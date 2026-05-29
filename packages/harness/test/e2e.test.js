@@ -66,3 +66,64 @@ test("e2e: capability level reported as 0-3 integer", async () => {
   assert.ok(Number.isInteger(verdict.capabilityLevel));
   assert.ok(verdict.capabilityLevel >= 0 && verdict.capabilityLevel <= 3);
 });
+
+// P6: end-to-end ratification that the Finding pipeline (P1 + P2 + P3) and
+// the spec-driven standardReferences merge (P5 / P5-bis) survive a real
+// harness run. Tests are written behaviourally so that extending the spec
+// data or adjusting scorer wording does not silently break them.
+
+test("e2e: every BP carries at least one finding emitted by the scorer (P3)", async () => {
+  const artifacts = [await loadFixture("sys2_srs.md")];
+  const harness = new Harness({ scorer: ruleScorer, targetLevel: 1 });
+  const verdict = await harness.evaluateProcess({ processId: "SYS.2", artifacts });
+  for (const bp of verdict.bps) {
+    assert.ok(
+      Array.isArray(bp.findings) && bp.findings.length >= 1,
+      `expected ${bp.id} to emit at least one finding from ruleScorer`
+    );
+    const f = bp.findings[0];
+    assert.equal(f.bpId, `SYS.2.${bp.id}`, "finding.bpId is fully qualified");
+    assert.ok(f.situation, "finding.situation must be non-empty");
+    assert.equal(f.type, "observation", "ruleScorer always emits observation findings");
+  }
+});
+
+test("e2e: BPResult.standardReferences merges scorer + extracted BGB rules (P5-bis)", async () => {
+  const artifacts = [await loadFixture("sys2_srs.md")];
+  const harness = new Harness({ scorer: ruleScorer, targetLevel: 1 });
+  const verdict = await harness.evaluateProcess({ processId: "SYS.2", artifacts });
+  const RL_RE = /^\[[A-Z][A-Z0-9.]*\.RL\.(?:\d+|xx)\]$/;
+  // SYS.2 has many BPs covered by the auto-extracted BGB CSV; at least one
+  // of them should surface bracketed rule IDs once bpEvaluator unions
+  // scorer refs + spec refs.
+  const withBgb = verdict.bps.filter((b) => b.standardReferences.bgbRL.length > 0);
+  assert.ok(
+    withBgb.length > 0,
+    `expected at least one SYS.2 BP to carry extracted BGB rules; got ${verdict.bps.map((b) => `${b.id}:${b.standardReferences.bgbRL.length}`).join(", ")}`
+  );
+  for (const bp of withBgb) {
+    for (const rl of bp.standardReferences.bgbRL) assert.match(rl, RL_RE);
+  }
+});
+
+test("e2e: each finding inherits the BP-level standardReferences (P5/P5-bis)", async () => {
+  const artifacts = [await loadFixture("sys2_srs.md")];
+  const harness = new Harness({ scorer: ruleScorer, targetLevel: 1 });
+  const verdict = await harness.evaluateProcess({ processId: "SYS.2", artifacts });
+  for (const bp of verdict.bps) {
+    for (const f of bp.findings) {
+      // BGB / ISO refs from the spec must be visible per finding so the UI
+      // can render chips next to each finding without re-querying the spec.
+      assert.deepEqual(
+        f.standardReferences.bgbRL,
+        bp.standardReferences.bgbRL,
+        `finding ${f.id} bgbRL should match BP-level bgbRL`
+      );
+      assert.deepEqual(
+        f.standardReferences.iso,
+        bp.standardReferences.iso,
+        `finding ${f.id} iso should match BP-level iso`
+      );
+    }
+  }
+});
