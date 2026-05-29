@@ -92,7 +92,7 @@ test("hasPamNote: accepts 'PAM Note <PROC>.<n>-<m>'", () => {
   assert.ok(!hasPamNote(undefined));
 });
 
-test("hasBgbRL: accepts 'RL<digit>' with optional .sub", () => {
+test("hasBgbRL: accepts 'RL<digit>' with optional .sub (legacy compat)", () => {
   assert.ok(hasBgbRL("RL3"));
   assert.ok(hasBgbRL("RL12"));
   assert.ok(hasBgbRL("RL3.2"));
@@ -100,6 +100,19 @@ test("hasBgbRL: accepts 'RL<digit>' with optional .sub", () => {
   assert.ok(!hasBgbRL("rl3"));
   assert.ok(!hasBgbRL("RL-3"));
   assert.ok(!hasBgbRL("BGB-RL3"));
+});
+
+test("hasBgbRL: accepts BGB rule-ID form '[PROC.RL.N]' (P5-bis canonical)", () => {
+  assert.ok(hasBgbRL("[SYS.2.RL.2]"));
+  assert.ok(hasBgbRL("[SWE.3.RL.1]"));
+  assert.ok(hasBgbRL("[SUP.10.RL.11]"));
+  assert.ok(hasBgbRL("[GEN.RL.1]"));
+  assert.ok(hasBgbRL("[MBD.RL.7]"));
+  assert.ok(hasBgbRL("[PA2.1.RL.5]"));
+  assert.ok(hasBgbRL("[CL2.RL.xx]"));
+  assert.ok(!hasBgbRL("[SYS.2.RL]"));
+  assert.ok(!hasBgbRL("SYS.2.RL.2"));
+  assert.ok(!hasBgbRL("[sys.2.RL.2]"));
 });
 
 test("hasIsoClause: accepts ISO/IEC variants with optional clause", () => {

@@ -13,8 +13,11 @@ test("MD parser: ignores prose / titles outside pipe tables (BGB)", () => {
   for (const key of idx.keys()) {
     assert.doesNotMatch(key, /매핑|Rating|BGB|Level/);
   }
+  // Accept either legacy "RL3" form or the canonical "[<scope>.RL.<n>]" form
+  // produced by the BGB extractor (P5-bis).
+  const RL_RE = /^(?:RL\d+(?:\.\d+)?|\[[A-Z][A-Z0-9.]*\.RL\.(?:\d+|xx)\])$/;
   for (const arr of idx.values()) {
-    for (const v of arr) assert.match(v, /^RL\d+(\.\d+)?$/);
+    for (const v of arr) assert.match(v, RL_RE);
   }
 });
 

@@ -1,26 +1,272 @@
-# BGB Rating Level → BP 매핑 (Markdown 표 예시)
+# BGB Rating Rule → BP 매핑 (자동 추출)
 
-본 파일은 동일 디렉터리의 `bpToRatingLevels.csv` 와 동등하게 처리됩니다.
-CSV 와 MD 가 같은 (processId, bpId, rlId) 행을 가지면 자동으로 중복 제거됩니다.
+본 파일은 `scripts/extractBgbRules.js` 가 `spec/bgb/sources/ASPICE_Guideline_20240312.md` 로부터
+추출한 (processId, bpId, rlId) 매핑입니다. 재실행 시 본 파일이 통째로 덮어써집니다.
+
+`rlId` 표기 규칙: `[<scope>.RL.<num>]` (정규식: `^\[[A-Z][A-Z0-9.]*\.RL\.(?:\d+|xx)\]$`).
+
+한 BP 가 여러 규칙에 매핑될 수 있으므로 한 행에 하나의 (processId, bpId, rlId) 만 기록합니다.
+
+PA-level rule (`[PA2.1.RL.*]`, `[PA3.1.RL.*]` 등) 은 BP 가 아닌 GP 를 대상으로 하므로 본 표에서 제외됩니다.
 
 ## 매핑 표
 
-| processId | bpId | rlId  |
-|-----------|------|-------|
-| SWE.3     | BP1  | RL3   |
-| SWE.3     | BP1  | RL3.2 |
-| SWE.3     | BP2  | RL3   |
-
-## 형식 규칙
-
-- `processId` 는 PAM 프로세스 ID (예: SWE.3).
-- `bpId` 는 spec/canonical/processes/<process>.json 안의 basePractices[i].id (예: BP1).
-- `rlId` 표기 정규식: `^RL\d+(\.\d+)?$`. 위반된 행은 자동 무시됩니다.
-- 표 외부의 텍스트 (제목/문장) 는 모두 무시되므로 자유롭게 주석으로 작성해도 됩니다.
-- 한 BP 가 여러 RL 에 매핑되면 행을 여러 개로 나눕니다.
-
-## 사용자 안내
-
-- 위 데모 행은 형식 예시이며 실제 BGB 매핑이 아닙니다.
-- 운영용 매핑으로 교체하거나, 동일 디렉터리에 새 `.md` / `.csv` 파일을 추가하세요.
-- 어떤 형식이든 헤더가 `processId`, `bpId`, `rlId` 세 컬럼을 포함하기만 하면 자동 인식됩니다.
+| processId | bpId | rlId |
+|-----------|------|------|
+| ACQ.4 | BP1 | [ACQ.4.RL.1] |
+| ACQ.4 | BP2 | [ACQ.4.RL.1] |
+| HWE.1 | BP1 | [HWE.1.RL.2] |
+| HWE.1 | BP2 | [HWE.1.RL.3] |
+| HWE.1 | BP2 | [HWE.1.RL.4] |
+| HWE.1 | BP2 | [HWE.1.RL.5] |
+| HWE.1 | BP2 | [HWE.1.RL.6] |
+| HWE.1 | BP2 | [HWE.1.RL.7] |
+| HWE.1 | BP3 | [HWE.1.RL.7] |
+| HWE.1 | BP3 | [HWE.1.RL.8] |
+| HWE.1 | BP3 | [HWE.1.RL.9] |
+| HWE.1 | BP3 | [HWE.1.RL.10] |
+| HWE.1 | BP3 | [HWE.1.RL.11] |
+| HWE.1 | BP3 | [MAN.3.RL.19] |
+| HWE.1 | BP5 | [HWE.1.RL.1] |
+| HWE.1 | BP5 | [HWE.1.RL.11] |
+| HWE.3 | BP1 | [HWE.3.RL.1] |
+| HWE.3 | BP1 | [HWE.3.RL.2] |
+| HWE.3 | BP3 | [HWE.3.RL.4] |
+| HWE.3 | BP4 | [HWE.3.RL.3] |
+| HWE.4 | BP1 | [HWE.4.RL.1] |
+| HWE.4 | BP1 | [HWE.4.RL.2] |
+| HWE.4 | BP3 | [HWE.4.RL.4] |
+| HWE.4 | BP5 | [HWE.4.RL.3] |
+| MAN.3 | BP1 | [DEX.RL.1] |
+| MAN.3 | BP1 | [MAN.3.RL.1] |
+| MAN.3 | BP1 | [MAN.3.RL.2] |
+| MAN.3 | BP1 | [MAN.3.RL.3] |
+| MAN.3 | BP2 | [MAN.3.RL.3] |
+| MAN.3 | BP2 | [MAN.3.RL.16] |
+| MAN.3 | BP3 | [DEX.RL.16] |
+| MAN.3 | BP3 | [MAN.3.RL.19] |
+| MAN.3 | BP4 | [AGE.RL.1] |
+| MAN.3 | BP4 | [MAN.3.RL.4] |
+| MAN.3 | BP4 | [MAN.3.RL.5] |
+| MAN.3 | BP4 | [MAN.3.RL.7] |
+| MAN.3 | BP4 | [MAN.3.RL.10] |
+| MAN.3 | BP4 | [MAN.3.RL.11] |
+| MAN.3 | BP4 | [MAN.3.RL.13] |
+| MAN.3 | BP4 | [MAN.3.RL.17] |
+| MAN.3 | BP4 | [MAN.3.RL.21] |
+| MAN.3 | BP4 | [PIM.3.RL.3] |
+| MAN.3 | BP5 | [AGE.RL.2] |
+| MAN.3 | BP5 | [MAN.3.RL.6] |
+| MAN.3 | BP5 | [MAN.3.RL.10] |
+| MAN.3 | BP5 | [MAN.3.RL.11] |
+| MAN.3 | BP5 | [MAN.3.RL.16] |
+| MAN.3 | BP5 | [MAN.3.RL.17] |
+| MAN.3 | BP5 | [MAN.3.RL.18] |
+| MAN.3 | BP6 | [MAN.3.RL.9] |
+| MAN.3 | BP6 | [MAN.3.RL.10] |
+| MAN.3 | BP6 | [MAN.3.RL.11] |
+| MAN.3 | BP6 | [MAN.3.RL.20] |
+| MAN.3 | BP6 | [MAN.3.RL.21] |
+| MAN.3 | BP7 | [APA.RL.6] |
+| MAN.3 | BP7 | [DEX.RL.3] |
+| MAN.3 | BP7 | [DEX.RL.6] |
+| MAN.3 | BP7 | [DEX.RL.7] |
+| MAN.3 | BP7 | [DEX.RL.8] |
+| MAN.3 | BP7 | [MAN.3.RL.10] |
+| MAN.3 | BP7 | [MAN.3.RL.11] |
+| MAN.3 | BP7 | [MAN.3.RL.20] |
+| MAN.3 | BP8 | [MAN.3.RL.8] |
+| MAN.3 | BP8 | [MAN.3.RL.10] |
+| MAN.3 | BP8 | [MAN.3.RL.11] |
+| MAN.3 | BP8 | [MAN.3.RL.12] |
+| MAN.3 | BP8 | [MAN.3.RL.13] |
+| MAN.3 | BP8 | [MAN.3.RL.16] |
+| MAN.3 | BP9 | [AGE.RL.1] |
+| MAN.3 | BP9 | [DEX.RL.2] |
+| MAN.3 | BP9 | [MAN.3.RL.2] |
+| MAN.3 | BP9 | [MAN.3.RL.12] |
+| MAN.3 | BP9 | [MAN.3.RL.14] |
+| MAN.3 | BP9 | [MAN.3.RL.15] |
+| MAN.3 | BP10 | [MAN.3.RL.20] |
+| MAN.5 | BP1 | [MAN.5.RL.1] |
+| MAN.5 | BP1 | [MAN.5.RL.2] |
+| MAN.5 | BP1 | [MAN.5.RL.3] |
+| MAN.5 | BP1 | [REU.2.RL.3] |
+| MAN.5 | BP2 | [MAN.5.RL.5] |
+| MAN.5 | BP3 | [MAN.5.RL.6] |
+| MAN.5 | BP4 | [MAN.5.RL.9] |
+| MAN.5 | BP5 | [MAN.3.RL.17] |
+| MAN.5 | BP5 | [MAN.3.RL.18] |
+| MAN.5 | BP5 | [MAN.5.RL.7] |
+| MAN.5 | BP5 | [MAN.5.RL.9] |
+| MAN.5 | BP6 | [MAN.5.RL.4] |
+| MAN.5 | BP6 | [MAN.5.RL.8] |
+| MAN.6 | BP1 | [MAN.6.RL.2] |
+| MAN.6 | BP2 | [MAN.6.RL.1] |
+| MAN.6 | BP4 | [MAN.6.RL.3] |
+| MAN.6 | BP5 | [MAN.6.RL.2] |
+| MAN.6 | BP6 | [MAN.6.RL.2] |
+| MAN.6 | BP6 | [MAN.6.RL.3] |
+| MLE.1 | BP1 | [MLE.1.RL.1] |
+| MLE.1 | BP3 | [MAN.3.RL.19] |
+| MLE.2 | BP1 | [MLE.2.RL.1] |
+| MLE.3 | BP1 | [MLE.3.RL.1] |
+| MLE.3 | BP1 | [MLE.3.RL.2] |
+| MLE.4 | BP1 | [MLE.4.RL.1] |
+| MLE.4 | BP1 | [MLE.4.RL.2] |
+| PIM.3 | BP1 | [PIM.3.RL.1] |
+| PIM.3 | BP2 | [PIM.3.RL.2] |
+| PIM.3 | BP2 | [PIM.3.RL.4] |
+| PIM.3 | BP4 | [PIM.3.RL.3] |
+| PIM.3 | BP5 | [PIM.3.RL.2] |
+| PIM.3 | BP5 | [PIM.3.RL.3] |
+| PIM.3 | BP6 | [PIM.3.RL.4] |
+| REU.2 | BP1 | [REU.2.RL.3] |
+| REU.2 | BP2 | [REU.2.RL.1] |
+| REU.2 | BP2 | [REU.2.RL.2] |
+| REU.2 | BP3 | [REU.2.RL.2] |
+| REU.2 | BP4 | [REU.2.RL.2] |
+| REU.2 | BP4 | [REU.2.RL.3] |
+| SPL.2 | BP1 | [AGE.RL.1] |
+| SPL.2 | BP1 | [SPL.2.RL.1] |
+| SPL.2 | BP4 | [MAN.3.RL.11] |
+| SPL.2 | BP6 | [SPL.2.RL.2] |
+| SPL.2 | BP8 | [SUP.8.RL.4] |
+| SUP.1 | BP3 | [AGE.RL.5] |
+| SUP.1 | BP3 | [CL2.RL.xx] |
+| SUP.1 | BP3 | [SUP.1.RL.1] |
+| SUP.1 | BP3 | [SUP.1.RL.2] |
+| SUP.1 | BP3 | [SUP.1.RL.3] |
+| SUP.1 | BP3 | [SUP.1.RL.6] |
+| SUP.1 | BP4 | [SUP.1.RL.4] |
+| SUP.1 | BP4 | [SUP.1.RL.5] |
+| SUP.1 | BP4 | [SUP.1.RL.7] |
+| SUP.1 | BP6 | [PIM.3.RL.4] |
+| SUP.1 | BP7 | [DEX.RL.8] |
+| SUP.1 | BP7 | [SUP.1.RL.8] |
+| SUP.8 | BP1 | [APA.RL.3] |
+| SUP.8 | BP1 | [SUP.8.RL.1] |
+| SUP.8 | BP1 | [SUP.8.RL.2] |
+| SUP.8 | BP2 | [DEX.RL.4] |
+| SUP.8 | BP3 | [SUP.8.RL.3] |
+| SUP.8 | BP3 | [SUP.8.RL.4] |
+| SUP.8 | BP4 | [SUP.8.RL.2] |
+| SUP.8 | BP5 | [SUP.8.RL.2] |
+| SUP.8 | BP5 | [SUP.8.RL.6] |
+| SUP.8 | BP6 | [MAN.3.RL.20] |
+| SUP.8 | BP6 | [SUP.8.RL.2] |
+| SUP.8 | BP7 | [SUP.8.RL.5] |
+| SUP.8 | BP7 | [SUP.8.RL.6] |
+| SUP.8 | BP8 | [SUP.8.RL.4] |
+| SUP.9 | BP1 | [SUP.9.RL.1] |
+| SUP.9 | BP2 | [SUP.9.RL.1] |
+| SUP.9 | BP3 | [SUP.9.RL.2] |
+| SUP.9 | BP6 | [MAN.3.RL.21] |
+| SUP.9 | BP6 | [SUP.9.RL.3] |
+| SUP.9 | BP7 | [MAN.3.RL.20] |
+| SUP.10 | BP1 | [SUP.10.RL.2] |
+| SUP.10 | BP1 | [SUP.10.RL.11] |
+| SUP.10 | BP2 | [SUP.10.RL.1] |
+| SUP.10 | BP2 | [SUP.10.RL.2] |
+| SUP.10 | BP2 | [SUP.10.RL.5] |
+| SUP.10 | BP2 | [SUP.10.RL.6] |
+| SUP.10 | BP2 | [SUP.10.RL.9] |
+| SUP.10 | BP3 | [SUP.10.RL.3] |
+| SUP.10 | BP3 | [SUP.10.RL.4] |
+| SUP.10 | BP3 | [SUP.10.RL.5] |
+| SUP.10 | BP4 | [SUP.10.RL.6] |
+| SUP.10 | BP5 | [SUP.10.RL.7] |
+| SUP.10 | BP5 | [SUP.10.RL.8] |
+| SUP.10 | BP5 | [SUP.10.RL.9] |
+| SUP.10 | BP6 | [SUP.10.RL.10] |
+| SUP.10 | BP6 | [SUP.10.RL.11] |
+| SUP.11 | BP1 | [SUP.11.RL.1] |
+| SWE.1 | BP1 | [SWE.1.RL.2] |
+| SWE.1 | BP1 | [SWE.1.RL.3] |
+| SWE.1 | BP1 | [SYS.5.RL.4] |
+| SWE.1 | BP2 | [SWE.1.RL.4] |
+| SWE.1 | BP2 | [SWE.1.RL.5] |
+| SWE.1 | BP2 | [SWE.1.RL.6] |
+| SWE.1 | BP3 | [MAN.3.RL.19] |
+| SWE.1 | BP3 | [SWE.1.RL.6] |
+| SWE.1 | BP3 | [SWE.1.RL.7] |
+| SWE.1 | BP3 | [SWE.1.RL.9] |
+| SWE.1 | BP5 | [SWE.1.RL.1] |
+| SWE.1 | BP5 | [SWE.1.RL.9] |
+| SWE.1 | BP5 | [SWE.1.RL.10] |
+| SWE.2 | BP1 | [AGE.RL.4] |
+| SWE.2 | BP1 | [AGE.RL.xx] |
+| SWE.2 | BP1 | [DEX.RL.13] |
+| SWE.2 | BP1 | [DEX.RL.15] |
+| SWE.2 | BP1 | [TPS.RL.xx] |
+| SWE.2 | BP2 | [DEX.RL.14] |
+| SWE.2 | BP2 | [SWE.1.RL.4] |
+| SWE.2 | BP2 | [SWE.2.RL.1] |
+| SWE.2 | BP4 | [DEX.RL.12] |
+| SWE.3 | BP1 | [SWE.3.RL.1] |
+| SWE.3 | BP1 | [SWE.3.RL.2] |
+| SWE.3 | BP2 | [APA.RL.2] |
+| SWE.3 | BP2 | [SWE.3.RL.3] |
+| SWE.3 | BP3 | [APA.RL.2] |
+| SWE.3 | BP3 | [SWE.3.RL.1] |
+| SWE.3 | BP4 | [MBD.RL.5] |
+| SWE.4 | BP1 | [SWE.4.RL.1] |
+| SWE.4 | BP1 | [SWE.4.RL.2] |
+| SWE.4 | BP2 | [SWE.4.RL.4] |
+| SWE.4 | BP3 | [AGE.RL.5] |
+| SWE.4 | BP3 | [MBD.RL.6] |
+| SWE.4 | BP3 | [MBD.RL.7] |
+| SWE.4 | BP4 | [SWE.4.RL.3] |
+| SWE.5 | BP1 | [DEX.RL.10] |
+| SWE.5 | BP1 | [SWE.5.RL.1] |
+| SWE.5 | BP1 | [SWE.5.RL.2] |
+| SWE.5 | BP2 | [DEX.RL.9] |
+| SWE.5 | BP2 | [DEX.RL.10] |
+| SWE.5 | BP2 | [SWE.5.RL.1] |
+| SWE.5 | BP2 | [SWE.5.RL.2] |
+| SWE.5 | BP3 | [SWE.5.RL.4] |
+| SWE.5 | BP4 | [DEX.RL.5] |
+| SWE.5 | BP4 | [DEX.RL.10] |
+| SWE.5 | BP5 | [DEX.RL.11] |
+| SWE.5 | BP6 | [SWE.5.RL.3] |
+| SWE.6 | BP1 | [SWE.6.RL.1] |
+| SWE.6 | BP1 | [SWE.6.RL.2] |
+| SWE.6 | BP2 | [SWE.6.RL.4] |
+| SWE.6 | BP4 | [SWE.6.RL.3] |
+| SYS.2 | BP1 | [SYS.2.RL.2] |
+| SYS.2 | BP1 | [SYS.2.RL.3] |
+| SYS.2 | BP1 | [SYS.2.RL.4] |
+| SYS.2 | BP2 | [SYS.2.RL.1] |
+| SYS.2 | BP2 | [SYS.2.RL.4] |
+| SYS.2 | BP2 | [SYS.2.RL.5] |
+| SYS.2 | BP2 | [SYS.2.RL.6] |
+| SYS.2 | BP3 | [MAN.3.RL.19] |
+| SYS.2 | BP3 | [SYS.2.RL.6] |
+| SYS.2 | BP3 | [SYS.2.RL.7] |
+| SYS.2 | BP3 | [SYS.2.RL.8] |
+| SYS.2 | BP3 | [SYS.2.RL.9] |
+| SYS.2 | BP5 | [SYS.2.RL.3] |
+| SYS.2 | BP5 | [SYS.2.RL.10] |
+| SYS.3 | BP1 | [AGE.RL.3] |
+| SYS.3 | BP1 | [APA.RL.1] |
+| SYS.3 | BP2 | [APA.RL.1] |
+| SYS.3 | BP2 | [SYS.3.RL.1] |
+| SYS.4 | BP1 | [DEX.RL.9] |
+| SYS.4 | BP1 | [SYS.4.RL.1] |
+| SYS.4 | BP1 | [SYS.4.RL.2] |
+| SYS.4 | BP1 | [SYS.4.RL.4] |
+| SYS.4 | BP2 | [DEX.RL.5] |
+| SYS.4 | BP2 | [SYS.4.RL.4] |
+| SYS.4 | BP4 | [SYS.4.RL.3] |
+| SYS.4 | BP4 | [SYS.5.RL.3] |
+| SYS.5 | BP1 | [APA.RL.4] |
+| SYS.5 | BP1 | [SYS.4.RL.4] |
+| SYS.5 | BP1 | [SYS.5.RL.1] |
+| SYS.5 | BP1 | [SYS.5.RL.2] |
+| SYS.5 | BP1 | [SYS.5.RL.4] |
+| SYS.5 | BP2 | [SYS.5.RL.4] |
+| SYS.5 | BP4 | [SYS.5.RL.3] |
+| VAL.1 | BP1 | [VAL.1.RL.1] |
+| VAL.1 | BP2 | [VAL.1.RL.3] |
+| VAL.1 | BP4 | [VAL.4.RL.2] |
+| VAL.4 | BP4 | [VAL.4.RL.2] |

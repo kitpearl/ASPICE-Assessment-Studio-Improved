@@ -17,7 +17,9 @@
  * Beyond the PAM section citation, individual Finding 객체는
  * standardReferences 슬롯에 다음 표기를 추가로 실을 수 있다 (P1):
  *   - PAM Note: "PAM Note SWE.2-1"
- *   - BGB Rating Level: "RL3", "RL3.2"
+ *   - BGB Rating Rule (P5-bis 발견 후 의미 정정 — 단순 등급이 아닌 조건부
+ *     평가 규칙의 식별자): "[SYS.2.RL.2]", "[GEN.RL.1]", "[PA2.1.RL.5]".
+ *     호환을 위해 단순 등급 표기 ("RL3", "RL3.2") 도 계속 인정한다.
  *   - ISO clause: "ISO 26262-6:2018 §8.4.5", "ISO/IEC 33020:2019 §5.3"
  */
 
@@ -25,7 +27,11 @@ import { makeFinding, validateFinding } from "../model/finding.js";
 
 const CITATION_RE = /PAM\s*§\s*(?:\d+(?:\.\d+){0,3}|[A-Z]{2,4}\.\d+)(?:\s+(?:BP\d+|GP\s?\d\.\d\.\d))?/;
 const PAM_NOTE_RE = /^PAM\s+Note\s+[A-Z]{2,4}\.\d+-\d+$/;
-const BGB_RL_RE = /^RL\d+(?:\.\d+)?$/;
+// BGB 표기 두 가지를 수용:
+//   1. 단순 등급: RL3 / RL3.2 (legacy compat)
+//   2. 규칙 ID: [PROC.SUBPROC.RL.N] / [GEN.RL.N] / [PA2.1.RL.5] 등
+//      (실제 BGB Guideline 본문에서 사용하는 표기)
+const BGB_RL_RE = /^(?:RL\d+(?:\.\d+)?|\[[A-Z][A-Z0-9.]*\.RL\.(?:\d+|xx)\])$/;
 const ISO_CLAUSE_RE = /^ISO(?:\/IEC)?\s+\d+(?:-\d+)?(?::\d{4})?(?:\s+§[\d.]+)?$/;
 
 /** @param {string|undefined} citation */
