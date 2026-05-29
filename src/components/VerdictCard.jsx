@@ -328,9 +328,214 @@ const EvidenceList = ({ items }) => {
   );
 };
 
+const FINDING_TYPE_META = {
+  weakness: { label: "약점 (WEAKNESS)", bg: "#FEF2F2", border: "#FECACA", bar: T.err, fg: T.err },
+  strength: { label: "강점 (STRENGTH)", bg: "#ECFDF5", border: "#A7F3D0", bar: T.ok, fg: T.ok },
+  observation: { label: "관찰 (OBSERVATION)", bg: "#F4F6F8", border: "#D4D4D8", bar: T.textLo, fg: T.textMd },
+};
+
+const StandardRefChips = ({ refs }) => {
+  if (!refs) return null;
+  const all = [
+    ...(refs.pam ?? []).map((r) => ({ kind: "PAM", text: r })),
+    ...(refs.pamNote ?? []).map((r) => ({ kind: "Note", text: r })),
+    ...(refs.bgbRL ?? []).map((r) => ({ kind: "BGB", text: r })),
+    ...(refs.iso ?? []).map((r) => ({ kind: "ISO", text: r })),
+  ];
+  if (all.length === 0) return null;
+  return (
+    <div style={{ display: "flex", flexWrap: "wrap", gap: 4, marginTop: 8 }}>
+      {all.map((r, i) => (
+        <span
+          key={`${r.kind}-${i}-${r.text}`}
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 4,
+            background: "#0A0A0C",
+            color: "#FFFFFF",
+            border: "1px solid #0A0A0C",
+            borderRadius: 3,
+            padding: "2px 7px",
+            fontFamily: FONTS.mono,
+            fontSize: 9,
+            fontWeight: 600,
+            letterSpacing: "0.04em",
+            maxWidth: "100%",
+            wordBreak: "break-all",
+            whiteSpace: "normal",
+          }}
+        >
+          <span style={{ opacity: 0.7 }}>{r.kind}</span>
+          <span>{r.text}</span>
+        </span>
+      ))}
+    </div>
+  );
+};
+
+const FindingSection = ({ label, body, accent }) => (
+  <div style={{ marginTop: 8 }}>
+    <div style={{
+      fontFamily: FONTS.mono,
+      fontSize: 9,
+      letterSpacing: "0.12em",
+      color: accent ?? T.textDim,
+      fontWeight: 700,
+      marginBottom: 3,
+      textTransform: "uppercase",
+    }}>{label}</div>
+    <div style={{ fontSize: 12.5, color: T.textHi, lineHeight: 1.55, wordBreak: "break-word", overflowWrap: "anywhere" }}>
+      {body}
+    </div>
+  </div>
+);
+
+const FindingCard = ({ finding }) => {
+  const meta = FINDING_TYPE_META[finding.type] || FINDING_TYPE_META.observation;
+  const loc = finding.location ?? {};
+  const evidenceItems = normalizeEvidence(finding.evidence ?? []);
+  const ri = finding.ratingImpact ?? {};
+  return (
+    <div
+      data-finding-card
+      data-finding-type={finding.type}
+      style={{
+        background: meta.bg,
+        border: `1px solid ${meta.border}`,
+        borderLeft: `3px solid ${meta.bar}`,
+        borderRadius: 4,
+        padding: "10px 14px 12px",
+        minWidth: 0,
+      }}
+    >
+      <div style={{ display: "flex", alignItems: "baseline", gap: 8, flexWrap: "wrap", marginBottom: 6 }}>
+        <span style={{
+          fontFamily: FONTS.mono,
+          fontSize: 9.5,
+          letterSpacing: "0.12em",
+          color: meta.fg,
+          fontWeight: 700,
+          textTransform: "uppercase",
+        }}>◆ {meta.label}</span>
+        {finding.id && (
+          <span style={{ fontFamily: FONTS.mono, fontSize: 9, color: T.textLo, letterSpacing: "0.04em" }}>
+            {finding.id}
+          </span>
+        )}
+      </div>
+      {finding.situation && (
+        <FindingSection label="상황 (SITUATION)" body={finding.situation} accent={T.textDim} />
+      )}
+      {finding.gap && (
+        <FindingSection label="갭 (GAP)" body={finding.gap} accent={T.err} />
+      )}
+      {finding.impact && (
+        <FindingSection label="영향 (IMPACT)" body={finding.impact} accent={T.warm} />
+      )}
+      {finding.recommendation && (
+        <FindingSection
+          label="권고 (RECOMMENDATION)"
+          accent={T.accent}
+          body={
+            <span style={{ fontWeight: 600 }}>
+              <span style={{ color: T.accent, marginRight: 4 }}>▸</span>
+              {finding.recommendation}
+            </span>
+          }
+        />
+      )}
+      {(loc.found || loc.recommended) && (
+        <FindingSection
+          label="위치 (LOCATION)"
+          accent={T.textDim}
+          body={
+            <span>
+              {loc.found && <span>발견: <strong>{loc.found}</strong></span>}
+              {loc.found && loc.recommended && <span style={{ color: T.textLo }}> · </span>}
+              {loc.recommended && <span>권고 위치: <strong>{loc.recommended}</strong></span>}
+            </span>
+          }
+        />
+      )}
+      <StandardRefChips refs={finding.standardReferences} />
+      {(ri.ruleApplied || ri.scoreDelta) && (
+        <div style={{
+          marginTop: 8,
+          paddingTop: 8,
+          borderTop: `1px dashed ${meta.border}`,
+          fontFamily: FONTS.mono,
+          fontSize: 9.5,
+          color: T.textDim,
+          letterSpacing: "0.02em",
+          lineHeight: 1.5,
+        }}>
+          <span style={{ fontWeight: 700, color: T.textMd }}>Rating Rule · </span>
+          {ri.ruleId && <span>{ri.ruleId}</span>}
+          {typeof ri.scoreDelta === "number" && ri.scoreDelta !== 0 && (
+            <span style={{ marginLeft: 6, color: ri.scoreDelta < 0 ? T.err : T.ok }}>
+              Δ {ri.scoreDelta > 0 ? "+" : ""}{ri.scoreDelta}%
+            </span>
+          )}
+          {ri.reason && (
+            <div style={{ color: T.textMd, marginTop: 2 }}>{ri.reason}</div>
+          )}
+        </div>
+      )}
+      {evidenceItems.length > 0 && (
+        <div style={{ marginTop: 8 }}>
+          <div style={{
+            fontFamily: FONTS.mono,
+            fontSize: 9,
+            letterSpacing: "0.12em",
+            color: T.textDim,
+            fontWeight: 700,
+            marginBottom: 4,
+            textTransform: "uppercase",
+          }}>증거 (EVIDENCE)</div>
+          <EvidenceList items={evidenceItems} />
+        </div>
+      )}
+    </div>
+  );
+};
+
+const AudienceBanner = () => (
+  <div
+    data-audience-banner
+    style={{
+      background: "#F0F9FF",
+      border: "1px solid #BAE6FD",
+      borderLeft: `3px solid ${T.accent}`,
+      borderRadius: 4,
+      padding: "10px 16px",
+      marginBottom: 18,
+      display: "flex",
+      flexWrap: "wrap",
+      gap: 10,
+      alignItems: "baseline",
+    }}
+  >
+    <span style={{
+      fontFamily: FONTS.mono,
+      fontSize: 9.5,
+      letterSpacing: "0.15em",
+      color: T.accent,
+      fontWeight: 700,
+      textTransform: "uppercase",
+    }}>◆ Audience</span>
+    <span style={{ fontSize: 12.5, color: T.textHi, lineHeight: 1.55 }}>
+      본 평가 결과는 <strong>산출물 작성팀(개발자·시스템 엔지니어)</strong> 과 <strong>경영진(품질책임자·프로젝트 매니저)</strong> 모두를 위한
+      결론 진술입니다. 권고(Recommendation)는 즉시 시정 행위로 이어질 수 있도록 동사로 시작합니다.
+    </span>
+  </div>
+);
+
 const BpRatingRow = ({ proc, bp, rating }) => {
   const m = RATING_META[rating.rating] || RATING_META.N;
+  const findings = Array.isArray(rating.findings) ? rating.findings : [];
   const evidenceItems = normalizeEvidence(rating.evidence);
+  const hasFindings = findings.length > 0;
   return (
     <div style={{
       display: "grid",
@@ -373,18 +578,30 @@ const BpRatingRow = ({ proc, bp, rating }) => {
             {bp.title}
           </span>
         </div>
-        <div style={{ fontSize: 12.5, color: T.textMd, lineHeight: 1.6, marginBottom: 10, wordBreak: "break-word", overflowWrap: "anywhere", minWidth: 0 }}>
-          <strong style={{ color: T.err, fontWeight: 600 }}>약점 · </strong>{rating.rationale}
-        </div>
-        <div style={{
-          fontFamily: FONTS.mono,
-          fontSize: 9,
-          letterSpacing: "0.12em",
-          color: T.textDim,
-          fontWeight: 700,
-          marginBottom: 6,
-        }}>약점 (WEAKNESS)</div>
-        <EvidenceList items={evidenceItems} />
+        {hasFindings ? (
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            {findings.map((f, i) => (
+              <FindingCard key={f.id || `${bp.id}-f-${i}`} finding={f} />
+            ))}
+            <StandardRefChips refs={rating.standardReferences} />
+          </div>
+        ) : (
+          <>
+            <div style={{ fontSize: 12.5, color: T.textMd, lineHeight: 1.6, marginBottom: 10, wordBreak: "break-word", overflowWrap: "anywhere", minWidth: 0 }}>
+              <strong style={{ color: T.err, fontWeight: 600 }}>약점 · </strong>{rating.rationale}
+            </div>
+            <div style={{
+              fontFamily: FONTS.mono,
+              fontSize: 9,
+              letterSpacing: "0.12em",
+              color: T.textDim,
+              fontWeight: 700,
+              marginBottom: 6,
+            }}>약점 (WEAKNESS)</div>
+            <EvidenceList items={evidenceItems} />
+            <StandardRefChips refs={rating.standardReferences} />
+          </>
+        )}
       </div>
     </div>
   );
@@ -483,6 +700,8 @@ export const VerdictCard = forwardRef(function VerdictCard(
       <HarnessVerdictBlock verdict={results._verdict} />
 
       <InsightsPair strengths={results.strengths} gaps={results.gaps} />
+
+      <AudienceBanner />
 
       <div style={{
         fontFamily: FONTS.mono,

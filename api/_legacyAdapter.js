@@ -69,6 +69,12 @@ export function toLegacyShape(v, skipped = []) {
       }),
       pamCitation: b.pamCitation,
       contextConsistency: b.contextConsistency,
+      // P4: surface the structured findings + standardReferences so the
+      // VerdictCard can render conclusion-statement cards instead of the
+      // collapsed legacy rationale. When findings is empty the UI falls
+      // back to the rationale + evidence path above.
+      findings: Array.isArray(b.findings) ? b.findings : [],
+      standardReferences: b.standardReferences ?? { pam: [], pamNote: [], bgbRL: [], iso: [] },
     };
   });
   const strong = (v.bps || []).filter((b) => b.scorePercent >= 68);

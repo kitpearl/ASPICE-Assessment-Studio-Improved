@@ -76,6 +76,17 @@ const PRINT_STYLE = `
   /* Quote box — show full content (no scroll), neutralise screen-only background/border. */
   #pdf-export-root div[style*="60px minmax(0, 1fr)"] > div:nth-child(2) > div:nth-child(4) > div > div:last-child { font-size:8.5px !important; color:#3F3F46 !important; line-height:1.4 !important; max-height:none !important; overflow:visible !important; padding:4px 6px !important; background:#FFFFFF !important; border:none !important; }
   #pdf-export-root > div[style*="flex-direction: column"]:last-child { gap:5px !important; }
+  /* P4: audience banner + finding cards. Inline styles already render well in
+     PDF; these rules just tighten paddings/fonts for paper. */
+  #pdf-export-root [data-audience-banner] { padding:6px 12px !important; margin-bottom:10px !important; gap:6px !important; }
+  #pdf-export-root [data-audience-banner] > span:first-child { font-size:7px !important; }
+  #pdf-export-root [data-audience-banner] > span:last-child { font-size:8.5px !important; line-height:1.4 !important; }
+  #pdf-export-root [data-finding-card] { padding:7px 11px 9px !important; border-radius:3px !important; }
+  #pdf-export-root [data-finding-card] > div:first-child { margin-bottom:4px !important; gap:6px !important; }
+  #pdf-export-root [data-finding-card] > div:first-child > span { font-size:7px !important; }
+  #pdf-export-root [data-finding-card] > div { margin-top:5px !important; }
+  #pdf-export-root [data-finding-card] > div > div:first-child { font-size:6.5px !important; margin-bottom:2px !important; }
+  #pdf-export-root [data-finding-card] > div > div:last-child { font-size:9px !important; line-height:1.4 !important; }
 `;
 
 const attachPrintStyle = (clonedDoc, clonedElement) => {
@@ -105,6 +116,69 @@ const setStyle = (el, patch) => {
   for (const [k, v] of Object.entries(patch)) {
     el.style.setProperty(k, v, "important");
   }
+};
+
+// P4: Finding 카드 안의 모든 quote/pill 요소도 evidence-list 와 동일한 보정을
+// 받도록 한다. lucide SVG 의 PDF 렌더 문제 회피 + quote 박스의 max-height 제거가
+// 핵심이며, 카드 자체의 색상/패딩은 PRINT_STYLE 의 [data-finding-card] 규칙이
+// 담당한다.
+const applyInlineFindingStyle = (bodyCell) => {
+  bodyCell.querySelectorAll("[data-finding-card]").forEach((card) => {
+    setStyle(card, {
+      padding: "7px 11px 9px",
+      "border-radius": "3px",
+    });
+  });
+  bodyCell.querySelectorAll("[data-evidence-quote]").forEach((quote) => {
+    setStyle(quote, {
+      "font-size": "8.5px",
+      color: "#3F3F46",
+      "line-height": "1.4",
+      "max-height": "none",
+      overflow: "visible",
+      padding: "4px 6px",
+      background: "#FFFFFF",
+      border: "none",
+    });
+  });
+  // Location pills inside finding evidence — same SVG-vanishing workaround
+  // as the legacy path: replace the lucide icon + label with plain "▸ {text}".
+  bodyCell
+    .querySelectorAll("[data-finding-card] [data-evidence-quote]")
+    .forEach((quote) => {
+      const item = quote.parentElement;
+      if (!item) return;
+      const pill = Array.from(item.children).find(
+        (c) =>
+          c !== quote &&
+          c.nodeType === 1 &&
+          !c.hasAttribute("data-html2canvas-ignore") &&
+          c.tagName !== "BUTTON"
+      );
+      if (!pill) return;
+      const labelText = pill.textContent ? pill.textContent.trim() : "";
+      pill.innerHTML = "";
+      const label = pill.ownerDocument.createElement("span");
+      label.textContent = "▸ " + labelText;
+      setStyle(label, { color: "#FFFFFF", "font-weight": "700" });
+      pill.appendChild(label);
+      setStyle(pill, {
+        background: "#0A0A0C",
+        color: "#FFFFFF",
+        border: "1px solid #0A0A0C",
+        "border-radius": "3px",
+        padding: "2px 8px",
+        "font-size": "7.5px",
+        "font-weight": "700",
+        "letter-spacing": "0.04em",
+        "margin-bottom": "3px",
+        display: "inline-block",
+        "max-width": "100%",
+        "word-break": "break-all",
+        "white-space": "normal",
+        "font-family": "'JetBrains Mono', monospace",
+      });
+    });
 };
 
 // Walk the verdict section in the cloned doc and rewrite inline styles for
@@ -138,8 +212,14 @@ const applyInlinePdfStyle = (root) => {
     if (ratingChildren[0]) setStyle(ratingChildren[0], { "font-size": "18px", "font-weight": "800", color: "#0A0A0C", "line-height": "1" });
     if (ratingChildren[1]) setStyle(ratingChildren[1], { "font-size": "6.5px", color: "#52525C", opacity: "1", "margin-top": "2px" });
 
-    // Right body cell — title row, rationale, evidence label, evidence list.
+    // Right body cell — title row, then either (new) FindingCard stack or
+    // (legacy) rationale + evidence list. Detect findings mode and skip the
+    // legacy mutation so the new card layout flows untouched.
     setStyle(bodyCell, { padding: "7px 11px" });
+    if (bodyCell.querySelector("[data-finding-card]")) {
+      applyInlineFindingStyle(bodyCell);
+      return;
+    }
     const body = bodyCell.children;
     if (body[1]) setStyle(body[1], { "font-size": "9px", color: "#3F3F46", "line-height": "1.4", "margin-bottom": "5px" });
     if (body[2]) setStyle(body[2], { "font-size": "7px", color: "#52525C", "letter-spacing": "0.12em", "font-weight": "700", "margin-bottom": "3px" });
