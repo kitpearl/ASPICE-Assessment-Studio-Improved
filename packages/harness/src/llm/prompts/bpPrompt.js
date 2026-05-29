@@ -1,10 +1,12 @@
+import { ASSESSOR_PERSONA } from "./assessorPersona.js";
+
 /**
  * Build the assessor prompt for one Base Practice.
  *
  * Returns a three-part structure that the LLM client adapters can translate
  * into cached + dynamic message blocks (Anthropic) or a concatenated user
  * message (OpenAI):
- *   - system  : assessor persona (stable, cacheable across all calls)
+ *   - system  : assessor persona + 출력 규약 (stable, cacheable across all calls)
  *   - context : process spec + evidence excerpt (stable within a process eval)
  *   - task    : BP-specific question (varies per call)
  *
@@ -20,39 +22,64 @@ export function buildBpPrompt({
   artifactsExcerpt,
   projectFingerprint,
 }) {
-  const system = `You are a qualified Automotive SPICE v4.0 assessor. You evaluate evidence against Base Practices and Process Attributes defined in the PAM. You MUST cite the relevant PAM section for every verdict (format: "PAM §X.Y.Z" with optional " BP#" or " GP X.Y.Z"). You also verify that submitted evidence is from the SAME product/project context as the rest of the deliverables — evidence that is structurally relevant but clearly references a different program, product, system, or release MUST be down-rated and flagged. You return JSON ONLY. All natural-language fields ("gaps", "evidence[].quote", "contextConsistency.note") MUST be written in Korean (한국어). PAM citations and identifiers stay as-is. Each "evidence[].quote" MUST be a verbatim, COMPLETE passage from the source — include the surrounding sentences so the reader has full context. Never truncate mid-sentence or mid-word, never abbreviate with "…", and prefer 2–6 contiguous sentences (typically 300–800 characters) over a one-line snippet.`;
+  const system = ASSESSOR_PERSONA;
 
   const context = [
-    `Process: ${process.id} ${process.name}`,
-    `PAM section: ${process.pamSection}`,
-    `Process purpose: ${process.purpose}`,
+    `# 평가 컨텍스트`,
+    `- Process: ${process.id} ${process.name}`,
+    `- PAM section: ${process.pamSection}`,
+    `- Process purpose: ${process.purpose}`,
     "",
-    `Project / product context fingerprint (dominant terms across the uploaded batch):`,
+    `# 프로젝트 / 제품 컨텍스트 지문 (업로드 배치의 지배적 용어)`,
     `  ${projectFingerprint || "(unknown)"}`,
     "",
-    `Evidence excerpts (from uploaded work products):`,
+    `# 산출물 인용 (업로드된 work product 들의 발췌)`,
     artifactsExcerpt || "(no artifacts supplied)",
   ].join("\n");
 
+  const bpFullId = `${process.id}.${bp.id}`;
   const task = [
-    `Evaluate this Base Practice:`,
-    `  ${process.id}.${bp.id}: ${bp.title}`,
+    `# 평가 대상 Base Practice`,
+    `  ${bpFullId}: ${bp.title}`,
     bp.description ? `  ${bp.description}` : "",
     "",
-    `Score 0-100 for extent of achievement. Cite PAM §${process.pamSection} ${bp.id} (or narrower).`,
-    `Then judge whether the evidence preserves the project / product context:`,
-    `  - "consistent"  : evidence clearly belongs to the same project/product as the fingerprint`,
-    `  - "partial"     : evidence is mixed; some artifacts look off-project`,
-    `  - "off-context" : evidence references a different project/product/release than the fingerprint`,
-    `  - "unknown"     : not enough signal to decide`,
-    `If status is "partial" or "off-context" you MUST reduce scorePercent accordingly and explain in "contextConsistency.note".`,
-    `Return JSON ONLY:`,
+    `# 작업`,
+    `- 0~100 점으로 충족도를 평가하라.`,
+    `- pamCitation 은 "PAM §${process.pamSection} ${bp.id}" 또는 더 구체적인 인용으로 작성하라.`,
+    `- contextConsistency 를 판정하라: "consistent" | "partial" | "off-context" | "unknown".`,
+    `  partial/off-context 인 경우 scorePercent 감점 + note 에 사유 기록 필수.`,
+    `- findings 배열에 최소 1개의 Finding 을 작성하라 (가이드: 시스템 메시지 § Finding 작성 룰).`,
+    `  - 각 Finding 의 bpId 는 "${bpFullId}" 로 고정하라.`,
+    `  - id 는 "F-${bpFullId}-NN" 형식으로 부여하라 (NN 은 01 부터).`,
+    "",
+    `# 출력 JSON 스키마`,
     `{`,
     `  "scorePercent": <0-100>,`,
     `  "evidence": [{"artifactName": "...", "quote": "...", "location": "..."}],`,
     `  "gaps": ["..."],`,
     `  "pamCitation": "PAM §...",`,
-    `  "contextConsistency": { "status": "consistent|partial|off-context|unknown", "note": "..." }`,
+    `  "contextConsistency": { "status": "consistent|partial|off-context|unknown", "note": "..." },`,
+    `  "standardReferences": {`,
+    `    "pam": ["PAM §..."],`,
+    `    "pamNote": ["PAM Note ${process.id}-N"],`,
+    `    "bgbRL": ["RL3"],`,
+    `    "iso": ["ISO 26262-6:2018 §8.4.5"]`,
+    `  },`,
+    `  "findings": [`,
+    `    {`,
+    `      "id": "F-${bpFullId}-01",`,
+    `      "bpId": "${bpFullId}",`,
+    `      "type": "weakness|strength|observation",`,
+    `      "situation": "<산출물에서 관찰된 객관적 사실 + 결론 진술>",`,
+    `      "gap": "<weakness 인 경우 무엇이 부족한지 구체적 진술>",`,
+    `      "impact": "<weakness 인 경우 BP outcome / capability 에 미치는 영향>",`,
+    `      "recommendation": "<weakness 인 경우 동사로 시작하는 권고>",`,
+    `      "location": { "found": "<발견 위치 또는 null>", "recommended": "<부재 시 권고 위치 또는 null>" },`,
+    `      "evidence": [{"artifactName": "...", "quote": "..."}],`,
+    `      "standardReferences": {"pam": ["..."], "pamNote": [], "bgbRL": [], "iso": []},`,
+    `      "ratingImpact": {"ruleApplied": false, "ruleId": null, "scoreDelta": 0, "reason": "..."}`,
+    `    }`,
+    `  ]`,
     `}`,
   ].join("\n");
 

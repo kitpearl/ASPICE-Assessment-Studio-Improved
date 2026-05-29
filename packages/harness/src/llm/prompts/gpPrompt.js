@@ -1,3 +1,5 @@
+import { ASSESSOR_PERSONA } from "./assessorPersona.js";
+
 /**
  * Build the assessor prompt for one Generic Practice (PA 1.1 ~ 3.2).
  *
@@ -14,7 +16,7 @@ export function buildGpPrompt({
   artifactsExcerpt,
   projectFingerprint,
 }) {
-  const system = `You are a qualified Automotive SPICE v4.0 assessor. You evaluate Process Attributes by judging their Generic Practices against evidence, AND verify that the evidence belongs to the same product/project context as the rest of the deliverables. Cite PAM §X.Y.Z for the rule you apply. Return JSON ONLY. All natural-language fields ("gaps", "evidence[].quote", "contextConsistency.note") MUST be written in Korean (한국어). PAM citations and identifiers stay as-is. Each "evidence[].quote" MUST be a verbatim, COMPLETE passage from the source — include the surrounding sentences so the reader has full context. Never truncate mid-sentence or mid-word, never abbreviate with "…", and prefer 2–6 contiguous sentences (typically 300–800 characters) over a one-line snippet.`;
+  const system = ASSESSOR_PERSONA;
 
   const bpSummary = (bpResults ?? [])
     .map((r) => `  ${r.id}: ${r.rating} (${r.scorePercent}%)`)
@@ -24,39 +26,65 @@ export function buildGpPrompt({
     .join("\n") || "  (none)";
 
   const context = [
-    `Process: ${process.id} ${process.name}`,
-    `Process Attribute: ${paSpec.id} ${paSpec.name} (capability level ${paSpec.level})`,
-    `PA scope: ${paSpec.scope ?? ""}`,
+    `# 평가 컨텍스트`,
+    `- Process: ${process.id} ${process.name}`,
+    `- Process Attribute: ${paSpec.id} ${paSpec.name} (capability level ${paSpec.level})`,
+    `- PA scope: ${paSpec.scope ?? ""}`,
     "",
-    `Project / product context fingerprint (dominant terms across the uploaded batch):`,
+    `# 프로젝트 / 제품 컨텍스트 지문`,
     `  ${projectFingerprint || "(unknown)"}`,
     "",
-    `Prior per-process results:`,
+    `# 선행 평가 결과`,
     `Base Practices:`,
     bpSummary,
     `Output Work Products:`,
     wpSummary,
     "",
-    `Evidence excerpts:`,
+    `# 산출물 인용`,
     artifactsExcerpt || "(no artifacts supplied)",
   ].join("\n");
 
   const task = [
-    `Evaluate this Generic Practice:`,
+    `# 평가 대상 Generic Practice`,
     `  ${gp.id}: ${gp.title}`,
     gp.description ? `  ${gp.description}` : "",
     "",
-    `Score 0-100. Cite the PAM section for this GP (typically "PAM §5 ${gp.id}").`,
-    `Then judge whether the evidence preserves the project / product context:`,
-    `  - "consistent" | "partial" | "off-context" | "unknown"`,
-    `If "partial" or "off-context" you MUST reduce scorePercent and explain in contextConsistency.note.`,
-    `Return JSON ONLY:`,
+    `# 작업`,
+    `- 0~100 점으로 충족도를 평가하라.`,
+    `- pamCitation 은 "PAM §5 ${gp.id}" 또는 더 구체적인 인용으로 작성하라.`,
+    `- contextConsistency 를 판정하라 ("partial"/"off-context" 인 경우 감점 + note 필수).`,
+    `- findings 배열에 최소 1개의 Finding 을 작성하라 (가이드: 시스템 메시지 § Finding 작성 룰).`,
+    `  - 각 Finding 의 bpId 는 "${process.id}.${gp.id}" 형식으로 기록하라 (GP 도 동일 필드 사용).`,
+    `  - id 는 "F-${process.id}.${gp.id}-NN" 형식으로 부여하라.`,
+    "",
+    `# 출력 JSON 스키마`,
     `{`,
     `  "scorePercent": <0-100>,`,
     `  "evidence": [{"artifactName": "...", "quote": "..."}],`,
     `  "gaps": ["..."],`,
     `  "pamCitation": "PAM §...",`,
-    `  "contextConsistency": { "status": "consistent|partial|off-context|unknown", "note": "..." }`,
+    `  "contextConsistency": { "status": "consistent|partial|off-context|unknown", "note": "..." },`,
+    `  "standardReferences": {`,
+    `    "pam": ["PAM §..."],`,
+    `    "pamNote": [],`,
+    `    "bgbRL": [],`,
+    `    "iso": []`,
+    `  },`,
+    `  "findings": [`,
+    `    {`,
+    `      "id": "F-${process.id}.${gp.id}-01",`,
+    `      "bpId": "${process.id}.${gp.id}",`,
+    `      "type": "weakness|strength|observation",`,
+    `      "situation": "<산출물에서 관찰된 객관적 사실 + 결론 진술>",`,
+    `      "gap": "<weakness 인 경우>",`,
+    `      "impact": "<weakness 인 경우>",`,
+    `      "recommendation": "<weakness 인 경우 동사로 시작>",`,
+    `      "location": { "found": null, "recommended": null },`,
+    `      "evidence": [{"artifactName": "...", "quote": "..."}],`,
+    `      "standardReferences": {"pam": [], "pamNote": [], "bgbRL": [], "iso": []},`,
+    `      "ratingImpact": {"ruleApplied": false, "ruleId": null, "scoreDelta": 0, "reason": "..."}`,
+    `    }`,
+    `  ]`,
     `}`,
   ].join("\n");
 

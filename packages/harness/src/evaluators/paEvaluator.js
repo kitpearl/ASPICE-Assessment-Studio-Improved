@@ -34,7 +34,14 @@ export async function evaluatePAs(
 
     const gps = [];
     for (const gp of paSpec.genericPractices) {
-      const { scorePercent, evidence, gaps, contextConsistency } = await scorer.scoreGP({
+      const {
+        scorePercent,
+        evidence,
+        gaps,
+        contextConsistency,
+        standardReferences,
+        findings,
+      } = await scorer.scoreGP({
         process: processSpec,
         paSpec,
         gp,
@@ -51,6 +58,8 @@ export async function evaluatePAs(
         evidence,
         gaps,
         contextConsistency: contextConsistency ?? { status: "unknown", note: "" },
+        standardReferences: standardReferences ?? { pam: [], pamNote: [], bgbRL: [], iso: [] },
+        findings: Array.isArray(findings) ? findings : [],
       });
     }
 

@@ -16,7 +16,14 @@ export async function evaluateBPs(processSpec, artifacts, scorer, options = {}) 
   const { projectFingerprint } = options;
   const results = [];
   for (const bp of processSpec.basePractices) {
-    const { scorePercent, evidence, gaps, contextConsistency } = await scorer.scoreBP({
+    const {
+      scorePercent,
+      evidence,
+      gaps,
+      contextConsistency,
+      standardReferences,
+      findings,
+    } = await scorer.scoreBP({
       process: processSpec,
       bp,
       artifacts,
@@ -31,6 +38,8 @@ export async function evaluateBPs(processSpec, artifacts, scorer, options = {}) 
       gaps,
       pamCitation: bp.pamCitation ?? processSpec.pamSection,
       contextConsistency: contextConsistency ?? { status: "unknown", note: "" },
+      standardReferences: standardReferences ?? { pam: [], pamNote: [], bgbRL: [], iso: [] },
+      findings: Array.isArray(findings) ? findings : [],
     });
   }
   return results;

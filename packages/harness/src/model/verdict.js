@@ -25,6 +25,7 @@
  * @property {number} scorePercent
  * @property {Evidence[]} evidence
  * @property {string[]} gaps
+ * @property {Finding[]} [findings]  결론 진술형 Finding 목록 (P2 신규, 옵션)
  *
  * @typedef {Object} PAResult
  * @property {string} paId          e.g. "PA 1.1"

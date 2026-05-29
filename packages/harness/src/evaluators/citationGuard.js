@@ -21,6 +21,8 @@
  *   - ISO clause: "ISO 26262-6:2018 §8.4.5", "ISO/IEC 33020:2019 §5.3"
  */
 
+import { makeFinding, validateFinding } from "../model/finding.js";
+
 const CITATION_RE = /PAM\s*§\s*(?:\d+(?:\.\d+){0,3}|[A-Z]{2,4}\.\d+)(?:\s+(?:BP\d+|GP\s?\d\.\d\.\d))?/;
 const PAM_NOTE_RE = /^PAM\s+Note\s+[A-Z]{2,4}\.\d+-\d+$/;
 const BGB_RL_RE = /^RL\d+(?:\.\d+)?$/;
@@ -95,6 +97,37 @@ export function normalizeContextConsistency(raw) {
 }
 
 /**
+ * LLM 응답의 findings 배열을 정규화한다. 각 raw finding 은 makeFinding 으로
+ * 빈 슬롯을 채운 뒤 validateFinding 으로 검증한다. 무효 항목은 silently drop
+ * 하고 droppedFindings 에 이유를 노출한다 (전체 응답을 거부하면 scoring 데이터
+ * 까지 잃으므로 부분 수용이 안전).
+ *
+ * 또한 finding 내부의 standardReferences 슬롯도 normalizeStandardReferences
+ * 로 재처리해 표기 규칙을 일관 적용한다.
+ *
+ * @param {any} rawFindings
+ * @returns {{findings: import("../model/finding.js").Finding[], dropped: string[]}}
+ */
+export function normalizeFindings(rawFindings) {
+  const findings = [];
+  const dropped = [];
+  if (!Array.isArray(rawFindings)) return { findings, dropped };
+  for (let i = 0; i < rawFindings.length; i++) {
+    const raw = rawFindings[i];
+    if (!raw || typeof raw !== "object") {
+      dropped.push(`[${i}]:<non-object>`);
+      continue;
+    }
+    const { refs: normalizedRefs } = normalizeStandardReferences(raw.standardReferences);
+    const candidate = makeFinding({ ...raw, standardReferences: normalizedRefs });
+    const v = validateFinding(candidate);
+    if (v.ok) findings.push(candidate);
+    else dropped.push(`[${i}]:${v.reason}`);
+  }
+  return { findings, dropped };
+}
+
+/**
  * @param {any} raw  LLM JSON response
  * @returns {{ok: true, result: any} | {ok: false, reason: string}}
  */
@@ -112,6 +145,7 @@ export function validateLlmResult(raw) {
   const gaps = Array.isArray(raw.gaps) ? raw.gaps : [];
   const contextConsistency = normalizeContextConsistency(raw.contextConsistency);
   const { refs: standardReferences, dropped: droppedRefs } = normalizeStandardReferences(raw.standardReferences);
+  const { findings, dropped: droppedFindings } = normalizeFindings(raw.findings);
   return {
     ok: true,
     result: {
@@ -122,6 +156,8 @@ export function validateLlmResult(raw) {
       contextConsistency,
       standardReferences,
       droppedRefs,
+      findings,
+      droppedFindings,
     },
   };
 }

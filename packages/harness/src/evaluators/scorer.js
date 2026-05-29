@@ -10,6 +10,10 @@
  * @property {number} scorePercent   0..100
  * @property {import("../model/verdict.js").Evidence[]} evidence
  * @property {string[]} gaps
+ * @property {string} [pamCitation]                       LLM/Hybrid 만 채움
+ * @property {{status: string, note: string}} [contextConsistency]
+ * @property {import("../model/finding.js").StandardReferences} [standardReferences]
+ * @property {import("../model/finding.js").Finding[]} [findings]   결론 진술형 Finding 목록 (P2)
  *
  * @typedef {Object} Scorer
  * @property {(ctx: {process, bp, artifacts}) => Promise<ScoreResult>} scoreBP

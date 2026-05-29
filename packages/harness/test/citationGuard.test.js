@@ -6,6 +6,7 @@ import {
   hasBgbRL,
   hasIsoClause,
   normalizeStandardReferences,
+  normalizeFindings,
   validateLlmResult,
 } from "../src/evaluators/citationGuard.js";
 
@@ -163,4 +164,93 @@ test("validateLlmResult: missing standardReferences yields empty slots and no dr
   assert.ok(v.ok);
   assert.deepEqual(v.result.standardReferences, { pam: [], pamNote: [], bgbRL: [], iso: [] });
   assert.deepEqual(v.result.droppedRefs, []);
+});
+
+test("normalizeFindings: keeps valid weakness, drops findings without verb-first recommendation", () => {
+  const { findings, dropped } = normalizeFindings([
+    {
+      id: "F-SWE.2.BP1-01",
+      bpId: "SWE.2.BP1",
+      type: "weakness",
+      situation: "정적 아키텍처 명세 부분 존재",
+      gap: "외부 인터페이스 타이밍 정의 부재",
+      impact: "BP1 outcome 부분 충족",
+      recommendation: "추가하라: 외부 인터페이스 타이밍 정의",
+      standardReferences: { pam: ["PAM §SWE.2 BP1"], iso: ["ISO 26262-6:2018 §8.4.5"] },
+    },
+    {
+      id: "F-SWE.2.BP1-02",
+      bpId: "SWE.2.BP1",
+      type: "weakness",
+      situation: "동적 아키텍처 명세 부재",
+      gap: "동적 view 정의 누락",
+      recommendation: "이걸 좀 채워주면 좋겠다",
+    },
+  ]);
+  assert.equal(findings.length, 1);
+  assert.equal(findings[0].id, "F-SWE.2.BP1-01");
+  assert.deepEqual(findings[0].standardReferences.iso, ["ISO 26262-6:2018 §8.4.5"]);
+  assert.equal(dropped.length, 1);
+  assert.match(dropped[0], /\[1\]/);
+  assert.match(dropped[0], /동사/);
+});
+
+test("normalizeFindings: non-object / null entries are dropped with index", () => {
+  const { findings, dropped } = normalizeFindings([null, 42, "x", undefined]);
+  assert.equal(findings.length, 0);
+  assert.deepEqual(dropped, ["[0]:<non-object>", "[1]:<non-object>", "[2]:<non-object>", "[3]:<non-object>"]);
+});
+
+test("normalizeFindings: non-array input yields empty result", () => {
+  for (const x of [undefined, null, 42, "string", {}]) {
+    const { findings, dropped } = normalizeFindings(x);
+    assert.deepEqual(findings, []);
+    assert.deepEqual(dropped, []);
+  }
+});
+
+test("normalizeFindings: malformed nested standardReferences are silently scrubbed", () => {
+  const { findings } = normalizeFindings([
+    {
+      bpId: "SWE.2.BP1",
+      type: "observation",
+      situation: "정적 아키텍처 명세 존재",
+      standardReferences: { pam: ["bogus"], iso: ["ISO 26262-6:2018 §8.4.5", "nope"] },
+    },
+  ]);
+  assert.equal(findings.length, 1);
+  assert.deepEqual(findings[0].standardReferences.pam, []);
+  assert.deepEqual(findings[0].standardReferences.iso, ["ISO 26262-6:2018 §8.4.5"]);
+});
+
+test("validateLlmResult: surfaces findings + droppedFindings", () => {
+  const v = validateLlmResult({
+    scorePercent: 60,
+    evidence: [],
+    gaps: [],
+    pamCitation: "PAM §SWE.2 BP1",
+    findings: [
+      {
+        bpId: "SWE.2.BP1",
+        type: "observation",
+        situation: "정적 아키텍처 명세 존재",
+      },
+      { bpId: "", type: "weakness" },
+    ],
+  });
+  assert.ok(v.ok);
+  assert.equal(v.result.findings.length, 1);
+  assert.equal(v.result.droppedFindings.length, 1);
+});
+
+test("validateLlmResult: missing findings yields empty array and no drops", () => {
+  const v = validateLlmResult({
+    scorePercent: 60,
+    evidence: [],
+    gaps: [],
+    pamCitation: "PAM §SWE.2 BP1",
+  });
+  assert.ok(v.ok);
+  assert.deepEqual(v.result.findings, []);
+  assert.deepEqual(v.result.droppedFindings, []);
 });

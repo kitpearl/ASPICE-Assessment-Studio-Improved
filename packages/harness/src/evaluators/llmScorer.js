@@ -47,7 +47,13 @@ export function createLlmScorer({ client }) {
       console.warn("[aspice/llm] response rejected:", v.reason, "— pamCitation:", raw?.pamCitation, "evidenceCount:", Array.isArray(raw?.evidence) ? raw.evidence.length : 0);
       return fallback(v.reason, raw);
     }
-    const { contextConsistency } = v.result;
+    const { contextConsistency, standardReferences, findings, droppedFindings, droppedRefs } = v.result;
+    if (droppedRefs.length > 0) {
+      console.warn("[aspice/llm] dropped malformed standardReferences:", droppedRefs.join(", "));
+    }
+    if (droppedFindings.length > 0) {
+      console.warn("[aspice/llm] dropped malformed findings:", droppedFindings.join(", "));
+    }
     const multiplier = CONTEXT_MULTIPLIERS[contextConsistency.status] ?? 1.0;
     const adjustedScore = Math.round(v.result.scorePercent * multiplier);
     const gaps = [...v.result.gaps];
@@ -62,6 +68,8 @@ export function createLlmScorer({ client }) {
       gaps,
       pamCitation: v.result.pamCitation,
       contextConsistency,
+      standardReferences,
+      findings,
     };
   }
 
@@ -87,6 +95,8 @@ function fallback(reason, raw) {
     evidence: [],
     gaps: [`LLM verdict rejected: ${reason}`],
     contextConsistency: { status: "unknown", note: "" },
+    standardReferences: { pam: [], pamNote: [], bgbRL: [], iso: [] },
+    findings: [],
     ...(raw ? { rawLlmResponse: raw } : {}),
   };
 }
