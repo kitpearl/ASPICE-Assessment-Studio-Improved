@@ -20,7 +20,15 @@
  *   - BGB Rating Rule (P5-bis 발견 후 의미 정정 — 단순 등급이 아닌 조건부
  *     평가 규칙의 식별자): "[SYS.2.RL.2]", "[GEN.RL.1]", "[PA2.1.RL.5]".
  *     호환을 위해 단순 등급 표기 ("RL3", "RL3.2") 도 계속 인정한다.
- *   - ISO clause: "ISO 26262-6:2018 §8.4.5", "ISO/IEC 33020:2019 §5.3"
+ *   - ISO / 자동차 산업 표준 clause (P5-ter 확장 — 슬롯 이름은 "iso" 그대로
+ *     유지하되 ISO 외에 IEC, IATF, ISO/SAE 등 자동차 평가 맥락에서 흔히 인용
+ *     되는 표준을 함께 수용한다):
+ *       "ISO 26262-6:2018 §8.4.5"        ← § 표기
+ *       "ISO 26262-6 clause 8.4.5"       ← PAM v4.0 본문 표기 (clause 단어)
+ *       "ISO/IEC 33020:2019 §5.3"
+ *       "ISO/SAE 21434"
+ *       "IEC 61508 clause 7.2"
+ *       "IATF 16949:2016 clause 8.4.1.2"
  */
 
 import { makeFinding, validateFinding } from "../model/finding.js";
@@ -32,7 +40,11 @@ const PAM_NOTE_RE = /^PAM\s+Note\s+[A-Z]{2,4}\.\d+-\d+$/;
 //   2. 규칙 ID: [PROC.SUBPROC.RL.N] / [GEN.RL.N] / [PA2.1.RL.5] 등
 //      (실제 BGB Guideline 본문에서 사용하는 표기)
 const BGB_RL_RE = /^(?:RL\d+(?:\.\d+)?|\[[A-Z][A-Z0-9.]*\.RL\.(?:\d+|xx)\])$/;
-const ISO_CLAUSE_RE = /^ISO(?:\/IEC)?\s+\d+(?:-\d+)?(?::\d{4})?(?:\s+§[\d.]+)?$/;
+// ISO/IATF/IEC clause: standard prefix (ISO[ /IEC | /SAE ] | IEC | IATF) 다음에
+// 표준 번호(예: 26262, 16949), 선택적 part(-6), 선택적 연도(:2018), 선택적
+// clause 표기 (§8.4.5 또는 clause 8.4.5) 를 허용.
+const ISO_CLAUSE_RE =
+  /^(?:ISO(?:\/(?:IEC|SAE))?|IEC|IATF)\s+\d+(?:-\d+)?(?::\d{4})?(?:\s+(?:§[\d.]+|clause\s+[\d.]+))?$/;
 
 /** @param {string|undefined} citation */
 export function hasPamCitation(citation) {

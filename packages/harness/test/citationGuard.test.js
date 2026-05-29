@@ -115,14 +115,27 @@ test("hasBgbRL: accepts BGB rule-ID form '[PROC.RL.N]' (P5-bis canonical)", () =
   assert.ok(!hasBgbRL("[sys.2.RL.2]"));
 });
 
-test("hasIsoClause: accepts ISO/IEC variants with optional clause", () => {
+test("hasIsoClause: accepts ISO/IEC variants with § clause notation", () => {
   assert.ok(hasIsoClause("ISO 26262-6:2018 §8.4.5"));
   assert.ok(hasIsoClause("ISO/IEC 33020:2019 §5.3"));
   assert.ok(hasIsoClause("ISO 21434"));
   assert.ok(hasIsoClause("ISO 26262-6:2018"));
   assert.ok(!hasIsoClause("ISO26262"));
   assert.ok(!hasIsoClause("iso 26262"));
-  assert.ok(!hasIsoClause("ISO 26262-6 clause 8.4.5"));
+});
+
+test("hasIsoClause: P5-ter — accepts the PAM v4.0 'clause N.N.N' notation", () => {
+  assert.ok(hasIsoClause("ISO 26262-6 clause 8.4.5"));
+  assert.ok(hasIsoClause("ISO 26262-6 clause 9"));
+  assert.ok(hasIsoClause("IEC 61508 clause 7.2"));
+});
+
+test("hasIsoClause: P5-ter — accepts ISO/SAE, IEC, IATF prefixes", () => {
+  assert.ok(hasIsoClause("ISO/SAE 21434"));
+  assert.ok(hasIsoClause("IEC 33020:2019"));
+  assert.ok(hasIsoClause("IATF 16949:2016 clause 8.4.1.2"));
+  assert.ok(!hasIsoClause("iatf 16949"));
+  assert.ok(!hasIsoClause("ISO/foo 12345"));
 });
 
 test("normalizeStandardReferences: keeps valid entries, drops malformed ones", () => {

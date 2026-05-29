@@ -14,7 +14,8 @@ import {
 // hard-coding every value the extractor produced.
 
 const RL_RE = /^\[[A-Z][A-Z0-9.]*\.RL\.(?:\d+|xx)\]$/;
-const ISO_RE = /^ISO(?:\/IEC)?\s+\d+/;
+// Mirrors the citationGuard ISO_CLAUSE_RE prefix portion after P5-ter.
+const ISO_RE = /^(?:ISO(?:\/(?:IEC|SAE))?|IEC|IATF)\s+\d+/;
 
 test("lookupStandardRefs: returns rule IDs for an extracted BP and ISO clauses from the CSV", () => {
   _clearStandardRefsCache();
@@ -87,4 +88,19 @@ test("lookupStandardRefs: ISO clauses authored in Markdown are loaded (SWE.3)", 
   const refs = lookupStandardRefs("SWE.3.BP1");
   assert.ok(refs.iso.includes("ISO 26262-6:2018 §9.4.3"));
   assert.ok(refs.iso.includes("ISO/IEC 25010:2011 §4.2"));
+});
+
+test("lookupStandardRefs: P5-ter — PAM-extracted ISO Notes surface (SWE.3.BP3, HWE.1.BP1, HWE.2.BP2)", () => {
+  _clearStandardRefsCache();
+  // The PAM v4.0 notes were curated into spec/iso/bpToClauses.pam-v40.md.
+  // Confirm the loader picks them up and that the 'clause N.N.N' notation
+  // survives the citationGuard validator.
+  const swe3 = lookupStandardRefs("SWE.3.BP3");
+  assert.ok(swe3.iso.includes("ISO 26262-6 clause 8.4.5"));
+
+  const hwe1 = lookupStandardRefs("HWE.1.BP1");
+  assert.ok(hwe1.iso.includes("ISO 26262-8:2018"));
+
+  const hwe2 = lookupStandardRefs("HWE.2.BP2");
+  assert.ok(hwe2.iso.includes("IATF 16949:2016 clause 8.4.1.2"));
 });

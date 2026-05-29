@@ -24,8 +24,11 @@ test("MD parser: ignores prose / titles outside pipe tables (BGB)", () => {
 test("MD parser: ignores prose outside pipe tables (ISO)", () => {
   _clearStandardRefsCache();
   const idx = loadIsoIndex();
+  // After P5-ter the loader also accepts IATF / IEC / ISO/SAE prefixes,
+  // matching the citationGuard regex extension.
+  const STD_RE = /^(?:ISO(?:\/(?:IEC|SAE))?|IEC|IATF)\s+\d+/;
   for (const arr of idx.values()) {
-    for (const v of arr) assert.match(v, /^ISO(\/IEC)?\s+\d+/);
+    for (const v of arr) assert.match(v, STD_RE);
   }
 });
 
