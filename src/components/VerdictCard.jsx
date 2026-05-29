@@ -432,7 +432,7 @@ const HarnessVerdictBlock = ({ verdict }) => {
   );
 };
 
-// exportReport.js의 onclone은 section.textContent에 "NPLF VERDICT"가 포함된 요소를 찾으므로 SectionBadge 텍스트를 유지해야 함.
+// exportReport.js는 data-pdf-export-root 속성으로 이 섹션을 찾으므로 해당 속성을 유지해야 함.
 export const VerdictCard = forwardRef(function VerdictCard(
   { proc, results, fileName, date, viewingHistory, exporting, onExportPdf, onExportTxt },
   ref

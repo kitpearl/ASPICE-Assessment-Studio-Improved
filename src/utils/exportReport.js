@@ -78,19 +78,17 @@ const PRINT_STYLE = `
   #pdf-export-root > div[style*="flex-direction: column"]:last-child { gap:5px !important; }
 `;
 
-const attachPrintStyle = (clonedDoc) => {
-  // Prefer the explicit data-attribute marker set by VerdictCard. Fall back
-  // to legacy textContent-based matching so older snapshots still print.
-  let target = clonedDoc.querySelector("[data-pdf-export-root]");
+const attachPrintStyle = (clonedDoc, clonedElement) => {
+  // VerdictCard always renders the section with data-pdf-export-root. Prefer the
+  // cloned element passed by html2canvas; query the doc as a safety net.
+  const target =
+    (clonedElement && clonedElement.hasAttribute && clonedElement.hasAttribute("data-pdf-export-root")
+      ? clonedElement
+      : null) ||
+    (clonedElement && clonedElement.querySelector ? clonedElement.querySelector("[data-pdf-export-root]") : null) ||
+    clonedDoc.querySelector("[data-pdf-export-root]");
   if (!target) {
-    clonedDoc.querySelectorAll("section").forEach((el) => {
-      const t = el.textContent || "";
-      if (!target && (t.includes("NPLF VERDICT") || t.includes("NPLF 평가 결과"))) target = el;
-    });
-  }
-  if (!target) {
-    console.warn("[aspice/pdf] verdict section not found in cloned doc — print stylesheet not applied");
-    return;
+    throw new Error("PDF 인쇄 스타일을 적용할 평가 결과 섹션(data-pdf-export-root)을 찾지 못했습니다.");
   }
   target.id = "pdf-export-root";
   const s = clonedDoc.createElement("style");
