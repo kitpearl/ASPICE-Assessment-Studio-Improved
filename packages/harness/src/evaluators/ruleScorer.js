@@ -1,5 +1,16 @@
 import { extractKeywords } from "../io/excerpt.js";
 import { classifyContextMatch } from "../io/projectContext.js";
+import { buildRuleObservationFinding } from "./findingBuilders.js";
+
+const EMPTY_REFS = { pam: [], pamNote: [], bgbRL: [], iso: [] };
+const RULE_ID_BP = "RULE-KEYWORD-OVERLAP";
+const RULE_ID_WP = "RULE-WPID-OR-NAME";
+const RULE_ID_GP_DERIVED = "RULE-GP-DERIVED-FROM-BP";
+const RULE_ID_GP_HEURISTIC = "RULE-KEYWORD-OVERLAP";
+
+function refsFromPamCitation(pamCitation) {
+  return pamCitation ? { pam: [pamCitation], pamNote: [], bgbRL: [], iso: [] } : { ...EMPTY_REFS };
+}
 
 /**
  * RuleScorer — offline, deterministic scorer.
@@ -21,9 +32,17 @@ import { classifyContextMatch } from "../io/projectContext.js";
  * @type {import("./scorer.js").Scorer}
  */
 export const ruleScorer = {
-  async scoreBP({ bp, artifacts, projectFingerprint }) {
+  async scoreBP({ process, bp, artifacts, projectFingerprint }) {
+    const bpFullId = `${process.id}.${bp.id}`;
+    const pamCitation = bp.pamCitation ?? process.pamSection;
     const kws = extractKeywords(`${bp.title} ${bp.description ?? ""}`, 10);
-    if (!kws.length) return empty("no keywords derivable from BP spec");
+    if (!kws.length) {
+      return emptyBp({
+        bpFullId,
+        pamCitation,
+        reason: "no keywords derivable from BP spec",
+      });
+    }
     const matchIndex = buildMatchIndex(artifacts, projectFingerprint);
     const { weighted, total, evidence, missing, perArtifactHits } = matchKeywords(kws, artifacts, matchIndex);
     const scorePercent = scoreFromWeighted(weighted, total);
@@ -36,10 +55,30 @@ export const ruleScorer = {
     } else if (contextConsistency.status === "partial") {
       gaps.push("프로젝트 컨텍스트 부분 일치: 일부 매칭 산출물이 다른 컨텍스트로 보임");
     }
-    return { scorePercent, evidence, gaps, contextConsistency };
+    const matchedCount = total - missing.length;
+    const ratio = total > 0 ? Math.round((matchedCount / total) * 100) : 0;
+    const finding = buildRuleObservationFinding({
+      bpFullId,
+      ruleId: RULE_ID_BP,
+      situation: `Rule-mode 자동 휴리스틱: BP 요구 개념의 ${ratio}% (${matchedCount}/${total}) 가 산출물 본문/메타에서 관찰됨. 의미적 충족 여부는 시니어 평가자가 추가 확인 필요.`,
+      evidence,
+      pamCitation,
+      scoreReason: `계산하라: 키워드 가중 일치 비율(${matchedCount}/${total}) → ${scorePercent}%`,
+    });
+    return {
+      scorePercent,
+      evidence,
+      gaps,
+      contextConsistency,
+      standardReferences: refsFromPamCitation(pamCitation),
+      findings: [finding],
+    };
   },
 
-  async scoreWP({ wp, artifacts, projectFingerprint }) {
+  async scoreWP({ process, wp, artifacts, projectFingerprint }) {
+    const bpFullId = `${process.id}.${wp.id}`;
+    const pamCitation = process.pamSection ? `PAM §${process.pamSection}` : undefined;
+    const refs = refsFromPamCitation(pamCitation);
     const matchIndex = buildMatchIndex(artifacts, projectFingerprint);
     const wpidHit = artifacts.find((a) => a.wpidCandidates?.includes(wp.id));
     if (wpidHit) {
@@ -49,17 +88,29 @@ export const ruleScorer = {
       const gaps = [];
       if (ctx.status === "off-context") gaps.push("프로젝트 컨텍스트 불일치: 해당 WP 태깅 산출물이 다른 제품/프로젝트로 보임");
       else if (ctx.status === "partial") gaps.push("프로젝트 컨텍스트 부분 일치: 해당 산출물이 다른 컨텍스트로 보임");
+      const evidence = [
+        {
+          artifactName: wpidHit.name,
+          quote: `Artifact tagged as WP ${wp.id} ${wp.name}`,
+          location: "wpidCandidates",
+        },
+      ];
       return {
         scorePercent: score,
-        evidence: [
-          {
-            artifactName: wpidHit.name,
-            quote: `Artifact tagged as WP ${wp.id} ${wp.name}`,
-            location: "wpidCandidates",
-          },
-        ],
+        evidence,
         gaps,
         contextConsistency: { status: ctx.status, note: ctx.note },
+        standardReferences: refs,
+        findings: [
+          buildRuleObservationFinding({
+            bpFullId,
+            ruleId: RULE_ID_WP,
+            situation: `Rule-mode: 산출물 "${wpidHit.name}" 이 WP ${wp.id} (${wp.name}) 식별자로 태깅되어 관찰됨. 의미적 충족 여부는 시니어 평가자가 추가 확인 필요.`,
+            evidence,
+            pamCitation,
+            scoreReason: `계산하라: WPID 직접 태깅 → 기저 점수 ${base}, 컨텍스트 보정 후 ${score}%`,
+          }),
+        ],
       };
     }
     // Fallback: name/alias match in filename or body
@@ -74,16 +125,28 @@ export const ruleScorer = {
       const gaps = [`No explicit WP ID ${wp.id} tagging; matched on name.`];
       if (ctx.status === "off-context") gaps.push("프로젝트 컨텍스트 불일치: 매칭 산출물이 다른 제품/프로젝트로 보임");
       else if (ctx.status === "partial") gaps.push("프로젝트 컨텍스트 부분 일치: 매칭 산출물이 다른 컨텍스트로 보임");
+      const evidence = [
+        {
+          artifactName: nameHit.name,
+          quote: snippet(nameHit.text ?? nameHit.name, needle, 400),
+        },
+      ];
       return {
         scorePercent: score,
-        evidence: [
-          {
-            artifactName: nameHit.name,
-            quote: snippet(nameHit.text ?? nameHit.name, needle, 400),
-          },
-        ],
+        evidence,
         gaps,
         contextConsistency: { status: ctx.status, note: ctx.note },
+        standardReferences: refs,
+        findings: [
+          buildRuleObservationFinding({
+            bpFullId,
+            ruleId: RULE_ID_WP,
+            situation: `Rule-mode: WP ${wp.id} 식별자 태깅은 부재하나 "${nameHit.name}" 산출물명/본문에서 WP 명칭 일치가 관찰됨. 의미적 충족 여부는 시니어 평가자가 추가 확인 필요.`,
+            evidence,
+            pamCitation,
+            scoreReason: `계산하라: 이름 매칭 → 기저 점수 ${base}, 컨텍스트 보정 후 ${score}%`,
+          }),
+        ],
       };
     }
     return {
@@ -91,24 +154,51 @@ export const ruleScorer = {
       evidence: [],
       gaps: [`No artifact satisfies WP ${wp.id} ${wp.name}`],
       contextConsistency: { status: "unknown", note: "" },
+      standardReferences: refs,
+      findings: [
+        buildRuleObservationFinding({
+          bpFullId,
+          ruleId: RULE_ID_WP,
+          situation: `Rule-mode: WP ${wp.id} ${wp.name} 에 대한 식별자 태깅·이름 일치가 어떤 산출물에서도 관찰되지 않음. 의미적 충족 여부는 시니어 평가자가 추가 확인 필요.`,
+          evidence: [],
+          pamCitation,
+          scoreReason: `계산하라: 매칭 부재 → 0%`,
+        }),
+      ],
     };
   },
 
-  async scoreGP({ paSpec, gp, bpResults, artifacts, projectFingerprint }) {
+  async scoreGP({ process, paSpec, gp, bpResults, artifacts, projectFingerprint }) {
+    const bpFullId = `${process.id}.${gp.id}`;
+    const pamCitation = `PAM §5 ${gp.id}`;
+    const refs = refsFromPamCitation(pamCitation);
     // PA 1.1: GP 1.1.1 depends entirely on BP achievement.
     if (paSpec.id === "PA 1.1") {
+      const list = bpResults ?? [];
       const bpAvg =
-        (bpResults ?? []).reduce((s, r) => s + (r.scorePercent ?? 0), 0) /
-        Math.max((bpResults ?? []).length, 1);
+        list.reduce((s, r) => s + (r.scorePercent ?? 0), 0) /
+        Math.max(list.length, 1);
+      const scorePercent = Math.round(bpAvg);
+      const lowCount = list.filter((r) => r.scorePercent < 51).length;
+      const gaps = lowCount > 0 ? ["Some base practices below 'Largely' threshold"] : [];
       return {
-        scorePercent: Math.round(bpAvg),
+        scorePercent,
         evidence: [],
-        gaps: bpResults?.some((r) => r.scorePercent < 51)
-          ? ["Some base practices below 'Largely' threshold"]
-          : [],
+        gaps,
         // PA 1.1 inherits the worst BP-level context concern so it surfaces
         // at the PA roll-up too.
         contextConsistency: rollupBpContext(bpResults),
+        standardReferences: refs,
+        findings: [
+          buildRuleObservationFinding({
+            bpFullId,
+            ruleId: RULE_ID_GP_DERIVED,
+            situation: `Rule-mode: GP 1.1.1 (Achieve the intent of the base practices) 는 BP 결과로부터 파생됨. 전체 ${list.length} 개 BP 중 ${lowCount} 개가 'Largely' 임계 (51%) 미만으로 관찰됨. 의미적 충족 여부는 시니어 평가자가 추가 확인 필요.`,
+            evidence: [],
+            pamCitation,
+            scoreReason: `계산하라: BP scorePercent 평균 → ${scorePercent}%`,
+          }),
+        ],
       };
     }
     // CL2/CL3 GPs — heuristic keyword overlap
@@ -120,7 +210,25 @@ export const ruleScorer = {
     const contextConsistency = aggregateContext(matchIndex, perArtifactHits);
     if (contextConsistency.status === "off-context") gaps.push("프로젝트 컨텍스트 불일치: 매칭 산출물이 다른 제품/프로젝트로 보임");
     else if (contextConsistency.status === "partial") gaps.push("프로젝트 컨텍스트 부분 일치: 일부 매칭 산출물이 다른 컨텍스트로 보임");
-    return { scorePercent, evidence, gaps, contextConsistency };
+    const matchedCount = (total || 0) - missing.length;
+    const ratio = total > 0 ? Math.round((matchedCount / total) * 100) : 0;
+    return {
+      scorePercent,
+      evidence,
+      gaps,
+      contextConsistency,
+      standardReferences: refs,
+      findings: [
+        buildRuleObservationFinding({
+          bpFullId,
+          ruleId: RULE_ID_GP_HEURISTIC,
+          situation: `Rule-mode 자동 휴리스틱: GP 요구 개념의 ${ratio}% (${matchedCount}/${total || 0}) 가 산출물 본문/메타에서 관찰됨. 의미적 충족 여부는 시니어 평가자가 추가 확인 필요.`,
+          evidence,
+          pamCitation,
+          scoreReason: `계산하라: 키워드 가중 일치 비율(${matchedCount}/${total || 0}) → ${scorePercent}%`,
+        }),
+      ],
+    };
   },
 };
 
@@ -280,11 +388,22 @@ function expandForwardToBoundary(text, from, ceil) {
 }
 
 
-function empty(reason) {
+function emptyBp({ bpFullId, pamCitation, reason }) {
   return {
     scorePercent: 0,
     evidence: [],
     gaps: [reason],
     contextConsistency: { status: "unknown", note: "" },
+    standardReferences: refsFromPamCitation(pamCitation),
+    findings: [
+      buildRuleObservationFinding({
+        bpFullId,
+        ruleId: RULE_ID_BP,
+        situation: `Rule-mode: BP 명세에서 키워드를 도출하지 못해 자동 휴리스틱을 적용할 수 없음 (${reason}). 시니어 평가자가 직접 평가 필요.`,
+        evidence: [],
+        pamCitation,
+        scoreReason: `계산하라: 키워드 도출 실패 → 0%`,
+      }),
+    ],
   };
 }

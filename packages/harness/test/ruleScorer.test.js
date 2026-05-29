@@ -30,9 +30,12 @@ test("ruleScorer.scoreBP: zero when no artifacts match", async () => {
   assert.ok(r.gaps.length > 0);
 });
 
+const STUB_PROC = { id: "SYS.2", name: "System Requirements Analysis", pamSection: "4.3.2" };
+
 test("ruleScorer.scoreWP: 90 when artifact tagged with matching WPID", async () => {
   const wp = { id: "17-00", name: "Requirement" };
   const r = await ruleScorer.scoreWP({
+    process: STUB_PROC,
     wp,
     artifacts: [{ name: "srs.docx", wpidCandidates: ["17-00"], text: "" }],
   });
@@ -43,6 +46,7 @@ test("ruleScorer.scoreWP: 90 when artifact tagged with matching WPID", async () 
 test("ruleScorer.scoreWP: 60 when name matches but no WPID tagging", async () => {
   const wp = { id: "13-51", name: "Consistency Evidence" };
   const r = await ruleScorer.scoreWP({
+    process: STUB_PROC,
     wp,
     artifacts: [{ name: "x.md", wpidCandidates: [], text: "This is a consistency evidence review record." }],
   });
@@ -52,6 +56,7 @@ test("ruleScorer.scoreWP: 60 when name matches but no WPID tagging", async () =>
 test("ruleScorer.scoreWP: 0 when nothing matches", async () => {
   const wp = { id: "17-54", name: "Requirement Attribute" };
   const r = await ruleScorer.scoreWP({
+    process: STUB_PROC,
     wp,
     artifacts: [{ name: "unrelated.pdf", wpidCandidates: [], text: "completely off-topic" }],
   });
@@ -63,6 +68,7 @@ test("ruleScorer.scoreGP PA 1.1: inherits average of BP scores", async () => {
   const paSpec = pas["PA 1.1"];
   const gp = paSpec.genericPractices[0];
   const r = await ruleScorer.scoreGP({
+    process: STUB_PROC,
     paSpec,
     gp,
     bpResults: [
@@ -110,6 +116,7 @@ test("ruleScorer.scoreWP: applies context penalty even when WPID matches", async
     ],
   };
   const r = await ruleScorer.scoreWP({
+    process: STUB_PROC,
     wp,
     artifacts: [{ name: "ADAS-srs.docx", wpidCandidates: ["17-00"], text: "" }],
     projectFingerprint: fingerprint,

@@ -30,7 +30,10 @@
  * @type {import("./scorer.js").Scorer}
  */
 
+import { buildCustomRuleObservationFinding } from "./findingBuilders.js";
+
 const APPLIES_TO = new Set(["bp", "wp", "gp", "any"]);
+const EMPTY_REFS = { pam: [], pamNote: [], bgbRL: [], iso: [] };
 const MAX_RULES = 200;
 const MAX_KEYWORDS = 40;
 
@@ -120,11 +123,12 @@ function ruleHits(rule, artifacts) {
 }
 
 /** Score a non-empty set of applicable rules against the artifacts. */
-function scoreByRules(rules, artifacts) {
+function scoreByRules(rules, artifacts, bpFullId) {
   let totalWeight = 0;
   let satisfiedWeight = 0;
   const evidence = [];
   const gaps = [];
+  const findings = [];
 
   for (const rule of rules) {
     totalWeight += rule.weight;
@@ -135,14 +139,17 @@ function scoreByRules(rules, artifacts) {
         ? matchedKw.size === rule.keywords.length
         : matchedKw.size >= 1;
 
+    const ruleEvidence = [];
     if (satisfied) {
       satisfiedWeight += rule.weight;
       for (const h of hits.slice(0, 2)) {
-        evidence.push({
+        const e = {
           artifactName: h.artifactName,
           quote: h.quote,
           location: `사용자 룰: ${rule.label}`,
-        });
+        };
+        evidence.push(e);
+        ruleEvidence.push(e);
       }
     } else {
       const missing = rule.keywords.filter((k) => !matchedKw.has(k));
@@ -152,12 +159,32 @@ function scoreByRules(rules, artifacts) {
           : `매칭 키워드 없음: ${rule.keywords.slice(0, 6).join(", ")}`;
       gaps.push(`사용자 룰 미충족 — ${rule.label} (${detail})`);
     }
+
+    if (bpFullId) {
+      findings.push(
+        buildCustomRuleObservationFinding({
+          bpFullId,
+          rule,
+          satisfied,
+          evidence: ruleEvidence,
+          matchedCount: matchedKw.size,
+          totalKeywords: rule.keywords.length,
+        })
+      );
+    }
   }
 
   const scorePercent = totalWeight
     ? Math.max(0, Math.min(100, Math.round((satisfiedWeight / totalWeight) * 100)))
     : 0;
-  return { scorePercent, evidence, gaps, contextConsistency: { status: "unknown", note: "" } };
+  return {
+    scorePercent,
+    evidence,
+    gaps,
+    contextConsistency: { status: "unknown", note: "" },
+    standardReferences: { ...EMPTY_REFS },
+    findings,
+  };
 }
 
 const METHOD_BY_KIND = { bp: "scoreBP", wp: "scoreWP", gp: "scoreGP" };
@@ -188,6 +215,8 @@ export function createCustomScorer({ ruleBook, fallback } = {}) {
     // a separate matching rule. Acts as if the rule book contained one rule
     // scoped to this BP only.
     const subject = kind === "bp" ? ctx.bp : kind === "wp" ? ctx.wp : ctx.gp;
+    const subjectId = subject?.id ?? "";
+    const bpFullId = processId && subjectId ? `${processId}.${subjectId}` : "";
     if (subject?._customRule) {
       const synthRule = sanitizeRule({
         ...subject._customRule,
@@ -197,7 +226,7 @@ export function createCustomScorer({ ruleBook, fallback } = {}) {
         process: processId || "*",
         enabled: true,
       });
-      if (synthRule) return scoreByRules([synthRule], ctx.artifacts ?? []);
+      if (synthRule) return scoreByRules([synthRule], ctx.artifacts ?? [], bpFullId);
     }
     const rules = applicableRules(kind, processId);
     if (!rules.length) {
@@ -207,9 +236,11 @@ export function createCustomScorer({ ruleBook, fallback } = {}) {
         evidence: [],
         gaps: ["적용되는 사용자 룰이 없습니다 (자동 키워드 폴백 비활성화됨)."],
         contextConsistency: { status: "unknown", note: "" },
+        standardReferences: { ...EMPTY_REFS },
+        findings: [],
       };
     }
-    return scoreByRules(rules, ctx.artifacts ?? []);
+    return scoreByRules(rules, ctx.artifacts ?? [], bpFullId);
   };
 
   const scoreBP = scoreKind("bp");

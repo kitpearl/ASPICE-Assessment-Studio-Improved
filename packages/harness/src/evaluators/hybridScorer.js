@@ -1,3 +1,5 @@
+import { unionStandardReferences } from "./findingBuilders.js";
+
 /**
  * HybridScorer — weighted fusion of rule and llm scores (default 40/60).
  *
@@ -58,6 +60,15 @@ function merge(method, rule, llm, weights) {
     else if (llmOk) scorePercent = llmRes.scorePercent;
     else scorePercent = 0;
 
+    // Findings 병합: LLM (가능하면 의미적 weakness/strength) 을 먼저 두고
+    // Rule (observation) 을 뒤에 붙여 시니어가 두 시그널을 한 곳에서 비교할 수
+    // 있게 한다. id 충돌이 거의 없도록 prefix 가 다르지만 (F-rule-, F-...
+    // vs F-SWE.2.BP1-01) 중복 제거 로직은 두지 않아 양쪽 진술을 모두 보존한다.
+    const findings = [...(llmRes.findings ?? []), ...(ruleRes.findings ?? [])];
+    const standardReferences = unionStandardReferences(
+      ruleRes.standardReferences,
+      llmRes.standardReferences
+    );
     return {
       scorePercent,
       // LLM evidence first: it produces full-sentence quotes with location/citation.
@@ -70,6 +81,8 @@ function merge(method, rule, llm, weights) {
       ],
       pamCitation: llmRes.pamCitation,
       contextConsistency: reconcileContext(ruleRes.contextConsistency, llmRes.contextConsistency),
+      standardReferences,
+      findings,
     };
   };
 }
@@ -86,5 +99,7 @@ function abstain(reason) {
     evidence: [],
     gaps: [`rejected: ${reason}`],
     contextConsistency: { status: "unknown", note: "" },
+    standardReferences: { pam: [], pamNote: [], bgbRL: [], iso: [] },
+    findings: [],
   };
 }
