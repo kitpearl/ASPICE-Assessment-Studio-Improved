@@ -1,6 +1,7 @@
 /**
  * @typedef {import("./rating.js").Rating} Rating
  * @typedef {import("./rating.js").CollapsedRating} CollapsedRating
+ * @typedef {import("./finding.js").Finding} Finding
  *
  * @typedef {Object} Evidence
  * @property {string} artifactName
@@ -15,6 +16,7 @@
  * @property {Evidence[]} evidence
  * @property {string[]} gaps
  * @property {string} pamCitation   PAM section ref
+ * @property {Finding[]} [findings]  결론 진술형 Finding 목록 (P1 신규, 옵션)
  *
  * @typedef {Object} GPResult
  * @property {string} id            e.g. "GP 2.1.1"
