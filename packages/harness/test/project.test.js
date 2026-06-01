@@ -73,6 +73,27 @@ test("project: trace matrices report coverage for engineering edges", async () =
   assert.ok(sys2ToSwe1.coveragePercent > 0, `expected positive coverage, got ${sys2ToSwe1.coveragePercent}%`);
 });
 
+test("project: trace matrices drop zero-source via-rows (no spurious 도착 누락)", async () => {
+  const artifacts = await loadProjectFixture();
+  const harness = new Harness({ scorer: ruleScorer, targetLevel: 1 });
+  const verdict = await harness.evaluateProject({
+    artifacts,
+    processIds: ["SYS.1", "SYS.2", "SYS.3", "SWE.1"],
+  });
+  const matrices = verdict.crossProcess.traceMatrices;
+  assert.ok(matrices.length > 0, "some trace matrices should be computed");
+  // A via-edge with no source IDs (e.g. SYS.2 → SWE.1 via 17-54 "Requirement
+  // Attribute" when no attribute doc carries trace IDs) has nothing to trace
+  // from, so it would report every target ID as a false "도착 누락". Such rows
+  // must be dropped entirely.
+  for (const m of matrices) {
+    assert.ok(
+      m.sourceIds.length > 0,
+      `zero-source trace row leaked: ${m.sourceProcess}→${m.targetProcess} via ${m.sourceWp} (도착 누락 ${m.orphansTarget.length})`
+    );
+  }
+});
+
 test("project: trace matrices keep development-area edges only", async () => {
   const artifacts = await loadProjectFixture();
   const harness = new Harness({ scorer: ruleScorer, targetLevel: 1 });

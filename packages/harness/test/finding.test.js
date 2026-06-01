@@ -137,7 +137,7 @@ test("findingsToLegacyEvidence: evidence 없이 권고 위치만 있으면 가�
   assert.equal(out[0].quote, "외부 인터페이스 정의 누락");
 });
 
-test("findingsToLegacyRationale: weakness 만 추출하여 'gap — recommendation' 형태로 직렬화", () => {
+test("findingsToLegacyRationale: weakness 만 추출하여 gap 만 직렬화 (권고 제외)", () => {
   const findings = [
     makeFinding({ bpId: "x", type: "strength", situation: "긍정 관찰" }),
     makeFinding({
@@ -148,7 +148,8 @@ test("findingsToLegacyRationale: weakness 만 추출하여 'gap — recommendati
     }),
   ];
   const r = findingsToLegacyRationale(findings, ["legacy gap"]);
-  assert.equal(r, "외부 인터페이스 정의 누락 — 추가하라: 인터페이스 표");
+  // 권고(recommendation)는 BP 평가 결과에서 제외하므로 gap 만 직렬화된다.
+  assert.equal(r, "외부 인터페이스 정의 누락");
 });
 
 test("findingsToLegacyRationale: findings 없으면 legacy gaps 폴백", () => {

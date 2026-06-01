@@ -3,6 +3,9 @@
 // component still consumes. Also Koreanizes English template phrases
 // emitted by ruleScorer/hybridScorer so the verdict UI is single-language.
 
+import { displayArtifactName } from "aspice-harness/io";
+import { bpTitleKo } from "./_bpTitlesKo.js";
+
 // Translate rule/hybrid scorer English template phrases (and the [rule]/[llm]
 // tag prefixes that hybridScorer prepends) into Korean.
 export function koreanizeGap(text) {
@@ -54,14 +57,17 @@ export function toLegacyShape(v, skipped = []) {
   const ratings = (v.bps || []).map((b) => {
     const gaps = (b.gaps || []).map(koreanizeGap).map(condenseGap).filter(Boolean);
     const rationale = gaps.length
-      ? `개선 필요 — ${gaps.slice(0, 3).join(" / ")}`
-      : "특이 약점 없음";
+      ? `Finding — ${gaps.slice(0, 3).join(" / ")}`
+      : "특이 Finding 없음";
     return {
       bp: b.id,
       rating: b.rating,
       rationale,
       evidence: (b.evidence || []).slice(0, 6).map((e) => {
-        const base = e.location || e.artifactName || "";
+        // displayArtifactName strips template/scaffolding folders (e.g.
+        // "2026년 템플릿/…") from the shown name; the raw name was already used
+        // for page annotation upstream, so this is display-only.
+        const base = e.location || displayArtifactName(e.artifactName) || "";
         const loc = e.page != null
           ? (base ? `${base} · p.${e.page}` : `p.${e.page}`)
           : base;
@@ -87,11 +93,14 @@ export function toLegacyShape(v, skipped = []) {
   return {
     ratings,
     summary,
-    strengths: strong.map((b) => `${b.id} ${b.title}`).join(", ") || "—",
+    strengths:
+      strong
+        .map((b) => `${b.id} ${bpTitleKo(v.processId, b.id, b.title)}`)
+        .join(", ") || "강점으로 식별된 BP 없음",
     gaps:
       weak
         .map((b) => `${b.id}: ${koreanizeGap(b.gaps?.[0]) ?? "부족"}`)
-        .join("; ") || "—",
+        .join("; ") || "특이 Finding 없음",
     projectFingerprint: v.projectFingerprint,
   };
 }

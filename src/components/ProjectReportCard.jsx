@@ -3,6 +3,7 @@ import { T, FONTS, SECTION_CONTAINER_STYLE } from "../theme";
 import { SectionBadge } from "./SectionBadge";
 import { RATING_META } from "../data/ratingMeta";
 import { condenseGap as condenseGapShared } from "../utils/gapText";
+import { bpTitleKo, gpTitleKo } from "../utils/titlesKo";
 
 export function ProjectReportCard({ verdict, onClose, onExportPdf, exporting = false }) {
   if (!verdict) return null;
@@ -280,9 +281,9 @@ function Pa11Rationale({ processes }) {
 
   return (
     <>
-      <SubHeading>PA 1.1 약점 요약 (BP 평가 기준)</SubHeading>
+      <SubHeading>PA 1.1 Finding 요약 (BP 평가 기준)</SubHeading>
       <div style={{ color: T.textLo, fontSize: 11, marginBottom: 10 }}>
-        PA 1.1(Process Performance)은 각 프로세스 BP의 평균으로 산출됩니다. 아래 표는 프로세스별 PA 1.1 등급과 BP별 개선 필요 항목을 정리한 것입니다.
+        PA 1.1(Process Performance)은 각 프로세스 BP의 평균으로 산출됩니다. 아래 표는 프로세스별 PA 1.1 등급과 BP별 Finding 항목을 정리한 것입니다.
       </div>
       {rows.map(({ proc, pa }) => {
         const bps = proc.bps || [];
@@ -312,14 +313,14 @@ function Pa11Rationale({ processes }) {
                   <th style={TH}>제목</th>
                   <th style={{ ...TH, textAlign: "center" }}>등급</th>
                   <th style={{ ...TH, textAlign: "center" }}>점수</th>
-                  <th style={TH}>약점 (개선 필요)</th>
+                  <th style={TH}>Finding</th>
                 </tr>
               </thead>
               <tbody>
                 {bps.map((b) => (
                   <tr key={b.id}>
                     <td style={{ ...TD, fontFamily: FONTS.mono, whiteSpace: "nowrap" }}>{b.id}</td>
-                    <td style={TD}>{b.title}</td>
+                    <td style={TD}>{bpTitleKo(proc.processId, b.id, b.title)}</td>
                     <td style={{ ...TD, textAlign: "center" }}><RatingPill code={b.rating} /></td>
                     <td style={{ ...TD, textAlign: "center", fontFamily: FONTS.mono }}>{Math.round(b.scorePercent || 0)}%</td>
                     <td style={{ ...TD, color: T.textMd, fontSize: 11 }}>{summarizeBp(b)}</td>
@@ -329,7 +330,7 @@ function Pa11Rationale({ processes }) {
             </table>
             {weak.length > 0 && (
               <div style={{ marginTop: 8, color: T.warm, fontSize: 11 }}>
-                약점 BP({weak.length}건): {weak.map((b) => `${b.id}(${b.rating})`).join(", ")} — PA 1.1이 L-에 머무르는 주된 원인.
+                Finding BP({weak.length}건): {weak.map((b) => `${b.id}(${b.rating})`).join(", ")} — PA 1.1이 L-에 머무르는 주된 원인.
               </div>
             )}
           </div>
@@ -341,11 +342,11 @@ function Pa11Rationale({ processes }) {
 
 function summarizeBp(b) {
   const gaps = (b.gaps || [])
-    .map((g) => condenseGapShared(g, { maxLen: 70 }))
-    .filter(Boolean);
-  if (gaps.length) return `개선 필요 — ${gaps.slice(0, 2).join(" / ")}`;
-  if (["F", "L+", "L-"].includes(b.rating)) return "특이 약점 없음";
-  return "개선 필요 — 평가 근거 미확보";
+    .map((g) => condenseGapShared(g, { full: true }))
+    .filter((s) => s && !s.includes("관련 키워드"));
+  if (gaps.length) return `Finding — ${gaps.join(" / ")}`;
+  if (["F", "L+", "L-"].includes(b.rating)) return "특이 Finding 없음";
+  return "Finding — 평가 근거 미확보";
 }
 
 // PA 2.1 ~ PA 3.2 are evaluated GP-by-GP (unlike PA 1.1 which is anchored on
@@ -355,22 +356,22 @@ const PA_GP_META = {
   "PA 2.1": {
     subtitle: "프로세스 수행 관리 (Process Performance Management)",
     intro:
-      "PA 2.1은 프로세스 수행이 계획·모니터링·조정되는지를 일반 실무(GP) 단위로 평가합니다. 아래 표는 프로세스별 PA 2.1 등급과 GP별 개선 필요 항목입니다.",
+      "PA 2.1은 프로세스 수행이 계획·모니터링·조정되는지를 일반 실무(GP) 단위로 평가합니다. 아래 표는 프로세스별 PA 2.1 등급과 GP별 Finding 항목입니다.",
   },
   "PA 2.2": {
     subtitle: "작업산출물 관리 (Work Product Management)",
     intro:
-      "PA 2.2는 작업산출물의 정의·관리·검토가 적절한지를 일반 실무(GP) 단위로 평가합니다. 아래 표는 프로세스별 PA 2.2 등급과 GP별 개선 필요 항목입니다.",
+      "PA 2.2는 작업산출물의 정의·관리·검토가 적절한지를 일반 실무(GP) 단위로 평가합니다. 아래 표는 프로세스별 PA 2.2 등급과 GP별 Finding 항목입니다.",
   },
   "PA 3.1": {
     subtitle: "프로세스 정의 (Process Definition)",
     intro:
-      "PA 3.1은 표준 프로세스가 정의·유지되는지를 일반 실무(GP) 단위로 평가합니다. 아래 표는 프로세스별 PA 3.1 등급과 GP별 개선 필요 항목입니다.",
+      "PA 3.1은 표준 프로세스가 정의·유지되는지를 일반 실무(GP) 단위로 평가합니다. 아래 표는 프로세스별 PA 3.1 등급과 GP별 Finding 항목입니다.",
   },
   "PA 3.2": {
     subtitle: "프로세스 배포 (Process Deployment)",
     intro:
-      "PA 3.2는 정의된 표준 프로세스가 실제로 배포·운영되는지를 일반 실무(GP) 단위로 평가합니다. 아래 표는 프로세스별 PA 3.2 등급과 GP별 개선 필요 항목입니다.",
+      "PA 3.2는 정의된 표준 프로세스가 실제로 배포·운영되는지를 일반 실무(GP) 단위로 평가합니다. 아래 표는 프로세스별 PA 3.2 등급과 GP별 Finding 항목입니다.",
   },
 };
 
@@ -416,14 +417,14 @@ function PaGpRationale({ processes, paId }) {
                   <th style={TH}>제목</th>
                   <th style={{ ...TH, textAlign: "center" }}>등급</th>
                   <th style={{ ...TH, textAlign: "center" }}>점수</th>
-                  <th style={TH}>약점 (개선 필요)</th>
+                  <th style={TH}>Finding</th>
                 </tr>
               </thead>
               <tbody>
                 {gps.map((g) => (
                   <tr key={g.id}>
                     <td style={{ ...TD, fontFamily: FONTS.mono, whiteSpace: "nowrap" }}>{g.id}</td>
-                    <td style={TD}>{g.title}</td>
+                    <td style={TD}>{gpTitleKo(g.id, g.title)}</td>
                     <td style={{ ...TD, textAlign: "center" }}><RatingPill code={g.rating} /></td>
                     <td style={{ ...TD, textAlign: "center", fontFamily: FONTS.mono }}>{Math.round(g.scorePercent || 0)}%</td>
                     <td style={{ ...TD, color: T.textMd, fontSize: 11 }}>{summarizeGp(g)}</td>
@@ -433,7 +434,7 @@ function PaGpRationale({ processes, paId }) {
             </table>
             {weak.length > 0 && (
               <div style={{ marginTop: 8, color: T.warm, fontSize: 11 }}>
-                약점 GP({weak.length}건): {weak.map((g) => `${g.id}(${g.rating})`).join(", ")} — {paId} 등급을 끌어내리는 주된 원인.
+                Finding GP({weak.length}건): {weak.map((g) => `${g.id}(${g.rating})`).join(", ")} — {paId} 등급을 끌어내리는 주된 원인.
               </div>
             )}
           </div>
@@ -445,11 +446,11 @@ function PaGpRationale({ processes, paId }) {
 
 function summarizeGp(g) {
   const gaps = (g.gaps || [])
-    .map((x) => condenseGapShared(x, { maxLen: 70 }))
-    .filter(Boolean);
-  if (gaps.length) return `개선 필요 — ${gaps.slice(0, 2).join(" / ")}`;
-  if (["F", "L+", "L-"].includes(g.rating)) return "특이 약점 없음";
-  return "개선 필요 — 평가 근거 미확보";
+    .map((x) => condenseGapShared(x, { full: true }))
+    .filter((s) => s && !s.includes("관련 키워드"));
+  if (gaps.length) return `Finding — ${gaps.join(" / ")}`;
+  if (["F", "L+", "L-"].includes(g.rating)) return "특이 Finding 없음";
+  return "Finding — 평가 근거 미확보";
 }
 
 function RatingPill({ code }) {

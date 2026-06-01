@@ -94,10 +94,55 @@ const STOPWORDS = new Set([
   "their","them","they","it","its","his","her","our","your","my",
   // PAM note/e.g. tokens that leak through
   "note","notes","e","g","i","ie","eg","etc",
+  // generic connectives / fillers that surface from PAM prose but carry no
+  // assessment signal (data-driven: these appear across many BP descriptions,
+  // e.g. "according to", "based on", "with respect to", "traceability alone
+  // does not ..."). Domain qualifiers like "appropriate"/"relevant" are kept.
+  "according","including","include","includes","included","alone","based",
+  "does","using","used","regarding","regard","respect","make","makes",
+  "take","takes","need","needs","well","also","other","others","before",
+  "after","once","onto",
 ]);
 
+// PAM PDF-extraction artifact scrubber.
+//
+// The canonical spec is generated from a markdown conversion of the PAM PDF.
+// In the PDF the per-process "Process outcomes" table sits immediately after
+// the last Base Practice, and its rotated/vertical "Outcome" column header is
+// extracted REVERSED as "emoctuO". The result is that the LAST BP description
+// of many processes carries a trailing run like:
+//   "... affected parties. SWE.2 Software Architectural Design 1 emoctuO 2 emoctuO ..."
+// i.e. a leaked "<ProcId> <Process Name>" header followed by "<n> emoctuO"
+// outcome-list rows (plus stray markdown table-cell pipes "|").
+//
+// Tokenizing that tail injects garbage keywords ("emoctuo") and off-topic
+// process-name words into BP/GP concept sets. We cut the description at the
+// start of that trailing boilerplate, then defensively scrub any residue.
+const PROC_ID_RE = /\b[A-Z]{2,4}\.\d+\b/g;
+
+export function stripPamArtifacts(text) {
+  let s = String(text ?? "");
+  const art = s.search(/emoctuo/i);
+  if (art !== -1) {
+    let cut = art;
+    // Rewind to the leaked "<ProcId> ..." header that introduces the reversed
+    // Outcomes list, if one sits just before the artifact.
+    const head = s.slice(0, art);
+    let last = -1, m;
+    PROC_ID_RE.lastIndex = 0;
+    while ((m = PROC_ID_RE.exec(head))) last = m.index;
+    if (last !== -1 && art - last <= 80) cut = last;
+    // Pull the cut back over the table pipes / whitespace right before it.
+    while (cut > 0 && /[\s|]/.test(s[cut - 1])) cut--;
+    s = s.slice(0, cut);
+  }
+  // Belt-and-braces: drop any residual reversed-Outcome tokens and table pipes.
+  s = s.replace(/\bemoctuo\b/gi, " ").replace(/\|/g, " ");
+  return s.replace(/\s{2,}/g, " ").trim();
+}
+
 export function extractKeywords(description, max = 8) {
-  const tokens = (description || "")
+  const tokens = stripPamArtifacts(description)
     .toLowerCase()
     .split(/[^a-z0-9]+/)
     .filter((w) => w.length >= 4 && !STOPWORDS.has(w));

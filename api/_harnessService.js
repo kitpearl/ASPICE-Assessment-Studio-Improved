@@ -12,7 +12,7 @@
 import { Harness, loadProcess, loadProcesses, loadWorkProducts } from "aspice-harness";
 import { ruleScorer, createLlmScorer, createHybridScorer, createCustomScorer } from "aspice-harness/evaluators";
 import { createLlmClient } from "aspice-harness/llm";
-import { indexArtifacts } from "aspice-harness/io";
+import { indexArtifacts, scopeArtifactsForProcess } from "aspice-harness/io";
 import { loadProcessGraph } from "aspice-harness/spec";
 import {
   buildProcessGraph,
@@ -161,39 +161,31 @@ function buildScorer(engines, apiKey, customRules) {
   return buildAveragingScorer(built);
 }
 
-// Per-process artifact scoping. The BP/WP/GP scorers see only artifacts that
-// look relevant to the process being evaluated, so project-mode evaluation of
-// a single process yields the same BP scores as a stand-alone process-mode
-// run with the same evidence file. Relevance heuristic:
-//   - artifact tagged with one of the process's input/output WP IDs, OR
-//   - artifact filename contains the process ID ("SYS.2", "SYS2", "swe.1"…)
-// If nothing matches we fall back to ALL artifacts so that ad-hoc uploads
-// (e.g. "requirements.pdf" with no WP tag) are still scored.
-function filterArtifactsForProcess(processSpec, artifacts) {
-  const expectedWp = new Set([
-    ...((processSpec.inputWorkProducts ?? []).map((w) => w.id)),
-    ...((processSpec.outputWorkProducts ?? []).map((w) => w.id)),
-  ]);
-  const idLow = (processSpec.id || "").toLowerCase();
-  const idCompact = idLow.replace(/\./g, "");
-  const filtered = artifacts.filter((a) => {
-    if ((a.wpidCandidates ?? []).some((id) => expectedWp.has(id))) return true;
-    const nameLow = (a.name || "").toLowerCase();
-    return nameLow.includes(idLow) || (idCompact && nameLow.includes(idCompact));
-  });
-  return filtered.length ? filtered : artifacts;
-}
-
 // Common per-process evaluation. Both /api/analyze (one process) and
-// /api/project (many processes) drive the harness through this helper, which
-// applies the same artifact scoping in both modes — that is what guarantees
-// that a process scored standalone vs inside a project produces the *same*
-// BP percentages for the same evidence file.
+// /api/project (many processes) drive the harness through this helper. Artifact
+// scoping (scopeArtifactsForProcess) keeps, for each process, only the artifacts
+// that belong to it (its own deliverables) or are of a document type
+// appropriate to its area. The document-type restriction below applies at CL1
+// only (targetLevel === 1); above CL1 every type is admissible evidence and
+// only owner-based routing applies. CL1 area scope:
+//   SUP            → 계획서 / 활동보고서 / 심사결과서
+//   MAN.3          → 계획서 / 타당성 보고서
+//   SYS·SWE·HWE·MLE 개발      → 명세서 / 설계서 / 분석보고서
+//   SYS·SWE·HWE·MLE 검증·테스트 → 검증·테스트 계획서 / 결과서
+// A deliverable owned by another process — e.g. the MAN.3 feasibility report —
+// is never inherited as evidence elsewhere.
+//
+// `strict` (project mode) refuses to fall back to another process's deliverable
+// when a process has no own artifact; single-process mode keeps the legacy
+// "score against everything" fallback for ad-hoc uploads.
 //
 // `extraBPs` is an optional list of user-defined Base Practices that the
 // harness will merge into the process spec's BP list (see Harness#evaluateProcess).
-async function evaluateOneProcess(harness, processSpec, indexedArtifacts, extraBPs = []) {
-  const scoped = filterArtifactsForProcess(processSpec, indexedArtifacts);
+async function evaluateOneProcess(harness, processSpec, indexedArtifacts, extraBPs = [], strict = false) {
+  // The per-area document-type restriction is a CL1 rule only. Above CL1 every
+  // document type is admissible evidence; only owner-based routing still applies.
+  const docTypeScope = Number(harness?.targetLevel) === 1;
+  const scoped = scopeArtifactsForProcess(processSpec, indexedArtifacts, { strict, docTypeScope });
   return harness.evaluateProcess({
     processId: processSpec.id,
     artifacts: scoped,
@@ -292,16 +284,18 @@ export async function handleProject({ processIds, artifacts, targetLevel = 1, en
   const indexed = indexArtifacts(arts, { wpCatalog: loadWorkProducts() });
   const customActive = resolved.includes("custom");
 
-  // Evaluate each process with the same per-process artifact scoping that
-  // /api/analyze uses. This is what makes project-mode BP percentages match
-  // a per-process run on the same evidence.
+  // Evaluate each process against only its own deliverables (strict scoping):
+  // a process with no artifact of its own is not back-filled with another
+  // process's documents, so e.g. the MAN.3 plan no longer leaks into SUP/SWE
+  // findings. Cross-process checks below still see the full artifact set.
   const processVerdicts = await Promise.all(
     inScope.map((proc) =>
       evaluateOneProcess(
         harness,
         proc,
         indexed,
-        customActive ? customBPsForProcess(customRules, proc.id) : []
+        customActive ? customBPsForProcess(customRules, proc.id) : [],
+        true // strict: a process is judged on its own deliverables, not inherited ones
       )
     )
   );
@@ -336,7 +330,12 @@ export async function handleProject({ processIds, artifacts, targetLevel = 1, en
         sourceWp: via,
         targetWps,
       });
-      if (matrix.sourceIds.length === 0 && matrix.targetIds.length === 0) continue;
+      // Skip a via-edge with no source IDs: there is nothing to trace *from*,
+      // so coverage is undefined (—) and every target ID would be reported as a
+      // spurious "도착 누락" (target orphan). Drops e.g. SYS.2 → SWE.1 via 17-54
+      // "Requirement Attribute" when no attribute document carries trace IDs.
+      // (A zero-source edge subsumes the both-sides-empty case.)
+      if (matrix.sourceIds.length === 0) continue;
       traceMatrices.push(matrix);
     }
   }

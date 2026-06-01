@@ -176,7 +176,7 @@ function parseBPs(block, procId) {
     const titleMatch = firstLine.match(/^([^.]+)\.\s*(.*)$/);
     const title = titleMatch ? titleMatch[1].trim() : firstLine;
     const tail = titleMatch ? (titleMatch[2] + " " + rest).trim() : rest;
-    const description = stripNotes(tail);
+    const description = stripOutcomeArtifact(stripNotes(tail));
     results.push({
       id,
       title,
@@ -194,6 +194,30 @@ function stripNotes(text) {
     .join("\n")
     .trim()
     .replace(/\s+/g, " ");
+}
+
+// The PDF "Process outcomes" table trails the last BP and its rotated "Outcome"
+// header is extracted reversed as "emoctuO" (preceded by a leaked "<ProcId>
+// <Process Name>" header and stray table pipes). Cut the description there so
+// the generated spec — and the keywords derived from it — stay clean. Mirrors
+// stripPamArtifacts() in src/io/excerpt.js (kept local: the extractor has no
+// runtime dependency on src/).
+const EXTRACTOR_PROC_ID_RE = /\b[A-Z]{2,4}\.\d+\b/g;
+function stripOutcomeArtifact(text) {
+  let s = String(text ?? "");
+  const art = s.search(/emoctuo/i);
+  if (art !== -1) {
+    let cut = art;
+    const head = s.slice(0, art);
+    let last = -1, m;
+    EXTRACTOR_PROC_ID_RE.lastIndex = 0;
+    while ((m = EXTRACTOR_PROC_ID_RE.exec(head))) last = m.index;
+    if (last !== -1 && art - last <= 80) cut = last;
+    while (cut > 0 && /[\s|]/.test(s[cut - 1])) cut--;
+    s = s.slice(0, cut);
+  }
+  s = s.replace(/\bemoctuo\b/gi, " ").replace(/\|/g, " ");
+  return s.replace(/\s{2,}/g, " ").trim();
 }
 
 function parseOutputWps(block) {

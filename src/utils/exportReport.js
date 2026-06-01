@@ -19,12 +19,12 @@ export const exportReportAsText = ({ proc, results, fileName, date }) => {
   results.ratings.forEach((r) => {
     const bpDef = proc.bps.find((b) => b.id === r.bp);
     lines.push(`${r.bp} [${r.rating}] ${bpDef?.title || ""}`);
-    lines.push(`  약점: ${r.rationale}`);
+    lines.push(`  Finding: ${r.rationale}`);
     const evidenceItems = normalizeEvidence(r.evidence);
     if (evidenceItems.length === 0) {
-      lines.push(`  약점 근거: (제시된 근거 없음)`);
+      lines.push(`  Finding 근거: (제시된 근거 없음)`);
     } else {
-      lines.push(`  약점 근거:`);
+      lines.push(`  Finding 근거:`);
       evidenceItems.forEach((ev, i) => {
         const loc = ev.location ? `[${ev.location}] ` : "";
         lines.push(`    ${i + 1}. ${loc}${ev.quote || "(내용 없음)"}`);
@@ -76,11 +76,8 @@ const PRINT_STYLE = `
   /* Quote box — show full content (no scroll), neutralise screen-only background/border. */
   #pdf-export-root div[style*="60px minmax(0, 1fr)"] > div:nth-child(2) > div:nth-child(4) > div > div:last-child { font-size:8.5px !important; color:#3F3F46 !important; line-height:1.4 !important; max-height:none !important; overflow:visible !important; padding:4px 6px !important; background:#FFFFFF !important; border:none !important; }
   #pdf-export-root > div[style*="flex-direction: column"]:last-child { gap:5px !important; }
-  /* P4: audience banner + finding cards. Inline styles already render well in
+  /* P4: finding cards. Inline styles already render well in
      PDF; these rules just tighten paddings/fonts for paper. */
-  #pdf-export-root [data-audience-banner] { padding:6px 12px !important; margin-bottom:10px !important; gap:6px !important; }
-  #pdf-export-root [data-audience-banner] > span:first-child { font-size:7px !important; }
-  #pdf-export-root [data-audience-banner] > span:last-child { font-size:8.5px !important; line-height:1.4 !important; }
   #pdf-export-root [data-finding-card] { padding:7px 11px 9px !important; border-radius:3px !important; }
   #pdf-export-root [data-finding-card] > div:first-child { margin-bottom:4px !important; gap:6px !important; }
   #pdf-export-root [data-finding-card] > div:first-child > span { font-size:7px !important; }

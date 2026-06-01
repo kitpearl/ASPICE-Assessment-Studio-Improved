@@ -7,13 +7,17 @@ import { validateLlmResult } from "./citationGuard.js";
 
 // Safety-net multiplier applied AFTER the LLM's own verdict. The assessor is
 // instructed to lower scorePercent itself when it flags partial/off-context
-// evidence, but we also apply a conservative cap here so the numeric score
-// can never silently drift back up if the LLM forgets to follow the rule.
+// evidence, but we also apply a cap here so the numeric score can never
+// silently drift back up if the LLM forgets to follow the rule.
+//
+// 점수를 여유있게 부여하라는 요청에 맞춰 페널티를 완화했다 (정성적 컨텍스트
+// 우선): partial 0.85→0.95, off-context 0.6→0.8. 컨텍스트 불일치 사유는
+// 여전히 gaps/note 로 남아 시니어 평가자가 확인할 수 있다.
 const CONTEXT_MULTIPLIERS = {
   consistent: 1.0,
   unknown: 1.0,
-  partial: 0.85,
-  "off-context": 0.6,
+  partial: 0.95,
+  "off-context": 0.8,
 };
 
 /**

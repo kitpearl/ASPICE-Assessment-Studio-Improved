@@ -32,22 +32,29 @@ export async function evaluateBPs(processSpec, artifacts, scorer, options = {}) 
       projectFingerprint,
     });
     const bpFullId = `${processSpec.id}.${bp.id}`;
-    // P5: 사용자가 spec/{bgb,iso}/*.csv 에 채워둔 매핑을 BPResult 와 각
-    // finding 에 union 으로 병합한다. scorer (rule/llm/hybrid) 가 이미 채운
-    // refs (예: LLM 이 출력한 ISO 인용) 와 spec-derived refs 가 함께 노출되어
-    // 시니어 평가자가 양쪽 출처를 모두 확인할 수 있도록 한다.
+    // P5: 사용자가 spec/bgb/*.csv 에 채워둔 BGB Rating Level 매핑을 BPResult 와
+    // 각 finding 에 union 으로 병합한다.
+    //
+    // ISO 근거(ISO 26262 / ISO/IEC ...)는 BP 평가 근거에서 제외한다 (요청):
+    // BP-level 평가는 PAM 과 BGB(Rating Level) 만을 근거로 삼는다. 따라서
+    // spec/iso/*.csv 의 매핑은 더 이상 병합하지 않고, scorer (예: LLM 모드)가
+    // 출력한 iso 인용도 여기서 제거하여 어떤 모드에서도 ISO 가 노출되지 않게 한다.
     const csvRefs = lookupStandardRefs(bpFullId);
     const mergedRefs = unionStandardReferences(
       standardReferences ?? { pam: [], pamNote: [], bgbRL: [], iso: [] },
-      { pam: [], pamNote: [], bgbRL: csvRefs.bgbRL, iso: csvRefs.iso }
+      { pam: [], pamNote: [], bgbRL: csvRefs.bgbRL, iso: [] }
     );
-    const enrichedFindings = (Array.isArray(findings) ? findings : []).map((f) => ({
-      ...f,
-      standardReferences: unionStandardReferences(
-        f.standardReferences,
-        { pam: [], pamNote: [], bgbRL: csvRefs.bgbRL, iso: csvRefs.iso }
-      ),
-    }));
+    mergedRefs.iso = [];
+    const enrichedFindings = (Array.isArray(findings) ? findings : []).map((f) => {
+      const refs = unionStandardReferences(f.standardReferences, {
+        pam: [],
+        pamNote: [],
+        bgbRL: csvRefs.bgbRL,
+        iso: [],
+      });
+      refs.iso = [];
+      return { ...f, standardReferences: refs };
+    });
     results.push({
       id: bp.id,
       title: bp.title,

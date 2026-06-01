@@ -188,7 +188,7 @@ const InsightsPair = ({ strengths, gaps }) => {
             letterSpacing: "0.15em",
             marginBottom: 6,
             fontWeight: 700,
-          }}>◆ 개선 필요</div>
+          }}>◆ Finding</div>
           <div style={{ fontSize: 13, color: T.textHi, lineHeight: 1.55 }}>{gaps}</div>
         </div>
       )}
@@ -334,13 +334,24 @@ const FINDING_TYPE_META = {
   observation: { label: "관찰 (OBSERVATION)", bg: "#F4F6F8", border: "#D4D4D8", bar: T.textLo, fg: T.textMd },
 };
 
-const StandardRefChips = ({ refs }) => {
+// BGB Rating Rule 인용은 형식이 [<scope>.RL.<n>] 이다 (예: [MAN.3.RL.8]).
+// 근거 증적에는 현재 평가 중인 프로세스 영역(processId, 예: "MAN.3")에 해당하는
+// 규칙만 노출한다 — 타 프로세스(GEN/DEX/APA 등)에서 교차 참조된 규칙은 평가자의
+// 초점을 흐리므로 제외한다. processId 가 없으면(레거시 호출) 필터하지 않는다.
+const scopeBgbRefs = (bgbRL, processId) => {
+  if (!Array.isArray(bgbRL)) return [];
+  if (!processId) return bgbRL;
+  const prefix = `[${processId}.RL.`;
+  return bgbRL.filter((r) => typeof r === "string" && r.startsWith(prefix));
+};
+
+const StandardRefChips = ({ refs, processId }) => {
   if (!refs) return null;
+  // ISO 근거(refs.iso)는 BP 평가에서 제외한다 (요청): PAM·BGB 만 노출.
   const all = [
     ...(refs.pam ?? []).map((r) => ({ kind: "PAM", text: r })),
     ...(refs.pamNote ?? []).map((r) => ({ kind: "Note", text: r })),
-    ...(refs.bgbRL ?? []).map((r) => ({ kind: "BGB", text: r })),
-    ...(refs.iso ?? []).map((r) => ({ kind: "ISO", text: r })),
+    ...scopeBgbRefs(refs.bgbRL, processId).map((r) => ({ kind: "BGB", text: r })),
   ];
   if (all.length === 0) return null;
   return (
@@ -391,11 +402,25 @@ const FindingSection = ({ label, body, accent }) => (
   </div>
 );
 
-const FindingCard = ({ finding }) => {
+// 증적(quote) 원문을 그대로 덤프하지 않고, Finding 의 서술 슬롯
+// (situation → gap → impact) 을 한 문단으로 엮어 "무엇을 발견했는지" 를 진술한다.
+// 서술 슬롯이 모두 비어 있는 레거시/덤프형 데이터는 evidence quote 로 폴백한다.
+const buildFindingNarrative = (finding) => {
+  const parts = [finding.situation, finding.gap, finding.impact]
+    .map((s) => (typeof s === "string" ? s.trim() : ""))
+    .filter(Boolean);
+  if (parts.length > 0) return parts.join(" ");
+  return normalizeEvidence(finding.evidence ?? [])
+    .map((e) => e.quote)
+    .filter(Boolean)
+    .join(" ");
+};
+
+const FindingCard = ({ finding, processId }) => {
   const meta = FINDING_TYPE_META[finding.type] || FINDING_TYPE_META.observation;
   const loc = finding.location ?? {};
-  const evidenceItems = normalizeEvidence(finding.evidence ?? []);
   const ri = finding.ratingImpact ?? {};
+  const narrative = buildFindingNarrative(finding);
   return (
     <div
       data-finding-card
@@ -424,27 +449,10 @@ const FindingCard = ({ finding }) => {
           </span>
         )}
       </div>
-      {finding.situation && (
-        <FindingSection label="상황 (SITUATION)" body={finding.situation} accent={T.textDim} />
+      {narrative && (
+        <FindingSection label="Finding" body={narrative} accent={meta.fg} />
       )}
-      {finding.gap && (
-        <FindingSection label="갭 (GAP)" body={finding.gap} accent={T.err} />
-      )}
-      {finding.impact && (
-        <FindingSection label="영향 (IMPACT)" body={finding.impact} accent={T.warm} />
-      )}
-      {finding.recommendation && (
-        <FindingSection
-          label="권고 (RECOMMENDATION)"
-          accent={T.accent}
-          body={
-            <span style={{ fontWeight: 600 }}>
-              <span style={{ color: T.accent, marginRight: 4 }}>▸</span>
-              {finding.recommendation}
-            </span>
-          }
-        />
-      )}
+      {/* 권고(RECOMMENDATION) 섹션은 BP 평가 결과에서 제외한다 (요청). */}
       {(loc.found || loc.recommended) && (
         <FindingSection
           label="위치 (LOCATION)"
@@ -458,7 +466,7 @@ const FindingCard = ({ finding }) => {
           }
         />
       )}
-      <StandardRefChips refs={finding.standardReferences} />
+      <StandardRefChips refs={finding.standardReferences} processId={processId} />
       {(ri.ruleApplied || ri.scoreDelta) && (
         <div style={{
           marginTop: 8,
@@ -482,54 +490,10 @@ const FindingCard = ({ finding }) => {
           )}
         </div>
       )}
-      {evidenceItems.length > 0 && (
-        <div style={{ marginTop: 8 }}>
-          <div style={{
-            fontFamily: FONTS.mono,
-            fontSize: 9,
-            letterSpacing: "0.12em",
-            color: T.textDim,
-            fontWeight: 700,
-            marginBottom: 4,
-            textTransform: "uppercase",
-          }}>증거 (EVIDENCE)</div>
-          <EvidenceList items={evidenceItems} />
-        </div>
-      )}
     </div>
   );
 };
 
-const AudienceBanner = () => (
-  <div
-    data-audience-banner
-    style={{
-      background: "#F0F9FF",
-      border: "1px solid #BAE6FD",
-      borderLeft: `3px solid ${T.accent}`,
-      borderRadius: 4,
-      padding: "10px 16px",
-      marginBottom: 18,
-      display: "flex",
-      flexWrap: "wrap",
-      gap: 10,
-      alignItems: "baseline",
-    }}
-  >
-    <span style={{
-      fontFamily: FONTS.mono,
-      fontSize: 9.5,
-      letterSpacing: "0.15em",
-      color: T.accent,
-      fontWeight: 700,
-      textTransform: "uppercase",
-    }}>◆ Audience</span>
-    <span style={{ fontSize: 12.5, color: T.textHi, lineHeight: 1.55 }}>
-      본 평가 결과는 <strong>산출물 작성팀(개발자·시스템 엔지니어)</strong> 과 <strong>경영진(품질책임자·프로젝트 매니저)</strong> 모두를 위한
-      결론 진술입니다. 권고(Recommendation)는 즉시 시정 행위로 이어질 수 있도록 동사로 시작합니다.
-    </span>
-  </div>
-);
 
 const BpRatingRow = ({ proc, bp, rating }) => {
   const m = RATING_META[rating.rating] || RATING_META.N;
@@ -581,9 +545,9 @@ const BpRatingRow = ({ proc, bp, rating }) => {
         {hasFindings ? (
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             {findings.map((f, i) => (
-              <FindingCard key={f.id || `${bp.id}-f-${i}`} finding={f} />
+              <FindingCard key={f.id || `${bp.id}-f-${i}`} finding={f} processId={proc.id} />
             ))}
-            <StandardRefChips refs={rating.standardReferences} />
+            <StandardRefChips refs={rating.standardReferences} processId={proc.id} />
           </div>
         ) : (
           <>
@@ -599,7 +563,7 @@ const BpRatingRow = ({ proc, bp, rating }) => {
               marginBottom: 6,
             }}>약점 (WEAKNESS)</div>
             <EvidenceList items={evidenceItems} />
-            <StandardRefChips refs={rating.standardReferences} />
+            <StandardRefChips refs={rating.standardReferences} processId={proc.id} />
           </>
         )}
       </div>
@@ -700,8 +664,6 @@ export const VerdictCard = forwardRef(function VerdictCard(
       <HarnessVerdictBlock verdict={results._verdict} />
 
       <InsightsPair strengths={results.strengths} gaps={results.gaps} />
-
-      <AudienceBanner />
 
       <div style={{
         fontFamily: FONTS.mono,

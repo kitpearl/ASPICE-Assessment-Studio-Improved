@@ -135,6 +135,30 @@ test("extractInternalIds: keeps multi-segment IDs whose first segment is a real 
   assert.ok(ids.includes("REQ-EC-001"), "REQ-prefixed ID should survive even if EC appears mid-id");
 });
 
+test("extractInternalIds: repairs line-wrapped / spaced compound IDs (SWRS-NFR-002)", () => {
+  // Document/table text extraction can break a compound ID at the hyphen,
+  // producing a newline or stray space. The whole ID must still be recovered
+  // so the "SWRS-" document prefix is preserved (and the fragment "NFR-002"
+  // is NOT surfaced as a standalone requirement ID / false trace orphan).
+  const wrapped = "추적표: SWRS-\nNFR-002, SWRS- IF-004 그리고 SWRS-FR-008.";
+  const ids = extractInternalIds(wrapped);
+  assert.ok(ids.includes("SWRS-NFR-002"), "newline-wrapped ID should rejoin");
+  assert.ok(ids.includes("SWRS-IF-004"), "space-after-hyphen ID should rejoin");
+  assert.ok(ids.includes("SWRS-FR-008"), "intact compound ID still extracted");
+  // The bare middle/tail fragments must NOT leak out as separate IDs.
+  assert.ok(!ids.includes("NFR-002"), "tail fragment must not be a standalone ID");
+  assert.ok(!ids.includes("IF-004"), "tail fragment must not be a standalone ID");
+});
+
+test("extractInternalIds: does not merge requirement ID with a following list bullet", () => {
+  // "FR-001\n- 002 ..." is a list, not a wrapped "FR-001-002". Whitespace is
+  // only tolerated *after* a separator, so the bullet is not absorbed.
+  const list = "FR-001\n- 002 항목 설명";
+  const ids = extractInternalIds(list);
+  assert.ok(ids.includes("FR-001"));
+  assert.ok(!ids.includes("FR-001-002"), "list bullet must not be merged into the ID");
+});
+
 test("extractInternalIds: extraExcludedPrefixes via indexArtifacts adds project-specific noise", () => {
   const arts = indexArtifacts(
     [{ name: "spec.md", text: "DOC-001 메모, MEMO-007 비공식 노트, SYS-100 정식 요구사항." }],

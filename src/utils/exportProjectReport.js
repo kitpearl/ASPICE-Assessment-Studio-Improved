@@ -13,6 +13,7 @@ import jsPDF from "jspdf";
 import { RATING_META } from "../data/ratingMeta";
 import { captureToPngCanvas, sliceCanvasToPdfPage } from "./pdfPaginator";
 import { condenseGap as condenseGapShared } from "./gapText";
+import { bpTitleKo, gpTitleKo } from "./titlesKo";
 
 // A4 가로
 const PAGE_W_MM = 297;
@@ -196,7 +197,7 @@ function reportContentHtml(verdict, entry) {
   // PA 1.1 details (per process)
   sections.push({
     id: "pa11",
-    title: `${num()}. PA 1.1 약점 — 프로세스별 BP 평가`,
+    title: `${num()}. PA 1.1 Finding — 프로세스별 BP 평가`,
     body: processes.map((p) => {
       const bps = p.bps || [];
       const avg = bps.length ? Math.round(bps.reduce((s, b) => s + (b.scorePercent || 0), 0) / bps.length) : 0;
@@ -213,10 +214,10 @@ function reportContentHtml(verdict, entry) {
             </span>
           </div>
           ${tableHtml(
-            ["BP", "제목", "등급", "점수", "약점 (개선 필요)"],
+            ["BP", "제목", "등급", "점수", "Finding"],
             bps.map((b) => [
               `<span style="font-family:${FONT_MONO};white-space:nowrap">${esc(b.id)}</span>`,
-              esc(b.title || ""),
+              esc(bpTitleKo(p.processId, b.id, b.title || "")),
               ratingPillHtml(b.rating),
               `<span style="font-family:${FONT_MONO}">${Math.round(b.scorePercent || 0)}%</span>`,
               `<span style="color:#475569;font-size:11px">${esc(summarizeBp(b))}</span>`,
@@ -244,7 +245,7 @@ function reportContentHtml(verdict, entry) {
     if (!paRows.length) continue;
     sections.push({
       id: `pa${paId.replace(/\D/g, "")}`,
-      title: `${num()}. ${paId} 약점 — 프로세스별 GP 평가 (${label})`,
+      title: `${num()}. ${paId} Finding — 프로세스별 GP 평가 (${label})`,
       body: paRows.map(({ proc, pa }) => {
         const gps = pa.gps || [];
         const avg = gps.length ? Math.round(gps.reduce((s, g) => s + (g.scorePercent || 0), 0) / gps.length) : 0;
@@ -260,10 +261,10 @@ function reportContentHtml(verdict, entry) {
               </span>
             </div>
             ${tableHtml(
-              ["GP", "제목", "등급", "점수", "약점 (개선 필요)"],
+              ["GP", "제목", "등급", "점수", "Finding"],
               gps.map((g) => [
                 `<span style="font-family:${FONT_MONO};white-space:nowrap">${esc(g.id)}</span>`,
-                esc(g.title || ""),
+                esc(gpTitleKo(g.id, g.title || "")),
                 ratingPillHtml(g.rating),
                 `<span style="font-family:${FONT_MONO}">${Math.round(g.scorePercent || 0)}%</span>`,
                 `<span style="color:#475569;font-size:11px">${esc(summarizeGp(g))}</span>`,
@@ -406,20 +407,20 @@ function statusBadgeHtml(status) {
 
 function summarizeBp(b) {
   const gaps = (b.gaps || [])
-    .map((g) => condenseGapShared(g, { maxLen: 80 }))
-    .filter(Boolean);
-  if (gaps.length) return `개선 필요 — ${gaps.slice(0, 2).join(" / ")}`;
-  if (["F", "L+", "L-"].includes(b.rating)) return "특이 약점 없음";
-  return "개선 필요 — 평가 근거 미확보";
+    .map((g) => condenseGapShared(g, { full: true }))
+    .filter((s) => s && !s.includes("관련 키워드"));
+  if (gaps.length) return `Finding — ${gaps.join(" / ")}`;
+  if (["F", "L+", "L-"].includes(b.rating)) return "특이 Finding 없음";
+  return "Finding — 평가 근거 미확보";
 }
 
 function summarizeGp(g) {
   const gaps = (g.gaps || [])
-    .map((x) => condenseGapShared(x, { maxLen: 80 }))
-    .filter(Boolean);
-  if (gaps.length) return `개선 필요 — ${gaps.slice(0, 2).join(" / ")}`;
-  if (["F", "L+", "L-"].includes(g.rating)) return "특이 약점 없음";
-  return "개선 필요 — 평가 근거 미확보";
+    .map((x) => condenseGapShared(x, { full: true }))
+    .filter((s) => s && !s.includes("관련 키워드"));
+  if (gaps.length) return `Finding — ${gaps.join(" / ")}`;
+  if (["F", "L+", "L-"].includes(g.rating)) return "특이 Finding 없음";
+  return "Finding — 평가 근거 미확보";
 }
 
 function tableHtml(headers, rows, aligns = []) {

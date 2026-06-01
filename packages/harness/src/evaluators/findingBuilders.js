@@ -27,11 +27,15 @@ function locationFromEvidence(evidence) {
 /**
  * Rule-mode (offline keyword 휴리스틱) 의 observation finding.
  *
+ * recommendation 슬롯은 비워 둔다. Rule-mode 관찰은 "어떤 룰이 무엇을
+ * 확인했는지" 를 situation 으로 진술할 뿐, 자동으로 시정 행위를 권고할 만한
+ * 의미 판단을 하지 않는다 (그 판단은 시니어 평가자/LLM 모드의 몫). 따라서
+ * 과거의 보일러플레이트 "검토하라: …" 권고는 발행하지 않는다.
+ *
  * @param {{
  *   bpFullId: string,             예: "SWE.2.BP1" / "SWE.2.04-04" / "SWE.2.GP 1.1.1"
  *   ruleId: string,               ratingImpact.ruleId 에 기록될 룰 식별자
  *   situation: string,            객관적 관찰 진술 (호출자가 mode/score 컨텍스트를 담아 전달)
- *   recommendation?: string,      기본값: "검토하라: 산출물의 의미적 충족 여부를 시니어 평가자가 확인"
  *   evidence?: import("../model/verdict.js").Evidence[],
  *   pamCitation?: string,         spec 의 BP/GP/WP pamCitation 이 있으면 그대로 사용
  *   scoreReason: string,          ratingImpact.reason — 동사로 시작 권장
@@ -42,7 +46,6 @@ export function buildRuleObservationFinding({
   bpFullId,
   ruleId,
   situation,
-  recommendation,
   evidence = [],
   pamCitation,
   scoreReason,
@@ -55,8 +58,7 @@ export function buildRuleObservationFinding({
     bpId: bpFullId,
     type: "observation",
     situation,
-    recommendation:
-      recommendation || "검토하라: 산출물의 의미적 충족 여부를 시니어 평가자가 확인",
+    recommendation: "",
     location: {
       found: locationFromEvidence(evidence),
       recommended: null,
@@ -97,15 +99,13 @@ export function buildCustomRuleObservationFinding({
   const situation = satisfied
     ? `${head} 충족: 산출물 ${evidence.length}건에서 일치 증거 관찰 (의미적 충족 여부는 시니어 평가자가 추가 확인 필요)`
     : `${head} 미충족: 룰이 요구하는 조건과 일치하는 증거가 관찰되지 않음`;
-  const recommendation = satisfied
-    ? "검토하라: 사용자 룰의 키워드 일치를 넘어 의미적 충족 여부를 확인"
-    : "검토하라: 사용자 룰의 조건이 산출물에 부재한지, 표현 방식만 다른지 확인";
+  // 권고(recommendation)는 BP 평가 결과에서 제외한다 (요청).
   return makeFinding({
     id: `F-custom-${bpFullId}-${rule.id}`,
     bpId: bpFullId,
     type: "observation",
     situation,
-    recommendation,
+    recommendation: "",
     location: {
       found: locationFromEvidence(evidence),
       recommended: null,

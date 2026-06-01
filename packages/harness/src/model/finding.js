@@ -152,12 +152,10 @@ export function findingsToLegacyRationale(findings, legacyGaps) {
   if (Array.isArray(findings) && findings.length > 0) {
     const weak = findings.filter((f) => f.type === "weakness");
     const target = weak.length > 0 ? weak : findings;
+    // 권고(recommendation)는 BP 평가 결과에서 제외한다 (요청). 따라서 legacy
+    // rationale 직렬화도 gap/situation 만 사용한다.
     return target
-      .map((f) => {
-        const gap = f.gap || f.situation || "";
-        const rec = f.recommendation ? ` — ${f.recommendation}` : "";
-        return `${gap}${rec}`.trim();
-      })
+      .map((f) => (f.gap || f.situation || "").trim())
       .filter(Boolean)
       .join(" / ");
   }

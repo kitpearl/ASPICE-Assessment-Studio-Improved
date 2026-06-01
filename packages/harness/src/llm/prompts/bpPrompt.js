@@ -63,7 +63,7 @@ export function buildBpPrompt({
     `    "pam": ["PAM §..."],`,
     `    "pamNote": ["PAM Note ${process.id}-N"],`,
     `    "bgbRL": ["RL3"],`,
-    `    "iso": ["ISO 26262-6:2018 §8.4.5"]`,
+    `    "iso": []`,
     `  },`,
     `  "findings": [`,
     `    {`,

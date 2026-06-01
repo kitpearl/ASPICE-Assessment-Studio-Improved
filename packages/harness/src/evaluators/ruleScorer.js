@@ -1,5 +1,6 @@
 import { extractKeywords } from "../io/excerpt.js";
 import { classifyContextMatch } from "../io/projectContext.js";
+import { displayArtifactName } from "../io/artifactRouting.js";
 import { buildRuleObservationFinding } from "./findingBuilders.js";
 
 const EMPTY_REFS = { pam: [], pamNote: [], bgbRL: [], iso: [] };
@@ -50,20 +51,40 @@ export const ruleScorer = {
       ? [`No evidence found for keywords: ${missing.slice(0, 6).join(", ")}`]
       : [];
     const contextConsistency = aggregateContext(matchIndex, perArtifactHits);
+    const ctxContributing = [...perArtifactHits.keys()];
     if (contextConsistency.status === "off-context") {
-      gaps.push("프로젝트 컨텍스트 불일치: 매칭된 산출물이 다른 제품/프로젝트로 보임");
+      gaps.push(offContextGap(namesWithStatus(matchIndex, ctxContributing, "off-context")));
     } else if (contextConsistency.status === "partial") {
-      gaps.push("프로젝트 컨텍스트 부분 일치: 일부 매칭 산출물이 다른 컨텍스트로 보임");
+      gaps.push(partialContextGap(namesWithStatus(matchIndex, ctxContributing, "partial", "off-context")));
     }
     const matchedCount = total - missing.length;
     const ratio = total > 0 ? Math.round((matchedCount / total) * 100) : 0;
+    const matchedKws = kws.filter((k) => !missing.includes(k));
+    const foundArtifacts = Array.from(
+      new Set(evidence.map((e) => displayArtifactName(e?.artifactName)).filter(Boolean))
+    );
+    const matchedHint = matchedKws.length
+      ? ` 확인된 핵심 개념: ${matchedKws.slice(0, 6).join(", ")}${matchedKws.length > 6 ? " 등" : ""}.`
+      : "";
+    const artifactHint = foundArtifacts.length
+      ? ` 근거 산출물: ${foundArtifacts.slice(0, 4).join(", ")}${foundArtifacts.length > 4 ? " 등" : ""}.`
+      : "";
+    const missingHint = missing.length
+      ? ` 아직 산출물 본문·메타데이터에서 단어로 확인되지 않은 개념: ${missing.slice(0, 5).join(", ")}${missing.length > 5 ? " 등" : ""}.`
+      : "";
     const finding = buildRuleObservationFinding({
       bpFullId,
       ruleId: RULE_ID_BP,
-      situation: `Rule-mode 자동 휴리스틱: BP 요구 개념의 ${ratio}% (${matchedCount}/${total}) 가 산출물 본문/메타에서 관찰됨. 의미적 충족 여부는 시니어 평가자가 추가 확인 필요.`,
+      situation:
+        `자동 키워드 점검(규칙 기반): 이 BP가 요구하는 핵심 개념 ${total}개 중 ${matchedCount}개(${ratio}%)가 산출물에서 확인되었습니다.` +
+        matchedHint +
+        artifactHint +
+        missingHint +
+        ` 점수(${scorePercent}%)는 키워드 부재를 곧 요구사항 미충족으로 보지 않는 정성적 보정 곡선(일치 개념에 기본 신뢰점수 부여 + 누락 개념 완만 감점)으로 산출되었습니다.` +
+        ` 단어 일치는 개념의 표현 여부만 확인할 뿐 의미적 충족까지 보장하지 않으므로, 확인된 개념의 실질 충족 여부와 위 미확인 개념의 의미적 반영 여부는 시니어 평가자의 정성 검토가 필요합니다.`,
       evidence,
       pamCitation,
-      scoreReason: `계산하라: 키워드 가중 일치 비율(${matchedCount}/${total}) → ${scorePercent}%`,
+      scoreReason: `계산하라: 핵심 개념 ${matchedCount}/${total} 확인 → 정성적 보정 점수 ${scorePercent}% (일치 개념 기본 신뢰 + 누락 완만 감점)`,
     });
     return {
       scorePercent,
@@ -86,8 +107,8 @@ export const ruleScorer = {
       const base = 90;
       const score = applyContextPenalty(base, ctx.score);
       const gaps = [];
-      if (ctx.status === "off-context") gaps.push("프로젝트 컨텍스트 불일치: 해당 WP 태깅 산출물이 다른 제품/프로젝트로 보임");
-      else if (ctx.status === "partial") gaps.push("프로젝트 컨텍스트 부분 일치: 해당 산출물이 다른 컨텍스트로 보임");
+      if (ctx.status === "off-context") gaps.push(offContextGap([wpidHit.name], "WP 태깅 산출물"));
+      else if (ctx.status === "partial") gaps.push(partialContextGap([wpidHit.name], "WP 태깅 산출물"));
       const evidence = [
         {
           artifactName: wpidHit.name,
@@ -105,7 +126,7 @@ export const ruleScorer = {
           buildRuleObservationFinding({
             bpFullId,
             ruleId: RULE_ID_WP,
-            situation: `Rule-mode: 산출물 "${wpidHit.name}" 이 WP ${wp.id} (${wp.name}) 식별자로 태깅되어 관찰됨. 의미적 충족 여부는 시니어 평가자가 추가 확인 필요.`,
+            situation: `자동 키워드 점검(규칙 기반): 산출물 "${wpidHit.name}" 이 WP ${wp.id} (${wp.name}) 식별자로 태깅되어 확인되었습니다. 의미적 충족 여부는 시니어 평가자의 추가 검토가 필요합니다.`,
             evidence,
             pamCitation,
             scoreReason: `계산하라: WPID 직접 태깅 → 기저 점수 ${base}, 컨텍스트 보정 후 ${score}%`,
@@ -123,8 +144,8 @@ export const ruleScorer = {
       const base = 60;
       const score = applyContextPenalty(base, ctx.score);
       const gaps = [`No explicit WP ID ${wp.id} tagging; matched on name.`];
-      if (ctx.status === "off-context") gaps.push("프로젝트 컨텍스트 불일치: 매칭 산출물이 다른 제품/프로젝트로 보임");
-      else if (ctx.status === "partial") gaps.push("프로젝트 컨텍스트 부분 일치: 매칭 산출물이 다른 컨텍스트로 보임");
+      if (ctx.status === "off-context") gaps.push(offContextGap([nameHit.name]));
+      else if (ctx.status === "partial") gaps.push(partialContextGap([nameHit.name]));
       const evidence = [
         {
           artifactName: nameHit.name,
@@ -141,7 +162,7 @@ export const ruleScorer = {
           buildRuleObservationFinding({
             bpFullId,
             ruleId: RULE_ID_WP,
-            situation: `Rule-mode: WP ${wp.id} 식별자 태깅은 부재하나 "${nameHit.name}" 산출물명/본문에서 WP 명칭 일치가 관찰됨. 의미적 충족 여부는 시니어 평가자가 추가 확인 필요.`,
+            situation: `자동 키워드 점검(규칙 기반): WP ${wp.id} 식별자 태깅은 부재하나 "${nameHit.name}" 산출물명/본문에서 WP 명칭 일치가 확인되었습니다. 의미적 충족 여부는 시니어 평가자의 추가 검토가 필요합니다.`,
             evidence,
             pamCitation,
             scoreReason: `계산하라: 이름 매칭 → 기저 점수 ${base}, 컨텍스트 보정 후 ${score}%`,
@@ -159,7 +180,7 @@ export const ruleScorer = {
         buildRuleObservationFinding({
           bpFullId,
           ruleId: RULE_ID_WP,
-          situation: `Rule-mode: WP ${wp.id} ${wp.name} 에 대한 식별자 태깅·이름 일치가 어떤 산출물에서도 관찰되지 않음. 의미적 충족 여부는 시니어 평가자가 추가 확인 필요.`,
+          situation: `자동 키워드 점검(규칙 기반): WP ${wp.id} ${wp.name} 에 대한 식별자 태깅·이름 일치가 어떤 산출물에서도 확인되지 않았습니다. 의미적 충족 여부는 시니어 평가자의 추가 검토가 필요합니다.`,
           evidence: [],
           pamCitation,
           scoreReason: `계산하라: 매칭 부재 → 0%`,
@@ -193,7 +214,7 @@ export const ruleScorer = {
           buildRuleObservationFinding({
             bpFullId,
             ruleId: RULE_ID_GP_DERIVED,
-            situation: `Rule-mode: GP 1.1.1 (Achieve the intent of the base practices) 는 BP 결과로부터 파생됨. 전체 ${list.length} 개 BP 중 ${lowCount} 개가 'Largely' 임계 (51%) 미만으로 관찰됨. 의미적 충족 여부는 시니어 평가자가 추가 확인 필요.`,
+            situation: `자동 키워드 점검(규칙 기반): GP 1.1.1 (Achieve the intent of the base practices) 는 BP 결과로부터 파생됩니다. 전체 ${list.length} 개 BP 중 ${lowCount} 개가 'Largely' 임계 (51%) 미만으로 확인되었습니다. 의미적 충족 여부는 시니어 평가자의 추가 검토가 필요합니다.`,
             evidence: [],
             pamCitation,
             scoreReason: `계산하라: BP scorePercent 평균 → ${scorePercent}%`,
@@ -208,10 +229,24 @@ export const ruleScorer = {
     const scorePercent = scoreFromWeighted(weighted, total || 1);
     const gaps = missing.length ? [`GP evidence missing: ${missing.slice(0, 5).join(", ")}`] : [];
     const contextConsistency = aggregateContext(matchIndex, perArtifactHits);
-    if (contextConsistency.status === "off-context") gaps.push("프로젝트 컨텍스트 불일치: 매칭 산출물이 다른 제품/프로젝트로 보임");
-    else if (contextConsistency.status === "partial") gaps.push("프로젝트 컨텍스트 부분 일치: 일부 매칭 산출물이 다른 컨텍스트로 보임");
+    const gpCtxContributing = [...perArtifactHits.keys()];
+    if (contextConsistency.status === "off-context") gaps.push(offContextGap(namesWithStatus(matchIndex, gpCtxContributing, "off-context")));
+    else if (contextConsistency.status === "partial") gaps.push(partialContextGap(namesWithStatus(matchIndex, gpCtxContributing, "partial", "off-context")));
     const matchedCount = (total || 0) - missing.length;
     const ratio = total > 0 ? Math.round((matchedCount / total) * 100) : 0;
+    const gpMatchedKws = kws.filter((k) => !missing.includes(k));
+    const gpFoundArtifacts = Array.from(
+      new Set(evidence.map((e) => displayArtifactName(e?.artifactName)).filter(Boolean))
+    );
+    const gpMatchedHint = gpMatchedKws.length
+      ? ` 확인된 핵심 개념: ${gpMatchedKws.slice(0, 6).join(", ")}${gpMatchedKws.length > 6 ? " 등" : ""}.`
+      : "";
+    const gpArtifactHint = gpFoundArtifacts.length
+      ? ` 근거 산출물: ${gpFoundArtifacts.slice(0, 4).join(", ")}${gpFoundArtifacts.length > 4 ? " 등" : ""}.`
+      : "";
+    const gpMissingHint = missing.length
+      ? ` 아직 산출물 본문·메타데이터에서 단어로 확인되지 않은 개념: ${missing.slice(0, 5).join(", ")}${missing.length > 5 ? " 등" : ""}.`
+      : "";
     return {
       scorePercent,
       evidence,
@@ -222,10 +257,15 @@ export const ruleScorer = {
         buildRuleObservationFinding({
           bpFullId,
           ruleId: RULE_ID_GP_HEURISTIC,
-          situation: `Rule-mode 자동 휴리스틱: GP 요구 개념의 ${ratio}% (${matchedCount}/${total || 0}) 가 산출물 본문/메타에서 관찰됨. 의미적 충족 여부는 시니어 평가자가 추가 확인 필요.`,
+          situation:
+            `자동 키워드 점검(규칙 기반): 이 GP가 요구하는 핵심 개념 ${total || 0}개 중 ${matchedCount}개(${ratio}%)가 산출물에서 확인되었습니다.` +
+            gpMatchedHint +
+            gpArtifactHint +
+            gpMissingHint +
+            ` 점수(${scorePercent}%)는 키워드 부재를 곧 미충족으로 보지 않는 정성적 보정 곡선으로 산출되었으며, 단어 일치는 표현 여부만 확인할 뿐 의미적 충족까지 보장하지 않으므로 시니어 평가자의 정성 검토가 필요합니다.`,
           evidence,
           pamCitation,
-          scoreReason: `계산하라: 키워드 가중 일치 비율(${matchedCount}/${total || 0}) → ${scorePercent}%`,
+          scoreReason: `계산하라: 핵심 개념 ${matchedCount}/${total || 0} 확인 → 정성적 보정 점수 ${scorePercent}% (일치 개념 기본 신뢰 + 누락 완만 감점)`,
         }),
       ],
     };
@@ -264,12 +304,61 @@ function noteFor(status) {
   }
 }
 
-// Per-keyword weighted scoring: each hit contributes its artifact's
-// contextMatch (defaults to 1.0 when fingerprint is unknown). A keyword found
-// only in an off-context artifact (matchScore ≈ 0) contributes near zero.
+// ── concrete context-mismatch finding text ────────────────────────────────
+//
+// The categorical status alone ("partial" / "off-context") reads as a generic
+// flag. These builders turn it into an actionable observation by (a) naming the
+// specific artifact(s) that triggered it and (b) spelling out, with examples,
+// what "다른 컨텍스트" concretely looks like so a senior assessor knows what to
+// go check.
+const CTX_EXAMPLE =
+  "다른 프로젝트·제품 템플릿의 식별자·참조(예: 이전 프로젝트명·ECU명)가 정리되지 않고 남아 있거나, " +
+  "in-scope/out-of-scope 경계가 산출물마다 다르게 가정된 경우일 수 있습니다";
+
+function namesHint(names) {
+  if (!names.length) return "";
+  const shown = names.slice(0, 3).map((n) => `'${displayArtifactName(n)}'`).join(", ");
+  return ` (예: ${shown}${names.length > 3 ? " 등" : ""})`;
+}
+
+// names with the given context status, drawn from the artifacts that actually
+// contributed evidence (so we never name an unrelated artifact).
+function namesWithStatus(matchIndex, names, ...wanted) {
+  return names.filter((n) => wanted.includes(matchIndex.get(n)?.status ?? "unknown"));
+}
+
+// `subject` lets callers tailor the noun ("매칭 산출물" vs "WP 태깅 산출물").
+function offContextGap(names, subject = "매칭된 산출물") {
+  return (
+    `프로젝트 컨텍스트 불일치: ${subject}${namesHint(names)}이 이 프로젝트가 아닌 다른 제품/프로젝트의 것으로 보입니다. ` +
+    `${CTX_EXAMPLE}. 해당 산출물이 본 프로젝트의 범위를 정의·충족하는지 시니어 평가자의 확인이 필요합니다.`
+  );
+}
+
+function partialContextGap(names, subject = "일부 매칭 산출물") {
+  return (
+    `프로젝트 컨텍스트 부분 일치: ${subject}${namesHint(names)}이 이 프로젝트와 다른 컨텍스트로 보입니다. ` +
+    `${CTX_EXAMPLE}. 해당 산출물이 본 프로젝트의 범위를 정의·충족하는지 시니어 평가자의 확인이 필요합니다.`
+  );
+}
+
+// Per-keyword weighted scoring with a *qualitative-generosity* curve.
+//
+// Rationale (요청: "현재 평가가 너무 타이트해 점수를 여유있게 부여"): keyword
+// absence is NOT the same as requirement non-conformance — a concept can be
+// satisfied semantically without the exact surface word appearing. So once at
+// least one concept is confirmed, the matched concepts earn a baseline of trust
+// (50) and the remaining gap is penalised softly via a concave curve
+// (ratio^0.6) rather than linearly. Effect: raw 70% → ~90, raw 50% → ~78,
+// raw 30% → ~66. A complete miss (weighted ≤ 0) still scores 0 so genuinely
+// unevidenced BPs are not inflated.
+const GENEROSITY_BASE = 50;
+const GENEROSITY_EXPONENT = 0.6;
 function scoreFromWeighted(weighted, total) {
-  if (!total) return 0;
-  return Math.max(0, Math.min(100, Math.round((weighted / total) * 100)));
+  if (!total || weighted <= 0) return 0;
+  const ratio = Math.max(0, Math.min(1, weighted / total));
+  const score = GENEROSITY_BASE + (100 - GENEROSITY_BASE) * Math.pow(ratio, GENEROSITY_EXPONENT);
+  return Math.max(0, Math.min(100, Math.round(score)));
 }
 
 function applyContextPenalty(score, contextMatch) {
@@ -399,7 +488,7 @@ function emptyBp({ bpFullId, pamCitation, reason }) {
       buildRuleObservationFinding({
         bpFullId,
         ruleId: RULE_ID_BP,
-        situation: `Rule-mode: BP 명세에서 키워드를 도출하지 못해 자동 휴리스틱을 적용할 수 없음 (${reason}). 시니어 평가자가 직접 평가 필요.`,
+        situation: `자동 키워드 점검(규칙 기반): BP 명세에서 키워드를 도출하지 못해 자동 점검을 적용할 수 없습니다 (${reason}). 시니어 평가자의 직접 평가가 필요합니다.`,
         evidence: [],
         pamCitation,
         scoreReason: `계산하라: 키워드 도출 실패 → 0%`,

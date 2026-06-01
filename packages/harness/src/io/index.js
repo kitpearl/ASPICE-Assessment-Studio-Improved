@@ -8,3 +8,11 @@ export {
   classifyContextMatch,
   fingerprintForPrompt,
 } from "./projectContext.js";
+export {
+  detectOwnerProcess,
+  detectDocType,
+  allowedDocTypesForProcess,
+  isVerificationProcess,
+  displayArtifactName,
+  scopeArtifactsForProcess,
+} from "./artifactRouting.js";

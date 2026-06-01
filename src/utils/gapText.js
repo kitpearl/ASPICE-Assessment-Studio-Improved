@@ -35,10 +35,14 @@ export function koreanizeGap(text) {
   return out;
 }
 
-export function condenseGap(raw, { maxLen = 70 } = {}) {
+export function condenseGap(raw, { maxLen = 70, full = false } = {}) {
   if (!raw) return "";
   let s = koreanizeGap(String(raw)).trim();
   s = s.replace(/^\[(규칙|LLM|rule|llm)\]\s*/i, "");
+  // Full mode: keep the entire normalized Finding text — no first-sentence
+  // truncation, no filler-ending trimming, and no length cap. Used by report
+  // tables that must render the complete Finding content (보고서 Full 표시).
+  if (full) return s;
   const firstSentence = s.split(/\.\s+/)[0];
   if (firstSentence) s = firstSentence;
   s = s.replace(

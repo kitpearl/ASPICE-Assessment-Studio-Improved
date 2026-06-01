@@ -126,8 +126,12 @@ export class Harness {
           sourceWp: via,
           targetWps,
         });
-        // Skip edges where no artifacts are present for either side
-        if (matrix.sourceIds.length === 0 && matrix.targetIds.length === 0) continue;
+        // Skip a via-edge with no source IDs: there is nothing to trace *from*,
+        // so coverage is undefined (—) and every target ID would be reported as
+        // a spurious "도착 누락" (target orphan). This drops e.g. SYS.2 → SWE.1
+        // via 17-54 "Requirement Attribute" when no attribute document carries
+        // trace IDs. (A zero-source edge subsumes the both-sides-empty case.)
+        if (matrix.sourceIds.length === 0) continue;
         traceMatrices.push(matrix);
       }
     }

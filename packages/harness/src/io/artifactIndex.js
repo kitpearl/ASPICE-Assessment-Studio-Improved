@@ -57,7 +57,17 @@ function inferWpIds(artifact, idx) {
 
 // Matches requirement/test/CR-style identifiers, including multi-segment
 // forms like REQ-SYS-001, TC-SYS-003, ARCH-SYS-002, CR-042, STK-001.
-const ID_PATTERN = /\b([A-Z]{2,6}(?:[-_][A-Z0-9]{2,})*[-_]\d+[A-Z0-9]*)\b/g;
+//
+// Whitespace tolerance: `[-_]\s*` allows whitespace *after* a separator so an
+// ID that gets line-wrapped or spaced during document/table text extraction —
+// e.g. a cell breaking at the hyphen into "SWRS-\nNFR-002" or "SWRS- NFR-002" —
+// is still captured as one token. Without this, only the tail ("NFR-002") would
+// match as a standalone ID, dropping the real "SWRS-" document prefix and
+// surfacing the fragment as a false traceability orphan. Whitespace is only
+// permitted *after* the separator (not before) so list bullets like
+// "FR-001\n- 002 ..." are not merged into "FR-001-002". The captured match is
+// normalized below by stripping the interior whitespace.
+const ID_PATTERN = /\b([A-Z]{2,6}(?:[-_]\s*[A-Z0-9]{2,})*[-_]\s*\d+[A-Z0-9]*)\b/g;
 
 // Prefixes that look like internal IDs but are domain vocabulary, standards
 // references, or environmental/algorithmic terms — never project requirements.
@@ -92,7 +102,8 @@ export function extractInternalIds(text, opts = {}) {
     : EXCLUDED_PREFIXES;
   const ids = new Set();
   for (const m of text.matchAll(ID_PATTERN)) {
-    const id = m[1];
+    // Repair line-wrapped / spaced IDs: "SWRS-\nNFR-002" → "SWRS-NFR-002".
+    const id = m[1].replace(/\s+/g, "");
     const firstPrefix = id.split(/[-_]/)[0];
     if (excluded.has(firstPrefix)) continue;
     ids.add(id);

@@ -6,8 +6,10 @@ import { loadProcess } from "../spec/canonical/index.js";
 import { _clearStandardRefsCache } from "../spec/standardRefs.js";
 
 // After P5-bis the BGB index is auto-extracted from the VDA guideline. SYS.2.BP5
-// happens to carry [SYS.2.RL.3] and [SYS.2.RL.10] there; the ISO mapping for
-// SYS.2.BP5 is still authored manually in bpToClauses.csv.
+// happens to carry [SYS.2.RL.3] and [SYS.2.RL.10] there.
+//
+// ISO 근거는 BP 평가에서 제외한다 (요청): bpEvaluator 가 PAM·BGB 만 병합하고
+// iso 는 항상 빈 배열이어야 한다 — scorer 나 spec/iso CSV 가 무엇을 담든 무관.
 
 const RL_RE = /^\[[A-Z][A-Z0-9.]*\.RL\.(?:\d+|xx)\]$/;
 
@@ -29,7 +31,7 @@ test("evaluateBPs: BPResult.standardReferences merges scorer refs + spec refs", 
   // brittle, just check non-empty and well-formed.
   assert.ok(bp5.standardReferences.bgbRL.length > 0, "expected BGB rules for SYS.2.BP5");
   for (const rl of bp5.standardReferences.bgbRL) assert.match(rl, RL_RE);
-  assert.ok(bp5.standardReferences.iso.includes("ISO/IEC 33020:2019 §5.3"));
+  assert.deepEqual(bp5.standardReferences.iso, [], "ISO 근거는 BP 평가에서 제외");
 });
 
 test("evaluateBPs: each finding inherits the spec-derived refs too", async () => {
@@ -48,7 +50,7 @@ test("evaluateBPs: each finding inherits the spec-derived refs too", async () =>
   const f = bp5.findings[0];
   assert.ok(f.standardReferences.bgbRL.length > 0, "finding should inherit BGB rules");
   for (const rl of f.standardReferences.bgbRL) assert.match(rl, RL_RE);
-  assert.ok(f.standardReferences.iso.includes("ISO/IEC 33020:2019 §5.3"));
+  assert.deepEqual(f.standardReferences.iso, [], "finding 도 ISO 근거를 갖지 않는다");
 });
 
 test("evaluateBPs: BP without spec mapping shows no BGB/ISO refs (graceful)", async () => {
