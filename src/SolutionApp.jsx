@@ -20,7 +20,7 @@ import { useCustomRules } from "./hooks/useCustomRules";
 
 import { extractFileContent } from "./utils/fileReaders";
 import { exportReportAsText, exportReportAsPdf } from "./utils/exportReport";
-import { exportProjectReportAsPdf } from "./utils/exportProjectReport";
+import { exportProjectReportAsPdf, exportProjectReportAsText } from "./utils/exportProjectReport";
 import { DEFAULT_ENGINES, ENGINE_IDS } from "./data/engineDefaults";
 
 import { AppHeader } from "./components/AppHeader";
@@ -362,6 +362,18 @@ export default function SolutionApp() {
     }
   };
 
+  const handleExportProjectEntryTxt = (entry) => {
+    if (!entry?.verdict) {
+      alert("텍스트로 내보낼 verdict 데이터가 비어있습니다.");
+      return;
+    }
+    try {
+      exportProjectReportAsText({ verdict: entry.verdict, entry });
+    } catch (e) {
+      alert(`텍스트 생성 실패: ${e.message || e}`);
+    }
+  };
+
   const viewingProjectHistory = selectedProjectHistoryId
     ? projectHistory.find((h) => h.id === selectedProjectHistoryId)
     : null;
@@ -528,6 +540,19 @@ export default function SolutionApp() {
                       id: "__current__",
                     };
                     return handleExportProjectEntryPdf(entry);
+                  }}
+                  onExportTxt={() => {
+                    const entry = viewingProjectHistory ?? {
+                      ...buildProjectHistoryEntry({
+                        verdict: displayProjectVerdict,
+                        artifacts: projectArtifacts,
+                        processIds: projectProcessIds,
+                        targetLevel: projectTargetLevel,
+                        engines: projectEngines,
+                      }),
+                      id: "__current__",
+                    };
+                    return handleExportProjectEntryTxt(entry);
                   }}
                   exporting={
                     viewingProjectHistory

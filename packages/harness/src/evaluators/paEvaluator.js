@@ -70,6 +70,10 @@ export async function evaluatePAs(
       paId,
       level: paSpec.level,
       rating,
+      // The score that actually drove `rating`. For PA 1.1 under hybrid/llm
+      // this is the GP 1.1.1 blend, NOT the raw BP average — reports must show
+      // this number next to the pill so the two never contradict.
+      scorePercent: Math.round(avg),
       collapsed: collapse(rating),
       gps,
     });

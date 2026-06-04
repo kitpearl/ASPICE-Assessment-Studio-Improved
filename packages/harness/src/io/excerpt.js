@@ -102,6 +102,9 @@ const STOPWORDS = new Set([
   "does","using","used","regarding","regard","respect","make","makes",
   "take","takes","need","needs","well","also","other","others","before",
   "after","once","onto",
+  // politeness / instruction fillers that leak from PAM prose ("please refer
+  // to ...") and read as nonsense when surfaced as a required concept.
+  "please","refer","refers","shown","given","above","below",
 ]);
 
 // PAM PDF-extraction artifact scrubber.

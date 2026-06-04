@@ -6,6 +6,7 @@ const QUOTE_COLLAPSED_MAX_HEIGHT = 60;
 import { T, FONTS } from "../theme";
 import { RATING_META, RATING_ORDER, countRatings, isCl1Pass } from "../data/ratingMeta";
 import { normalizeEvidence } from "../utils/evidence";
+import { FINDING_TYPE_LABEL, flattenStandardRefs, buildFindingNarrative } from "../utils/findings";
 
 const VerdictHeader = ({ proc, results, fileName, date, cl1Pass, counts, totalBps, viewingHistory, exporting, onExportPdf, onExportTxt }) => (
   <div style={{
@@ -329,30 +330,14 @@ const EvidenceList = ({ items }) => {
 };
 
 const FINDING_TYPE_META = {
-  weakness: { label: "약점 (WEAKNESS)", bg: "#FEF2F2", border: "#FECACA", bar: T.err, fg: T.err },
-  strength: { label: "강점 (STRENGTH)", bg: "#ECFDF5", border: "#A7F3D0", bar: T.ok, fg: T.ok },
-  observation: { label: "관찰 (OBSERVATION)", bg: "#F4F6F8", border: "#D4D4D8", bar: T.textLo, fg: T.textMd },
-};
-
-// BGB Rating Rule 인용은 형식이 [<scope>.RL.<n>] 이다 (예: [MAN.3.RL.8]).
-// 근거 증적에는 현재 평가 중인 프로세스 영역(processId, 예: "MAN.3")에 해당하는
-// 규칙만 노출한다 — 타 프로세스(GEN/DEX/APA 등)에서 교차 참조된 규칙은 평가자의
-// 초점을 흐리므로 제외한다. processId 가 없으면(레거시 호출) 필터하지 않는다.
-const scopeBgbRefs = (bgbRL, processId) => {
-  if (!Array.isArray(bgbRL)) return [];
-  if (!processId) return bgbRL;
-  const prefix = `[${processId}.RL.`;
-  return bgbRL.filter((r) => typeof r === "string" && r.startsWith(prefix));
+  weakness: { label: FINDING_TYPE_LABEL.weakness, bg: "#FEF2F2", border: "#FECACA", bar: T.err, fg: T.err },
+  strength: { label: FINDING_TYPE_LABEL.strength, bg: "#ECFDF5", border: "#A7F3D0", bar: T.ok, fg: T.ok },
+  observation: { label: FINDING_TYPE_LABEL.observation, bg: "#F4F6F8", border: "#D4D4D8", bar: T.textLo, fg: T.textMd },
 };
 
 const StandardRefChips = ({ refs, processId }) => {
-  if (!refs) return null;
   // ISO 근거(refs.iso)는 BP 평가에서 제외한다 (요청): PAM·BGB 만 노출.
-  const all = [
-    ...(refs.pam ?? []).map((r) => ({ kind: "PAM", text: r })),
-    ...(refs.pamNote ?? []).map((r) => ({ kind: "Note", text: r })),
-    ...scopeBgbRefs(refs.bgbRL, processId).map((r) => ({ kind: "BGB", text: r })),
-  ];
+  const all = flattenStandardRefs(refs, processId);
   if (all.length === 0) return null;
   return (
     <div style={{ display: "flex", flexWrap: "wrap", gap: 4, marginTop: 8 }}>
@@ -401,20 +386,6 @@ const FindingSection = ({ label, body, accent }) => (
     </div>
   </div>
 );
-
-// 증적(quote) 원문을 그대로 덤프하지 않고, Finding 의 서술 슬롯
-// (situation → gap → impact) 을 한 문단으로 엮어 "무엇을 발견했는지" 를 진술한다.
-// 서술 슬롯이 모두 비어 있는 레거시/덤프형 데이터는 evidence quote 로 폴백한다.
-const buildFindingNarrative = (finding) => {
-  const parts = [finding.situation, finding.gap, finding.impact]
-    .map((s) => (typeof s === "string" ? s.trim() : ""))
-    .filter(Boolean);
-  if (parts.length > 0) return parts.join(" ");
-  return normalizeEvidence(finding.evidence ?? [])
-    .map((e) => e.quote)
-    .filter(Boolean)
-    .join(" ");
-};
 
 const FindingCard = ({ finding, processId }) => {
   const meta = FINDING_TYPE_META[finding.type] || FINDING_TYPE_META.observation;

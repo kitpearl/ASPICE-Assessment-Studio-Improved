@@ -32,7 +32,7 @@ export class Harness {
     this.wpCatalog = loadWorkProducts();
   }
 
-  async evaluateProcess({ processId, artifacts, projectFingerprint, extraBPs = [] }) {
+  async evaluateProcess({ processId, artifacts, projectFingerprint, extraBPs = [], mode = "process" }) {
     const processSpec = loadProcess(processId);
     if (!processSpec) throw new Error(`Unknown process: ${processId}`);
     const indexed = this.#indexOnce(artifacts);
@@ -48,7 +48,10 @@ export class Harness {
       ? { ...processSpec, basePractices: [...processSpec.basePractices, ...extraBPs] }
       : processSpec;
 
-    const bps = await evaluateBPs(effectiveSpec, indexed, this.scorer, { projectFingerprint: fingerprint });
+    // `mode` is forwarded for call-site stability but no longer changes scoring:
+    // BP/WP/GP grading is identical in process and project mode so the same
+    // artifact earns the same rating either way (see buildBpPrompt).
+    const bps = await evaluateBPs(effectiveSpec, indexed, this.scorer, { projectFingerprint: fingerprint, mode });
     const wps = await evaluateWPs(effectiveSpec, indexed, this.scorer, { projectFingerprint: fingerprint });
     const pas = await evaluatePAs(
       effectiveSpec,
@@ -91,7 +94,7 @@ export class Harness {
     // function timeouts on a 6-process project run.
     const processVerdicts = await Promise.all(
       inScope.map((proc) =>
-        this.evaluateProcess({ processId: proc.id, artifacts: indexed, projectFingerprint })
+        this.evaluateProcess({ processId: proc.id, artifacts: indexed, projectFingerprint, mode: "project" })
       )
     );
 

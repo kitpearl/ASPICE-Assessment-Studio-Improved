@@ -11,11 +11,14 @@ import { unionStandardReferences } from "./findingBuilders.js";
  * @param {import("./types.js").ProcessSpec} processSpec
  * @param {import("../model/evidence.js").Artifact[]} artifacts
  * @param {import("./scorer.js").Scorer} scorer
- * @param {{projectFingerprint?: import("../io/projectContext.js").ProjectFingerprint}} [options]
+ * @param {{
+ *   projectFingerprint?: import("../io/projectContext.js").ProjectFingerprint,
+ *   mode?: "process" | "project"
+ * }} [options]
  * @returns {Promise<import("../model/verdict.js").BPResult[]>}
  */
 export async function evaluateBPs(processSpec, artifacts, scorer, options = {}) {
-  const { projectFingerprint } = options;
+  const { projectFingerprint, mode } = options;
   const results = [];
   for (const bp of processSpec.basePractices) {
     const {
@@ -30,6 +33,10 @@ export async function evaluateBPs(processSpec, artifacts, scorer, options = {}) 
       bp,
       artifacts,
       projectFingerprint,
+      // Forwarded to the LLM scorer → buildBpPrompt. Accepted for call-site
+      // stability only: BP scoring is mode-independent so process and project
+      // runs grade the same artifact identically (see buildBpPrompt).
+      mode,
     });
     const bpFullId = `${processSpec.id}.${bp.id}`;
     // P5: 사용자가 spec/bgb/*.csv 에 채워둔 BGB Rating Level 매핑을 BPResult 와

@@ -78,6 +78,23 @@ test("bpPrompt: task embeds findings schema with bpId and id template", () => {
   assert.match(task, /"ratingImpact"/);
 });
 
+test("bpPrompt: scoring prompt is mode-independent (process === project)", () => {
+  const proj = buildBpPrompt({ process: PROCESS, bp: BP, artifactsExcerpt: EXCERPT, projectFingerprint: FINGERPRINT });
+  const proc = buildBpPrompt({ process: PROCESS, bp: BP, artifactsExcerpt: EXCERPT, projectFingerprint: FINGERPRINT, mode: "process" });
+  // The mode-dependent "Finding 상세화" directive is gone: it biased single-
+  // process runs toward lower BP scores, so the same artifact graded worse in
+  // process mode than in project mode. The scoring prompt is now byte-identical
+  // across modes — same prompt → same llmResponseCache key → identical grades.
+  assert.equal(proc.system, proj.system);
+  assert.equal(proc.context, proj.context);
+  assert.equal(proc.task, proj.task);
+  assert.doesNotMatch(proc.task, /단일 프로세스\(Per-process\) 모드/);
+  // System prefix stays the shared persona for prompt-cache stability.
+  assert.equal(proj.system, ASSESSOR_PERSONA);
+  // The JSON schema tail is preserved.
+  assert.match(proc.task, /"findings":\s*\[/);
+});
+
 test("bpPrompt: context includes process + fingerprint + excerpt", () => {
   const { context } = buildBpPrompt({
     process: PROCESS,

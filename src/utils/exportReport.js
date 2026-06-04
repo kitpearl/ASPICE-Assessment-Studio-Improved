@@ -1,38 +1,140 @@
 import jsPDF from "jspdf";
 import { normalizeEvidence } from "./evidence";
 import { captureToPngCanvas, sliceCanvasToPdfPage } from "./pdfPaginator";
+import { RATING_META, RATING_ORDER, countRatings, isCl1Pass } from "../data/ratingMeta";
+import { FINDING_TYPE_LABEL, flattenStandardRefs, buildFindingNarrative } from "./findings";
 
+// 표준 인용 리스트({kind,text}[]) 를 "PAM xxx, BGB yyy" 형태의 한 줄로 만든다.
+const formatRefs = (refs) => refs.map((r) => `${r.kind} ${r.text}`).join(", ");
+
+// 텍스트 결과물은 PDF(=VerdictCard 캡처) 와 동일한 내용을 담아야 한다.
+// 따라서 VerdictCard 의 렌더 구조 — 헤더 판정 / 등급 분포 / 강점·Finding /
+// BP별 Finding 카드(서술·위치·표준근거·Rating Rule) — 를 그대로 글로 옮긴다.
+// (HarnessVerdictBlock 은 화면에서 data-html2canvas-ignore 라 PDF 에 빠지므로
+//  여기서도 제외한다.)
 export const exportReportAsText = ({ proc, results, fileName, date }) => {
-  const lines = [];
-  lines.push("ASPICE 4.0 CL1 진단 리포트");
-  lines.push("================================");
-  lines.push(`프로세스: ${proc.id} ${proc.name}`);
-  lines.push(`문서: ${fileName}`);
-  lines.push(`일시: ${date.toLocaleString("ko-KR")}`);
-  lines.push("");
-  lines.push(`[Summary] ${results.summary || ""}`);
-  lines.push(`[Strengths] ${results.strengths || ""}`);
-  lines.push(`[Gaps] ${results.gaps || ""}`);
-  lines.push("");
-  lines.push("BP별 평가");
-  lines.push("--------------------------------");
-  results.ratings.forEach((r) => {
-    const bpDef = proc.bps.find((b) => b.id === r.bp);
-    lines.push(`${r.bp} [${r.rating}] ${bpDef?.title || ""}`);
-    lines.push(`  Finding: ${r.rationale}`);
-    const evidenceItems = normalizeEvidence(r.evidence);
-    if (evidenceItems.length === 0) {
-      lines.push(`  Finding 근거: (제시된 근거 없음)`);
-    } else {
-      lines.push(`  Finding 근거:`);
-      evidenceItems.forEach((ev, i) => {
-        const loc = ev.location ? `[${ev.location}] ` : "";
-        lines.push(`    ${i + 1}. ${loc}${ev.quote || "(내용 없음)"}`);
-      });
-    }
-    lines.push("");
+  const counts = countRatings(results.ratings);
+  const totalBps = proc.bps.length;
+  const cl1Pass = isCl1Pass(results.ratings);
+  // VerdictHeader 와 동일한 식: N/P 를 뺀 나머지를 "L 이상" 으로 본다.
+  const aboveL = totalBps - (counts.N || 0) - (counts.P || 0);
+
+  const L = [];
+  const push = (s = "") => L.push(s);
+  const rule = (ch = "─") => L.push(ch.repeat(64));
+
+  // ── 헤더 (VerdictHeader) ──
+  push("§ 03 · NPLF 평가 결과");
+  push("Capability Level 1 · 평가 결과");
+  rule("=");
+  push(`판정: ${cl1Pass ? "적합 (Conformant)" : "갭 발견 (Gap Detected)"} · ${aboveL}/${totalBps} BP가 L 이상`);
+  push(`프로세스: ${proc.id} ${proc.name}`);
+  push(`문서: ${fileName || "—"}`);
+  push(`일시: ${date.toLocaleString("ko-KR")}`);
+  push();
+  if (results.summary) {
+    push(`[Summary] ${results.summary}`);
+    push();
+  }
+
+  // ── 등급 분포 (RatingCountsGrid) ──
+  push("등급 분포 (Rating Distribution)");
+  rule();
+  RATING_ORDER.forEach((k) => {
+    const m = RATING_META[k];
+    const c = counts[k] || 0;
+    const pct = totalBps ? (c / totalBps) * 100 : 0;
+    push(`  ${k.padEnd(3)} · ${m.label.toUpperCase().padEnd(11)} ${String(c).padStart(2)}개  ${pct.toFixed(0)}% · ${m.range}`);
   });
-  const blob = new Blob([lines.join("\n")], { type: "text/plain;charset=utf-8" });
+  push();
+
+  // ── 강점 / Finding (InsightsPair) ──
+  if (results.strengths || results.gaps) {
+    if (results.strengths) {
+      push("◆ 강점");
+      push(`  ${results.strengths}`);
+      push();
+    }
+    if (results.gaps) {
+      push("◆ Finding");
+      push(`  ${results.gaps}`);
+      push();
+    }
+  }
+
+  // ── BP별 평가 (BpRatingRow) ──
+  push("BP별 평가 (BP-level Ratings)");
+  rule("=");
+  push();
+
+  proc.bps.forEach((bp) => {
+    const rating =
+      results.ratings.find((x) => x.bp === bp.id) ||
+      { rating: "N", rationale: "응답 누락", evidence: "없음" };
+    const m = RATING_META[rating.rating] || RATING_META.N;
+    // 각 BP 단락 상단에 BP 번호를 머릿글로 먼저 노출한다.
+    // (BP 번호가 [등급] (범위) 뒤에 묻혀 누락된 것처럼 보이던 문제 수정)
+    rule("─");
+    push(`${proc.id}.${bp.id}  ${bp.title}`);
+    push(`  판정: [${rating.rating}] (${m.range})`);
+
+    const findings = Array.isArray(rating.findings) ? rating.findings : [];
+    if (findings.length > 0) {
+      // 신규: Finding 카드 스택 (FindingCard)
+      findings.forEach((f) => {
+        const label = FINDING_TYPE_LABEL[f.type] || FINDING_TYPE_LABEL.observation;
+        push(`  ◆ ${label}${f.id ? `  ${f.id}` : ""}`);
+        const narrative = buildFindingNarrative(f);
+        if (narrative) push(`    Finding: ${narrative}`);
+
+        const loc = f.location ?? {};
+        if (loc.found || loc.recommended) {
+          const segs = [];
+          if (loc.found) segs.push(`발견: ${loc.found}`);
+          if (loc.recommended) segs.push(`권고 위치: ${loc.recommended}`);
+          push(`    위치 (LOCATION): ${segs.join(" · ")}`);
+        }
+
+        const refs = flattenStandardRefs(f.standardReferences, proc.id);
+        if (refs.length) push(`    표준 근거: ${formatRefs(refs)}`);
+
+        const ri = f.ratingImpact ?? {};
+        if (ri.ruleApplied || ri.scoreDelta) {
+          const bits = [];
+          if (ri.ruleId) bits.push(ri.ruleId);
+          if (typeof ri.scoreDelta === "number" && ri.scoreDelta !== 0) {
+            bits.push(`Δ ${ri.scoreDelta > 0 ? "+" : ""}${ri.scoreDelta}%`);
+          }
+          push(`    Rating Rule · ${bits.join("  ")}`);
+          if (ri.reason) push(`      ${ri.reason}`);
+        }
+        push();
+      });
+      const ratingRefs = flattenStandardRefs(rating.standardReferences, proc.id);
+      if (ratingRefs.length) {
+        push(`  표준 근거: ${formatRefs(ratingRefs)}`);
+        push();
+      }
+    } else {
+      // 레거시: rationale + 약점(WEAKNESS) + evidence 리스트
+      push(`  약점 · ${rating.rationale}`);
+      push("  약점 (WEAKNESS)");
+      const evidenceItems = normalizeEvidence(rating.evidence);
+      if (evidenceItems.length === 0) {
+        push("    제시된 증거 없음");
+      } else {
+        evidenceItems.forEach((ev, i) => {
+          const loc = ev.location ? `[${ev.location}] ` : "";
+          push(`    ${i + 1}. ${loc}${ev.quote || "(내용 없음)"}`);
+        });
+      }
+      const ratingRefs = flattenStandardRefs(rating.standardReferences, proc.id);
+      if (ratingRefs.length) push(`  표준 근거: ${formatRefs(ratingRefs)}`);
+      push();
+    }
+  });
+
+  const blob = new Blob([L.join("\n")], { type: "text/plain;charset=utf-8" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;

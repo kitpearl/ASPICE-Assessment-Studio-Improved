@@ -58,33 +58,33 @@ export const ruleScorer = {
       gaps.push(partialContextGap(namesWithStatus(matchIndex, ctxContributing, "partial", "off-context")));
     }
     const matchedCount = total - missing.length;
-    const ratio = total > 0 ? Math.round((matchedCount / total) * 100) : 0;
     const matchedKws = kws.filter((k) => !missing.includes(k));
     const foundArtifacts = Array.from(
       new Set(evidence.map((e) => displayArtifactName(e?.artifactName)).filter(Boolean))
     );
-    const matchedHint = matchedKws.length
-      ? ` 확인된 핵심 개념: ${matchedKws.slice(0, 6).join(", ")}${matchedKws.length > 6 ? " 등" : ""}.`
-      : "";
+    // Lead with what the artifact substantively appears to cover, then spell out
+    // the *content* that the BP requires but is not yet evidenced — framed as a
+    // gap to investigate, not a keyword tally. The mechanical "n/m 개념(%)" and
+    // score-curve explanation are intentionally dropped: they read as a
+    // word-matching report, whereas a consultant needs "무엇이 부족한가".
+    const coveredHint = matchedKws.length
+      ? `산출물에서 ${matchedKws.slice(0, 6).join(", ")}${matchedKws.length > 6 ? " 등" : ""}에 관한 내용은 확인되었습니다.`
+      : `산출물에서 이 BP가 요구하는 내용이 뚜렷하게 확인되지 않았습니다.`;
     const artifactHint = foundArtifacts.length
       ? ` 근거 산출물: ${foundArtifacts.slice(0, 4).join(", ")}${foundArtifacts.length > 4 ? " 등" : ""}.`
       : "";
-    const missingHint = missing.length
-      ? ` 아직 산출물 본문·메타데이터에서 단어로 확인되지 않은 개념: ${missing.slice(0, 5).join(", ")}${missing.length > 5 ? " 등" : ""}.`
-      : "";
+    const gapHint = missing.length
+      ? ` 반면 ${missing.slice(0, 5).join(", ")}${missing.length > 5 ? " 등" : ""}에 해당하는 요구 내용은 본문·근거에서 충분히 다루어지지 않은 것으로 보여, 해당 측면이 실제로 기술·근거화되었는지와 보강이 필요한지에 대한 점검이 필요합니다.`
+      : ` 이 BP가 요구하는 핵심 내용은 대체로 확인되었습니다.`;
     const finding = buildRuleObservationFinding({
       bpFullId,
       ruleId: RULE_ID_BP,
       situation:
-        `자동 키워드 점검(규칙 기반): 이 BP가 요구하는 핵심 개념 ${total}개 중 ${matchedCount}개(${ratio}%)가 산출물에서 확인되었습니다.` +
-        matchedHint +
-        artifactHint +
-        missingHint +
-        ` 점수(${scorePercent}%)는 키워드 부재를 곧 요구사항 미충족으로 보지 않는 정성적 보정 곡선(일치 개념에 기본 신뢰점수 부여 + 누락 개념 완만 감점)으로 산출되었습니다.` +
-        ` 단어 일치는 개념의 표현 여부만 확인할 뿐 의미적 충족까지 보장하지 않으므로, 확인된 개념의 실질 충족 여부와 위 미확인 개념의 의미적 반영 여부는 시니어 평가자의 정성 검토가 필요합니다.`,
+        `내용 충실도 1차 검토(규칙 기반): ${coveredHint}${artifactHint}${gapHint}` +
+        ` 자동 1차 검토는 내용의 표면적 포함 여부만 확인하므로, 위 내용이 요구사항을 실질적으로 충족하는지와 부족한 부분의 보완 방향은 시니어 평가자의 정성 검토가 필요합니다.`,
       evidence,
       pamCitation,
-      scoreReason: `계산하라: 핵심 개념 ${matchedCount}/${total} 확인 → 정성적 보정 점수 ${scorePercent}% (일치 개념 기본 신뢰 + 누락 완만 감점)`,
+      scoreReason: `확인결과: 요구 내용 ${matchedCount}/${total} 항목 확인, 점수 ${scorePercent}% (자동 1차 검토 · 시니어 정성 검토 필요)`,
     });
     return {
       scorePercent,
@@ -126,10 +126,10 @@ export const ruleScorer = {
           buildRuleObservationFinding({
             bpFullId,
             ruleId: RULE_ID_WP,
-            situation: `자동 키워드 점검(규칙 기반): 산출물 "${wpidHit.name}" 이 WP ${wp.id} (${wp.name}) 식별자로 태깅되어 확인되었습니다. 의미적 충족 여부는 시니어 평가자의 추가 검토가 필요합니다.`,
+            situation: `산출물 충실도 1차 검토(규칙 기반): 산출물 "${wpidHit.name}" 이 WP ${wp.id} (${wp.name}) 으로 식별되어 해당 작업산출물이 존재함이 확인되었습니다. 다만 이 산출물이 ${wp.name} 으로서 요구되는 내용·구성요소를 실질적으로 충족하는지는 시니어 평가자의 정성 검토가 필요합니다.`,
             evidence,
             pamCitation,
-            scoreReason: `계산하라: WPID 직접 태깅 → 기저 점수 ${base}, 컨텍스트 보정 후 ${score}%`,
+            scoreReason: `확인결과: WPID 직접 태깅 → 기저 점수 ${base}, 컨텍스트 보정 후 ${score}%`,
           }),
         ],
       };
@@ -162,10 +162,10 @@ export const ruleScorer = {
           buildRuleObservationFinding({
             bpFullId,
             ruleId: RULE_ID_WP,
-            situation: `자동 키워드 점검(규칙 기반): WP ${wp.id} 식별자 태깅은 부재하나 "${nameHit.name}" 산출물명/본문에서 WP 명칭 일치가 확인되었습니다. 의미적 충족 여부는 시니어 평가자의 추가 검토가 필요합니다.`,
+            situation: `산출물 충실도 1차 검토(규칙 기반): WP ${wp.id} 식별자 태깅은 부재하나 "${nameHit.name}" 의 산출물명·본문에서 ${wp.name} 에 해당하는 내용이 확인되었습니다. 식별자 태깅이 없어 해당 작업산출물로 공식 관리·추적되는지 불명확하므로, 이 산출물의 ${wp.name} 요구 내용 충족 여부와 함께 시니어 평가자의 정성 검토가 필요합니다.`,
             evidence,
             pamCitation,
-            scoreReason: `계산하라: 이름 매칭 → 기저 점수 ${base}, 컨텍스트 보정 후 ${score}%`,
+            scoreReason: `확인결과: 이름 매칭 → 기저 점수 ${base}, 컨텍스트 보정 후 ${score}%`,
           }),
         ],
       };
@@ -180,10 +180,10 @@ export const ruleScorer = {
         buildRuleObservationFinding({
           bpFullId,
           ruleId: RULE_ID_WP,
-          situation: `자동 키워드 점검(규칙 기반): WP ${wp.id} ${wp.name} 에 대한 식별자 태깅·이름 일치가 어떤 산출물에서도 확인되지 않았습니다. 의미적 충족 여부는 시니어 평가자의 추가 검토가 필요합니다.`,
+          situation: `산출물 충실도 1차 검토(규칙 기반): WP ${wp.id} ${wp.name} 에 해당하는 작업산출물이 어떤 산출물에서도 식별되지 않았습니다. 해당 작업산출물의 부재 또는 다른 명칭으로의 산재 가능성이 있으므로, 실제 존재 여부와 내용 충족 여부에 대한 시니어 평가자의 확인이 필요합니다.`,
           evidence: [],
           pamCitation,
-          scoreReason: `계산하라: 매칭 부재 → 0%`,
+          scoreReason: `확인결과: 매칭 부재 → 0%`,
         }),
       ],
     };
@@ -214,10 +214,10 @@ export const ruleScorer = {
           buildRuleObservationFinding({
             bpFullId,
             ruleId: RULE_ID_GP_DERIVED,
-            situation: `자동 키워드 점검(규칙 기반): GP 1.1.1 (Achieve the intent of the base practices) 는 BP 결과로부터 파생됩니다. 전체 ${list.length} 개 BP 중 ${lowCount} 개가 'Largely' 임계 (51%) 미만으로 확인되었습니다. 의미적 충족 여부는 시니어 평가자의 추가 검토가 필요합니다.`,
+            situation: `내용 충실도 1차 검토(규칙 기반): GP 1.1.1 (기본 프랙티스 의도 달성) 의 달성도는 개별 BP 결과로부터 파생됩니다. 전체 ${list.length} 개 BP 중 ${lowCount} 개가 'Largely'(51%) 임계 미만으로, 해당 BP들이 요구 내용을 충분히 충족하지 못한 것으로 보입니다. 이들 BP의 실질 충족 여부와 보강 방향은 시니어 평가자의 정성 검토가 필요합니다.`,
             evidence: [],
             pamCitation,
-            scoreReason: `계산하라: BP scorePercent 평균 → ${scorePercent}%`,
+            scoreReason: `확인결과: BP scorePercent 평균 → ${scorePercent}%`,
           }),
         ],
       };
@@ -233,20 +233,19 @@ export const ruleScorer = {
     if (contextConsistency.status === "off-context") gaps.push(offContextGap(namesWithStatus(matchIndex, gpCtxContributing, "off-context")));
     else if (contextConsistency.status === "partial") gaps.push(partialContextGap(namesWithStatus(matchIndex, gpCtxContributing, "partial", "off-context")));
     const matchedCount = (total || 0) - missing.length;
-    const ratio = total > 0 ? Math.round((matchedCount / total) * 100) : 0;
     const gpMatchedKws = kws.filter((k) => !missing.includes(k));
     const gpFoundArtifacts = Array.from(
       new Set(evidence.map((e) => displayArtifactName(e?.artifactName)).filter(Boolean))
     );
-    const gpMatchedHint = gpMatchedKws.length
-      ? ` 확인된 핵심 개념: ${gpMatchedKws.slice(0, 6).join(", ")}${gpMatchedKws.length > 6 ? " 등" : ""}.`
-      : "";
+    const gpCoveredHint = gpMatchedKws.length
+      ? `산출물에서 ${gpMatchedKws.slice(0, 6).join(", ")}${gpMatchedKws.length > 6 ? " 등" : ""}에 관한 내용은 확인되었습니다.`
+      : `산출물에서 이 GP가 요구하는 내용이 뚜렷하게 확인되지 않았습니다.`;
     const gpArtifactHint = gpFoundArtifacts.length
       ? ` 근거 산출물: ${gpFoundArtifacts.slice(0, 4).join(", ")}${gpFoundArtifacts.length > 4 ? " 등" : ""}.`
       : "";
-    const gpMissingHint = missing.length
-      ? ` 아직 산출물 본문·메타데이터에서 단어로 확인되지 않은 개념: ${missing.slice(0, 5).join(", ")}${missing.length > 5 ? " 등" : ""}.`
-      : "";
+    const gpGapHint = missing.length
+      ? ` 반면 ${missing.slice(0, 5).join(", ")}${missing.length > 5 ? " 등" : ""}에 해당하는 요구 내용은 본문·근거에서 충분히 다루어지지 않은 것으로 보여, 해당 측면이 실제로 기술·근거화되었는지와 보강이 필요한지에 대한 점검이 필요합니다.`
+      : ` 이 GP가 요구하는 핵심 내용은 대체로 확인되었습니다.`;
     return {
       scorePercent,
       evidence,
@@ -258,14 +257,11 @@ export const ruleScorer = {
           bpFullId,
           ruleId: RULE_ID_GP_HEURISTIC,
           situation:
-            `자동 키워드 점검(규칙 기반): 이 GP가 요구하는 핵심 개념 ${total || 0}개 중 ${matchedCount}개(${ratio}%)가 산출물에서 확인되었습니다.` +
-            gpMatchedHint +
-            gpArtifactHint +
-            gpMissingHint +
-            ` 점수(${scorePercent}%)는 키워드 부재를 곧 미충족으로 보지 않는 정성적 보정 곡선으로 산출되었으며, 단어 일치는 표현 여부만 확인할 뿐 의미적 충족까지 보장하지 않으므로 시니어 평가자의 정성 검토가 필요합니다.`,
+            `내용 충실도 1차 검토(규칙 기반): ${gpCoveredHint}${gpArtifactHint}${gpGapHint}` +
+            ` 자동 1차 검토는 내용의 표면적 포함 여부만 확인하므로, 위 내용이 요구사항을 실질적으로 충족하는지와 부족한 부분의 보완 방향은 시니어 평가자의 정성 검토가 필요합니다.`,
           evidence,
           pamCitation,
-          scoreReason: `계산하라: 핵심 개념 ${matchedCount}/${total || 0} 확인 → 정성적 보정 점수 ${scorePercent}% (일치 개념 기본 신뢰 + 누락 완만 감점)`,
+          scoreReason: `확인결과: 요구 내용 ${matchedCount}/${total || 0} 항목 확인, 점수 ${scorePercent}% (자동 1차 검토 · 시니어 정성 검토 필요)`,
         }),
       ],
     };
@@ -488,10 +484,10 @@ function emptyBp({ bpFullId, pamCitation, reason }) {
       buildRuleObservationFinding({
         bpFullId,
         ruleId: RULE_ID_BP,
-        situation: `자동 키워드 점검(규칙 기반): BP 명세에서 키워드를 도출하지 못해 자동 점검을 적용할 수 없습니다 (${reason}). 시니어 평가자의 직접 평가가 필요합니다.`,
+        situation: `내용 충실도 1차 검토(규칙 기반): BP 명세에서 평가 기준이 될 핵심 내용을 도출하지 못해 자동 1차 검토를 적용할 수 없습니다 (${reason}). 시니어 평가자의 직접 평가가 필요합니다.`,
         evidence: [],
         pamCitation,
-        scoreReason: `계산하라: 키워드 도출 실패 → 0%`,
+        scoreReason: `확인결과: 키워드 도출 실패 → 0%`,
       }),
     ],
   };

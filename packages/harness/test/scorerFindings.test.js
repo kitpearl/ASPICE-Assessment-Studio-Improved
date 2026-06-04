@@ -25,12 +25,12 @@ test("ruleScorer.scoreBP: emits observation finding with rule-mode framing", asy
   const f = r.findings[0];
   assert.equal(f.type, "observation");
   assert.equal(f.bpId, "SYS.2.BP5");
-  assert.match(f.situation, /자동 키워드 점검/);
+  assert.match(f.situation, /내용 충실도 1차 검토/);
   // Rule-mode observations no longer emit a boilerplate "검토하라" recommendation.
   assert.equal(f.recommendation, "");
   assert.equal(f.ratingImpact.ruleApplied, true);
   assert.equal(f.ratingImpact.ruleId, "RULE-KEYWORD-OVERLAP");
-  assert.match(f.ratingImpact.reason, /^계산하라/);
+  assert.match(f.ratingImpact.reason, /^확인결과/);
   // BP-level standardReferences should carry the BP's PAM citation
   assert.ok(Array.isArray(r.standardReferences.pam) && r.standardReferences.pam.length > 0);
 });
@@ -58,7 +58,7 @@ test("ruleScorer.scoreWP: emits finding scoped to WP id", async () => {
   assert.equal(r.findings.length, 1);
   assert.equal(r.findings[0].bpId, "SYS.2.17-00");
   assert.equal(r.findings[0].ratingImpact.ruleId, "RULE-WPID-OR-NAME");
-  assert.match(r.findings[0].situation, /자동 키워드 점검/);
+  assert.match(r.findings[0].situation, /산출물 충실도 1차 검토/);
 });
 
 test("ruleScorer.scoreGP PA 1.1: finding mentions BP-derived computation", async () => {

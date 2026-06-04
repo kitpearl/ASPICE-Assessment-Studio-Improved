@@ -202,6 +202,11 @@ function reportContentHtml(verdict, entry) {
       const bps = p.bps || [];
       const avg = bps.length ? Math.round(bps.reduce((s, b) => s + (b.scorePercent || 0), 0) / bps.length) : 0;
       const pa = p.pas?.find((x) => x.paId === "PA 1.1");
+      // The score that actually drove the pill (hybrid blend), not the raw BP
+      // average — fall back to GP mean / BP avg for older saved reports.
+      const paScore = pa?.scorePercent ?? (pa?.gps?.length
+        ? Math.round(pa.gps.reduce((s, g) => s + (g.scorePercent || 0), 0) / pa.gps.length)
+        : avg);
       return `
         <div style="border:1px solid #E2E8F0;border-radius:5px;padding:12px 14px;margin-bottom:12px;background:#F8FAFC">
           <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
@@ -210,7 +215,8 @@ function reportContentHtml(verdict, entry) {
             <span style="margin-left:auto;display:inline-flex;align-items:center;gap:8px">
               <span style="font-size:10px;color:#64748B">PA 1.1</span>
               ${pa ? ratingPillHtml(pa.rating) : ""}
-              <span style="font-family:${FONT_MONO};font-size:10px;color:#64748B">BP 평균 ${avg}%</span>
+              <span style="font-family:${FONT_MONO};font-size:10px;color:#64748B">PA 점수 ${paScore}%</span>
+              <span style="font-family:${FONT_MONO};font-size:10px;color:#94A3B8">(참고 BP 평균 ${avg}%)</span>
             </span>
           </div>
           ${tableHtml(
@@ -516,6 +522,248 @@ function paginateContent(pdf, canvas, sectionMarkers, startingPageIndex) {
     if (!sectionPageStarts.has(sec.id)) sectionPageStarts.set(sec.id, pageIdx - 1);
   }
   return { sectionPageStarts, pagesAdded: totalPages };
+}
+
+// ── 텍스트 내보내기 ─────────────────────────────────────────────────────
+// PDF(=reportContentHtml 의 섹션 구성) 와 동일한 내용을 순수 텍스트로 옮긴다.
+// 프로세스 모드의 exportReportAsText 와 같은 사용감(한 줄 헤더 + 구분선 + 섹션)을
+// 목표로 하며, 표는 텍스트 표(컬럼 패딩)로 렌더한다.
+
+const padEndW = (s, w) => {
+  const str = String(s ?? "");
+  return str.length >= w ? str : str + " ".repeat(w - str.length);
+};
+
+// 헤더 + 행들을 받아 컬럼 폭을 자동 계산해 정렬된 텍스트 표를 만든다.
+const textTable = (headers, rows, indent = "  ") => {
+  const widths = headers.map((h, i) =>
+    Math.max(
+      String(h).length,
+      ...rows.map((r) => String(r[i] ?? "").length),
+    ),
+  );
+  const line = (cells) =>
+    indent + cells.map((c, i) => padEndW(c, widths[i])).join("  ").trimEnd();
+  const out = [];
+  out.push(line(headers));
+  out.push(indent + widths.map((w) => "─".repeat(w)).join("  "));
+  rows.forEach((r) => out.push(line(r.map((c) => (c == null ? "" : String(c))))));
+  return out;
+};
+
+export function exportProjectReportAsText({ verdict, entry }) {
+  if (!verdict) throw new Error("verdict required");
+
+  const { processes = [], crossProcess = {}, meta = {} } = verdict;
+  const { traceMatrices = [], consistency = [], coverage, changes } = crossProcess;
+  const target = meta.targetLevel ?? entry?.targetLevel ?? 1;
+  const metProcesses = processes.filter((p) => (p.capabilityLevel ?? 0) >= target);
+
+  const procIds = entry?.processIds || processes.map((p) => p.processId);
+  const arts = entry?.artifactNames || [];
+  const engineList = Array.isArray(entry?.engines) && entry.engines.length
+    ? entry.engines
+    : Array.isArray(meta?.engines) && meta.engines.length
+      ? meta.engines
+      : [entry?.engine || meta?.engine || "hybrid"];
+  const engine = engineList.map((e) => String(e).toUpperCase()).join(" + ");
+
+  const L = [];
+  const push = (s = "") => L.push(s);
+  const rule = (ch = "─") => L.push(ch.repeat(64));
+
+  let counter = 0;
+  const num = () => ++counter;
+
+  // ── 헤더 ──
+  push("ASPICE 4.0 · 프로젝트 평가 보고서");
+  push("프로젝트 평가 결과");
+  rule("=");
+  push(`발행일: ${formatDate(entry?.date)}`);
+  push(`목표 능력 수준: CL ${target}`);
+  push(`평가 엔진: ${engine}`);
+  push(`대상 프로세스 (${procIds.length}): ${procIds.join(", ")}`);
+  push(`증적 산출물 (${arts.length}): ${arts.length ? arts.join(", ") : "—"}`);
+  push();
+
+  // ── 1. 평가 요약 (Executive Summary) ──
+  push(`${num()}. 평가 요약 (Executive Summary)`);
+  rule();
+  push(`  목표 능력 수준: CL ${target}`);
+  push(`  프로세스 충족: ${metProcesses.length} / ${processes.length}`);
+  push(`  산출물: ${meta.artifactCount ?? entry?.artifactCount ?? 0}개`);
+  push(`  커버리지: ${coverage?.coveragePercent != null ? `${coverage.coveragePercent}%` : "—"}`);
+  push();
+  push(
+    `  평가 대상 프로세스 ${processes.length}개 중 ${metProcesses.length}개가 목표 능력 수준을 충족하였으며, ` +
+    `교차 프로세스 일관성 점검에서 오류 ${consistency.filter((c) => c.severity === "error").length}건, ` +
+    `경고 ${consistency.filter((c) => c.severity === "warning").length}건이 발견되었습니다.`,
+  );
+  push();
+
+  // ── 2. 능력 수준 요약 (Capability Summary) ──
+  push(`${num()}. 능력 수준 요약 (Capability Summary)`);
+  rule();
+  const PA_COLS = ["PA 1.1", "PA 2.1", "PA 2.2", "PA 3.1", "PA 3.2"];
+  textTable(
+    ["프로세스", "CL", ...PA_COLS],
+    processes.map((p) => [
+      `${p.processId} ${p.processName}`,
+      `CL${p.capabilityLevel}`,
+      ...PA_COLS.map((pa) => {
+        const hit = p.pas?.find((x) => x.paId === pa);
+        return hit ? hit.rating : "—";
+      }),
+    ]),
+  ).forEach(push);
+  push();
+
+  // ── 3. PA 1.1 Finding — 프로세스별 BP 평가 ──
+  if (processes.some((p) => p.pas?.find((x) => x.paId === "PA 1.1"))) {
+    push(`${num()}. PA 1.1 Finding — 프로세스별 BP 평가`);
+    rule("=");
+    push();
+    processes.forEach((p) => {
+      const pa = p.pas?.find((x) => x.paId === "PA 1.1");
+      if (!pa) return;
+      const bps = p.bps || [];
+      const avg = bps.length ? Math.round(bps.reduce((s, b) => s + (b.scorePercent || 0), 0) / bps.length) : 0;
+      const paScore = pa.scorePercent ?? (pa.gps?.length
+        ? Math.round(pa.gps.reduce((s, g) => s + (g.scorePercent || 0), 0) / pa.gps.length)
+        : avg);
+      rule("─");
+      push(`${p.processId}  ${p.processName}`);
+      push(`  PA 1.1: [${pa.rating}]  PA 점수 ${paScore}%  (참고 BP 평균 ${avg}%)`);
+      push();
+      textTable(
+        ["BP", "제목", "등급", "점수", "Finding"],
+        bps.map((b) => [
+          b.id,
+          bpTitleKo(p.processId, b.id, b.title || ""),
+          b.rating,
+          `${Math.round(b.scorePercent || 0)}%`,
+          summarizeBp(b),
+        ]),
+      ).forEach(push);
+      push();
+    });
+  }
+
+  // ── PA 2.1 ~ PA 3.2 Finding — 프로세스별 GP 평가 ──
+  const PA_GP_LABELS = {
+    "PA 2.1": "프로세스 수행 관리",
+    "PA 2.2": "작업산출물 관리",
+    "PA 3.1": "프로세스 정의",
+    "PA 3.2": "프로세스 배포",
+  };
+  for (const [paId, label] of Object.entries(PA_GP_LABELS)) {
+    const paRows = processes
+      .map((p) => ({ proc: p, pa: p.pas?.find((x) => x.paId === paId) }))
+      .filter((r) => r.pa && (r.pa.gps?.length ?? 0) > 0);
+    if (!paRows.length) continue;
+    push(`${num()}. ${paId} Finding — 프로세스별 GP 평가 (${label})`);
+    rule("=");
+    push();
+    paRows.forEach(({ proc, pa }) => {
+      const gps = pa.gps || [];
+      const avg = gps.length ? Math.round(gps.reduce((s, g) => s + (g.scorePercent || 0), 0) / gps.length) : 0;
+      rule("─");
+      push(`${proc.processId}  ${proc.processName}`);
+      push(`  ${paId}: [${pa.rating}]  GP 평균 ${avg}%`);
+      push();
+      textTable(
+        ["GP", "제목", "등급", "점수", "Finding"],
+        gps.map((g) => [
+          g.id,
+          gpTitleKo(g.id, g.title || ""),
+          g.rating,
+          `${Math.round(g.scorePercent || 0)}%`,
+          summarizeGp(g),
+        ]),
+      ).forEach(push);
+      push();
+    });
+  }
+
+  // ── 추적성 매트릭스 (Traceability Matrix) ──
+  if (traceMatrices.length > 0) {
+    push(`${num()}. 추적성 매트릭스 (Traceability Matrix)`);
+    rule();
+    textTable(
+      ["출발 → 도착", "WP", "출발 ID 수", "도착 ID 수", "커버리지", "고아(출발/도착)"],
+      traceMatrices.map((m) => [
+        `${m.sourceProcess} → ${m.targetProcess}`,
+        m.sourceWp,
+        String(m.sourceIds?.length ?? 0),
+        String(m.targetIds?.length ?? 0),
+        m.coveragePercent == null ? "—" : `${m.coveragePercent}%`,
+        `${m.orphansSource?.length ?? 0} / ${m.orphansTarget?.length ?? 0}`,
+      ]),
+    ).forEach(push);
+    const orphanEdges = traceMatrices.filter((m) => (m.orphansSource?.length || m.orphansTarget?.length));
+    if (orphanEdges.length) {
+      push();
+      push("  고아 ID 상세 (참조되지 않은 ID 목록)");
+      orphanEdges.forEach((m) => {
+        push(`  · ${m.sourceProcess} → ${m.targetProcess} · WP ${m.sourceWp}`);
+        if (m.orphansSource?.length) push(`      출발 누락(${m.orphansSource.length}): ${m.orphansSource.join(", ")}`);
+        if (m.orphansTarget?.length) push(`      도착 누락(${m.orphansTarget.length}): ${m.orphansTarget.join(", ")}`);
+      });
+    }
+    push();
+  }
+
+  // ── 일관성 점검 결과 (Consistency Findings) ──
+  if (consistency.length > 0) {
+    push(`${num()}. 일관성 점검 결과 (Consistency Findings)`);
+    rule();
+    consistency.forEach((f) => {
+      push(`  [${f.severity}] ${f.kind}`);
+      push(`    ${f.description}`);
+      push(`    아티팩트: ${(f.relatedArtifacts || []).join(", ") || "—"}`);
+      push();
+    });
+  }
+
+  // ── 요구사항 → 테스트 커버리지 (Coverage) ──
+  if (coverage && coverage.totalRequirements > 0) {
+    push(`${num()}. 요구사항 → 테스트 커버리지 (Coverage)`);
+    rule();
+    push(`  커버된 요구사항 ${coverage.coveredCount} / ${coverage.totalRequirements}  ·  ${coverage.coveragePercent}%`);
+    if (coverage.uncovered?.length) {
+      const shown = coverage.uncovered.slice(0, 80);
+      const more = coverage.uncovered.length > 80 ? ` … 외 ${coverage.uncovered.length - 80}건` : "";
+      push(`  미커버 요구사항 (${coverage.uncovered.length}): ${shown.join(", ")}${more}`);
+    }
+    push();
+  }
+
+  // ── 변경 전파 (SUP.10 Change Propagation) ──
+  if (changes && changes.summary?.total > 0) {
+    push(`${num()}. 변경 전파 (SUP.10 Change Propagation)`);
+    rule();
+    push(`  총 ${changes.summary.total}건 · 전파됨 ${changes.summary.propagated} · 검증만 ${changes.summary.verificationOnly} · 미해결 ${changes.summary.unresolved}`);
+    push();
+    textTable(
+      ["CR ID", "상태", "영향 산출물 수", "관련 산출물"],
+      (changes.report || []).map((r) => [
+        r.crId,
+        r.status,
+        String(r.impactedArtifactCount),
+        (r.artifacts || []).join(", ") || "—",
+      ]),
+    ).forEach(push);
+    push();
+  }
+
+  const fileProcIds = procIds.join("-").slice(0, 40) || "report";
+  const blob = new Blob([L.join("\n")], { type: "text/plain;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `ASPICE_Project_${fileProcIds}_report.txt`;
+  a.click();
+  URL.revokeObjectURL(url);
 }
 
 export async function exportProjectReportAsPdf({ verdict, entry }) {

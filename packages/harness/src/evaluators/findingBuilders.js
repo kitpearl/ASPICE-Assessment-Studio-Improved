@@ -116,7 +116,7 @@ export function buildCustomRuleObservationFinding({
       ruleApplied: true,
       ruleId: `CUSTOM:${rule.id}`,
       scoreDelta: 0,
-      reason: `계산하라: 사용자 룰 가중치 기반 비율 (${matchedCount}/${totalKeywords})`,
+      reason: `확인결과: 사용자 룰 가중치 기반 비율 (${matchedCount}/${totalKeywords})`,
     },
   });
 }

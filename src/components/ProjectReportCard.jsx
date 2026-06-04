@@ -1,11 +1,11 @@
-import { X, FileDown, Loader2 } from "lucide-react";
+import { X, FileDown, Download, Loader2 } from "lucide-react";
 import { T, FONTS, SECTION_CONTAINER_STYLE } from "../theme";
 import { SectionBadge } from "./SectionBadge";
 import { RATING_META } from "../data/ratingMeta";
 import { condenseGap as condenseGapShared } from "../utils/gapText";
 import { bpTitleKo, gpTitleKo } from "../utils/titlesKo";
 
-export function ProjectReportCard({ verdict, onClose, onExportPdf, exporting = false }) {
+export function ProjectReportCard({ verdict, onClose, onExportPdf, onExportTxt, exporting = false }) {
   if (!verdict) return null;
   const { processes = [], crossProcess = {}, meta = {} } = verdict;
   const { traceMatrices = [], consistency = [], coverage, changes, graph } = crossProcess;
@@ -14,7 +14,7 @@ export function ProjectReportCard({ verdict, onClose, onExportPdf, exporting = f
   return (
     <section style={{ ...SECTION_CONTAINER_STYLE, position: "relative" }}>
       <SectionBadge>06 · 프로젝트 리포트</SectionBadge>
-      {(onClose || onExportPdf) && (
+      {(onClose || onExportPdf || onExportTxt) && (
         <div style={{
           position: "absolute",
           top: 14,
@@ -50,6 +50,32 @@ export function ProjectReportCard({ verdict, onClose, onExportPdf, exporting = f
             >
               {exporting ? <Loader2 size={11} className="anim-spin" /> : <FileDown size={11} />}
               {exporting ? "생성 중" : "PDF 출력하기"}
+            </button>
+          )}
+          {onExportTxt && (
+            <button
+              type="button"
+              onClick={onExportTxt}
+              aria-label="이 리포트를 텍스트로 내보내기"
+              title="이 리포트를 텍스트로 내보내기"
+              style={{
+                background: "transparent",
+                color: T.textMd,
+                border: `1px solid ${T.borderM}`,
+                padding: "6px 10px",
+                fontFamily: FONTS.mono,
+                fontSize: 10,
+                letterSpacing: "0.1em",
+                textTransform: "uppercase",
+                cursor: "pointer",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 6,
+                borderRadius: 3,
+                fontWeight: 600,
+              }}
+            >
+              <Download size={11} /> 텍스트
             </button>
           )}
           {onClose && (
@@ -283,11 +309,16 @@ function Pa11Rationale({ processes }) {
     <>
       <SubHeading>PA 1.1 Finding 요약 (BP 평가 기준)</SubHeading>
       <div style={{ color: T.textLo, fontSize: 11, marginBottom: 10 }}>
-        PA 1.1(Process Performance)은 각 프로세스 BP의 평균으로 산출됩니다. 아래 표는 프로세스별 PA 1.1 등급과 BP별 Finding 항목을 정리한 것입니다.
+        PA 1.1(Process Performance)은 BP 평가를 기준으로 산정됩니다. Hybrid 엔진은 BP 평균(0.4)과 LLM의 GP 1.1.1 점수(0.6)를 혼합하므로, 등급(PA 점수)은 BP 평균과 다를 수 있습니다. 아래 표는 프로세스별 PA 1.1 등급과 BP별 Finding 항목을 정리한 것입니다.
       </div>
       {rows.map(({ proc, pa }) => {
         const bps = proc.bps || [];
         const avg = bps.length ? Math.round(bps.reduce((s, b) => s + (b.scorePercent || 0), 0) / bps.length) : 0;
+        // The number that actually produced the pill. Fall back to the GP mean
+        // (then BP avg) for reports saved before the harness exposed it.
+        const paScore = pa.scorePercent ?? (pa.gps?.length
+          ? Math.round(pa.gps.reduce((s, g) => s + (g.scorePercent || 0), 0) / pa.gps.length)
+          : avg);
         const weak = bps.filter((b) => ["P+", "P-", "N"].includes(b.rating));
         return (
           <div key={proc.processId} style={{
@@ -303,7 +334,8 @@ function Pa11Rationale({ processes }) {
               <span style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 8 }}>
                 <span style={{ color: T.textLo, fontSize: 11 }}>PA 1.1</span>
                 <RatingPill code={pa.rating} />
-                <span style={{ color: T.textLo, fontSize: 11, fontFamily: FONTS.mono }}>BP 평균 {avg}%</span>
+                <span style={{ color: T.textLo, fontSize: 11, fontFamily: FONTS.mono }}>PA 점수 {paScore}%</span>
+                <span style={{ color: T.textLo, fontSize: 11, fontFamily: FONTS.mono, opacity: 0.7 }}>(참고 BP 평균 {avg}%)</span>
               </span>
             </div>
             <table style={TBL}>

@@ -175,13 +175,15 @@ function buildScorer(engines, apiKey, customRules) {
 // A deliverable owned by another process — e.g. the MAN.3 feasibility report —
 // is never inherited as evidence elsewhere.
 //
-// `strict` (project mode) refuses to fall back to another process's deliverable
-// when a process has no own artifact; single-process mode keeps the legacy
-// "score against everything" fallback for ad-hoc uploads.
+// `strict` refuses to fall back to another process's deliverable when a process
+// has no own artifact (only ownerless files may serve as a last resort). Both
+// modes now run strict so the same artifact is scoped — and therefore graded —
+// identically in single-process and project runs. A file belonging to a
+// different process than the one selected is dropped rather than scored.
 //
 // `extraBPs` is an optional list of user-defined Base Practices that the
 // harness will merge into the process spec's BP list (see Harness#evaluateProcess).
-async function evaluateOneProcess(harness, processSpec, indexedArtifacts, extraBPs = [], strict = false) {
+async function evaluateOneProcess(harness, processSpec, indexedArtifacts, extraBPs = [], strict = false, mode = "process") {
   // The per-area document-type restriction is a CL1 rule only. Above CL1 every
   // document type is admissible evidence; only owner-based routing still applies.
   const docTypeScope = Number(harness?.targetLevel) === 1;
@@ -190,6 +192,10 @@ async function evaluateOneProcess(harness, processSpec, indexedArtifacts, extraB
     processId: processSpec.id,
     artifacts: scoped,
     extraBPs,
+    // `mode` no longer changes BP scoring: process (/api/analyze) and project
+    // (/api/project) grade the same artifact identically. Kept for call-site
+    // stability and possible future narrative-only use. See buildBpPrompt.
+    mode,
   });
 }
 
@@ -255,7 +261,9 @@ export async function handleEvaluate({ processId, artifact, artifacts, targetLev
   // Index once up-front so the per-process filter sees wpidCandidates.
   const indexed = indexArtifacts(arts, { wpCatalog: loadWorkProducts() });
   const extraBPs = resolved.includes("custom") ? customBPsForProcess(customRules, processSpec.id) : [];
-  const verdict = await evaluateOneProcess(harness, processSpec, indexed, extraBPs);
+  // strict: scope to this process's own (or ownerless) deliverables, matching
+  // project mode (/api/project) so a file grades the same in both modes.
+  const verdict = await evaluateOneProcess(harness, processSpec, indexed, extraBPs, true);
   verdict.meta = {
     ...(verdict.meta || {}),
     skippedArtifacts: skipped,
@@ -295,7 +303,8 @@ export async function handleProject({ processIds, artifacts, targetLevel = 1, en
         proc,
         indexed,
         customActive ? customBPsForProcess(customRules, proc.id) : [],
-        true // strict: a process is judged on its own deliverables, not inherited ones
+        true, // strict: a process is judged on its own deliverables, not inherited ones
+        "project" // project mode: terser cross-referenced Finding narratives
       )
     )
   );

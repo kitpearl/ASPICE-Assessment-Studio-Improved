@@ -15,12 +15,25 @@ import { ASSESSOR_PERSONA } from "./assessorPersona.js";
  * batch (i.e. is from the same program/system as the rest of the deliverables).
  * Off-context evidence cannot earn full credit even if it structurally matches
  * the BP description.
+ *
+ * Mode-independent scoring: the BP scoring prompt is identical whether the run
+ * is single-process (/api/analyze) or project (/api/project). An earlier version
+ * appended a per-process "Finding 상세화" directive to the dynamic task, but
+ * because scorePercent and the findings come from the *same* LLM response, that
+ * directive biased single-process runs toward lower scores — the same artifact
+ * earned worse BP grades in process mode than in project mode. Keeping the task
+ * byte-identical across modes also lets the llmResponseCache (see
+ * _harnessService.js) actually converge the two modes onto one verdict per
+ * prompt, which is its whole purpose. `mode` is accepted (and ignored) for
+ * call-site compatibility.
  */
 export function buildBpPrompt({
   process,
   bp,
   artifactsExcerpt,
   projectFingerprint,
+  // eslint-disable-next-line no-unused-vars -- accepted for call-site stability; scoring is mode-independent (see above)
+  mode = "project",
 }) {
   const system = ASSESSOR_PERSONA;
 
@@ -38,6 +51,7 @@ export function buildBpPrompt({
   ].join("\n");
 
   const bpFullId = `${process.id}.${bp.id}`;
+
   const task = [
     `# 평가 대상 Base Practice`,
     `  ${bpFullId}: ${bp.title}`,
