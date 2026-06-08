@@ -62,7 +62,7 @@ export function buildGpPrompt({
     `  "scorePercent": <0-100>,`,
     `  "evidence": [{"artifactName": "...", "quote": "..."}],`,
     `  "gaps": ["..."],`,
-    `  "pamCitation": "PAM §...",`,
+    `  "pamCitation": "PAM §5 ${gp.id}",`,
     `  "contextConsistency": { "status": "consistent|partial|off-context|unknown", "note": "..." },`,
     `  "standardReferences": {`,
     `    "pam": ["PAM §..."],`,

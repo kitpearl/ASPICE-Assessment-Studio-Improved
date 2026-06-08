@@ -4,6 +4,7 @@ import { buildBpPrompt } from "../src/llm/prompts/bpPrompt.js";
 import { buildGpPrompt } from "../src/llm/prompts/gpPrompt.js";
 import { buildWpPrompt } from "../src/llm/prompts/wpPrompt.js";
 import { ASSESSOR_PERSONA } from "../src/llm/prompts/assessorPersona.js";
+import { hasPamCitation } from "../src/evaluators/citationGuard.js";
 
 const PROCESS = {
   id: "SWE.2",
@@ -135,6 +136,23 @@ test("wpPrompt: task embeds findings schema scoped to WP id", () => {
   assert.match(task, /F-SWE\.2\.04-04-01/);
   assert.match(task, /"bpId":\s*"SWE\.2\.04-04"/);
   assert.match(task, /"findings":\s*\[/);
+});
+
+// Regression: the WP prompt once instructed the LLM to write pamCitation as
+// "PAM Annex B {wp.id}", a form citationGuard's CITATION_RE rejects — so every
+// WP verdict fell back to score 0. Lock the JSON-schema pamCitation example in
+// each prompt to a guard-passing value, and keep "Annex B" out of the WP task.
+test("prompts: pamCitation schema example passes the citation guard", () => {
+  const tasks = {
+    bp: buildBpPrompt({ process: PROCESS, bp: BP, artifactsExcerpt: "", projectFingerprint: "" }).task,
+    gp: buildGpPrompt({ process: PROCESS, paSpec: PA_SPEC, gp: GP, bpResults: [], wpResults: [], artifactsExcerpt: "", projectFingerprint: "" }).task,
+    wp: buildWpPrompt({ process: PROCESS, wp: WP, artifactsExcerpt: "", projectFingerprint: "" }).task,
+  };
+  for (const [label, task] of Object.entries(tasks)) {
+    const example = task.match(/"pamCitation":\s*"([^"]*)"/)?.[1];
+    assert.ok(example, `${label}: pamCitation example missing from schema`);
+    assert.ok(hasPamCitation(example), `${label}: pamCitation example "${example}" rejected by guard`);
+  }
 });
 
 test("prompts: all three preserve the legacy required fields", () => {

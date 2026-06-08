@@ -71,7 +71,7 @@ export function buildBpPrompt({
     `  "scorePercent": <0-100>,`,
     `  "evidence": [{"artifactName": "...", "quote": "...", "location": "..."}],`,
     `  "gaps": ["..."],`,
-    `  "pamCitation": "PAM §...",`,
+    `  "pamCitation": "PAM §${process.pamSection} ${bp.id}",`,
     `  "contextConsistency": { "status": "consistent|partial|off-context|unknown", "note": "..." },`,
     `  "standardReferences": {`,
     `    "pam": ["PAM §..."],`,
