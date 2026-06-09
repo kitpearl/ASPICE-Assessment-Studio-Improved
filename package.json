@@ -10,7 +10,8 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "npm test --workspace aspice-harness"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.0",

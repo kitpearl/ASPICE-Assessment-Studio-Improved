@@ -270,9 +270,9 @@ export const HelpModal = ({ onClose, mode }) => {
 
           <Step n={3} Icon={Target} title="목표 Capability Level 및 Scorer 선택">
             <strong style={{ color: T.textHi }}>CL1</strong>은 기본 수행, <strong style={{ color: T.textHi }}>CL2</strong>는 관리, <strong style={{ color: T.textHi }}>CL3</strong>는 확립된 프로세스입니다.
-            엔진은 <Code>Rule</Code>(오프라인 키워드/WPID 매칭 · 무료 · 빠름), <Code>LLM</Code>(OpenAI — BP/WP/GP별 호출),
+            엔진은 <Code>Rule</Code>(오프라인 키워드/WPID 매칭 · 무료 · 빠름), <Code>LLM</Code>(Claude — BP/WP/GP별 호출),
             <Code>Hybrid</Code>(0.4 rule + 0.6 llm, 권장), <Code>Custom</Code>(직접 만든 룰로 평가 · 무료) 중 선택합니다.
-            LLM/Hybrid는 서버에 <Code>OPENAI_API_KEY</Code>가 설정돼 있어야 합니다.
+            LLM/Hybrid는 서버에 <Code>ANTHROPIC_API_KEY</Code>가 설정돼 있어야 합니다.
             <Code>Custom</Code> 선택 시 <strong style={{ color: T.textHi }}>"평가 룰 편집"</strong>에서 키워드 룰을
             추가·편집·제외할 수 있으며, 룰이 없는 항목은 자동 키워드 폴백으로 평가됩니다.
           </Step>

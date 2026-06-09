@@ -8,7 +8,7 @@ import { extractFileContent } from "../utils/fileReaders";
 
 const ENGINE_OPTIONS = [
   { id: "rule",   label: "Rule (오프라인)",     hint: "키워드/WPID 매칭, 무료" },
-  { id: "llm",    label: "LLM (OpenAI)",        hint: "BP/WP/GP 각 호출" },
+  { id: "llm",    label: "LLM (Claude)",        hint: "BP/WP/GP 각 호출" },
   { id: "hybrid", label: "Hybrid (0.4 rule + 0.6 llm)", hint: "기본 권장" },
   { id: "custom", label: "Custom (사용자 룰)",  hint: "직접 만든 룰로 평가, 무료" },
 ];

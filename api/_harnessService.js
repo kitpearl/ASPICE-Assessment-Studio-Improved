@@ -29,7 +29,7 @@ import { toLegacyShape } from "./_legacyAdapter.js";
 // Recognised scorer engines. Anything unknown normalises to "hybrid" so the
 // two modes (per-process / project) cannot diverge on scorer choice.
 //   rule   — offline auto-keyword/WPID matching
-//   llm    — OpenAI BP/WP/GP scoring
+//   llm    — LLM BP/WP/GP scoring (provider resolved from env: Anthropic/OpenAI)
 //   hybrid — 0.4 rule + 0.6 llm (default)
 //   custom — offline, user-authored rule book (see customScorer.js)
 const KNOWN_ENGINES = new Set(["rule", "llm", "hybrid", "custom"]);
@@ -57,7 +57,7 @@ function resolveEngines(engines, engineLegacy) {
 }
 
 // In-process cache of generateJson results, keyed by the full prompt content.
-// gpt-4o's `seed`+`temperature=0` is best-effort, so the same prompt can
+// Even at `temperature=0`, sampling is best-effort, so the same prompt can
 // produce slightly different scores across calls — which surfaces as the same
 // document earning different BP grades in process mode vs project mode. The
 // cache pins one verdict per prompt so the two modes converge on identical
@@ -79,18 +79,37 @@ function memoizeLlmClient(client) {
   };
 }
 
+// Resolve which LLM provider/key/model to use from the server env. Mirrors the
+// harness resolveProvider precedence but reads the explicitly-passed `env`
+// object (Vercel serverless and the Vite dev middleware each hand us their own).
+//   1. ASPICE_LLM_PROVIDER pins the provider when set
+//   2. otherwise prefer Anthropic if ANTHROPIC_API_KEY is present, else OpenAI
+// Returns null when no usable key is configured (rule/custom engines still run).
+function resolveLlmConfig(env = {}) {
+  const provider =
+    env.ASPICE_LLM_PROVIDER ||
+    (env.ANTHROPIC_API_KEY ? "anthropic" : env.OPENAI_API_KEY ? "openai" : null);
+  if (!provider) return null;
+  const apiKey = provider === "anthropic" ? env.ANTHROPIC_API_KEY : env.OPENAI_API_KEY;
+  if (!apiKey) return null;
+  const model = env.ASPICE_LLM_MODEL || (provider === "anthropic" ? "claude-opus-4-7" : "gpt-4o");
+  return { provider, apiKey, model };
+}
+
 /** Build a single scorer for one engine id. */
-function buildSingleScorer(engine, apiKey, customRules) {
+function buildSingleScorer(engine, llmConfig, customRules) {
   if (engine === "rule") return ruleScorer;
   // Custom is offline: it scores against the user's rule book and falls back
   // to the auto-keyword rule scorer for practices no rule covers.
   if (engine === "custom") {
     return createCustomScorer({ ruleBook: customRules, fallback: ruleScorer });
   }
-  if (!apiKey) {
-    throw new Error(`engine=${engine} requires OPENAI_API_KEY in server env.`);
+  if (!llmConfig?.apiKey) {
+    throw new Error(
+      `engine=${engine} requires an LLM API key (ANTHROPIC_API_KEY or OPENAI_API_KEY) in server env.`,
+    );
   }
-  const rawClient = createLlmClient({ provider: "openai", apiKey, model: "gpt-4o" });
+  const rawClient = createLlmClient(llmConfig);
   const client = memoizeLlmClient(rawClient);
   const llm = createLlmScorer({ client });
   if (engine === "llm") return llm;
@@ -155,9 +174,9 @@ function buildAveragingScorer(scorers) {
   return { scoreBP: merge("scoreBP"), scoreWP: merge("scoreWP"), scoreGP: merge("scoreGP") };
 }
 
-function buildScorer(engines, apiKey, customRules) {
-  if (engines.length === 1) return buildSingleScorer(engines[0], apiKey, customRules);
-  const built = engines.map((id) => ({ id, scorer: buildSingleScorer(id, apiKey, customRules) }));
+function buildScorer(engines, llmConfig, customRules) {
+  if (engines.length === 1) return buildSingleScorer(engines[0], llmConfig, customRules);
+  const built = engines.map((id) => ({ id, scorer: buildSingleScorer(id, llmConfig, customRules) }));
   return buildAveragingScorer(built);
 }
 
@@ -255,7 +274,7 @@ export async function handleEvaluate({ processId, artifact, artifacts, targetLev
   if (!processSpec) throw new Error(`Unknown process: ${processId}`);
 
   const resolved = resolveEngines(engines, engine);
-  const scorer = buildScorer(resolved, env.OPENAI_API_KEY, customRules);
+  const scorer = buildScorer(resolved, resolveLlmConfig(env), customRules);
   const harness = new Harness({ scorer, targetLevel: Number(targetLevel) });
 
   // Index once up-front so the per-process filter sees wpidCandidates.
@@ -283,7 +302,7 @@ export async function handleProject({ processIds, artifacts, targetLevel = 1, en
   rejectIfNoArtifacts(arts, skipped);
 
   const resolved = resolveEngines(engines, engine);
-  const scorer = buildScorer(resolved, env.OPENAI_API_KEY, customRules);
+  const scorer = buildScorer(resolved, resolveLlmConfig(env), customRules);
   const harness = new Harness({ scorer, targetLevel: Number(targetLevel) });
 
   const all = loadProcesses();

@@ -140,9 +140,9 @@ const projectSectionHtml = () => `
   `)}
   ${stepHtml(3, "목표 Capability Level 및 Scorer 선택", `
     ${hi("CL1")}은 기본 수행, ${hi("CL2")}는 관리, ${hi("CL3")}는 확립된 프로세스입니다.
-    엔진은 ${code("Rule")}(오프라인 키워드/WPID 매칭 · 무료 · 빠름), ${code("LLM")}(OpenAI — BP/WP/GP별 호출),
+    엔진은 ${code("Rule")}(오프라인 키워드/WPID 매칭 · 무료 · 빠름), ${code("LLM")}(Claude — BP/WP/GP별 호출),
     ${code("Hybrid")}(0.4 rule + 0.6 llm, 권장), ${code("Custom")}(직접 만든 룰로 평가 · 무료) 중 선택합니다.
-    LLM/Hybrid는 서버에 ${code("OPENAI_API_KEY")}가 설정돼 있어야 합니다.
+    LLM/Hybrid는 서버에 ${code("ANTHROPIC_API_KEY")}가 설정돼 있어야 합니다.
     ${code("Custom")} 선택 시 ${hi("\"평가 룰 편집\"")}에서 키워드 룰을 추가·편집·제외할 수 있으며,
     룰이 없는 항목은 자동 키워드 폴백으로 평가됩니다.
   `)}
