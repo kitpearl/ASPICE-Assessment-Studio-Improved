@@ -22,6 +22,11 @@ function renderProcessMd(v) {
   lines.push("### Base Practices");
   for (const bp of v.bps) {
     lines.push(`- **${bp.id}** [${bp.rating}] ${bp.title} — ${bp.scorePercent}% <sub>${bp.pamCitation}</sub>`);
+    const incose = bp.standardReferences?.incose ?? [];
+    if (incose.length) {
+      const ids = incose.map((r) => r.replace(/^INCOSE GtWR\s+/, ""));
+      lines.push(`  - _INCOSE GtWR: ${ids.join(", ")}_`);
+    }
   }
   if (v.wps?.length) {
     lines.push("");
