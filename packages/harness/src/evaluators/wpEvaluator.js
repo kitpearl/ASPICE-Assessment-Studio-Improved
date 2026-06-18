@@ -11,23 +11,25 @@ import { percentToRating } from "../model/rating.js";
  */
 export async function evaluateWPs(processSpec, artifacts, scorer, options = {}) {
   const { projectFingerprint } = options;
-  const results = [];
-  for (const wp of processSpec.outputWorkProducts) {
-    const { scorePercent, evidence, gaps, contextConsistency } = await scorer.scoreWP({
-      process: processSpec,
-      wp,
-      artifacts,
-      projectFingerprint,
-    });
-    results.push({
-      wpId: wp.id,
-      name: wp.name,
-      rating: percentToRating(scorePercent),
-      scorePercent,
-      evidence,
-      gaps,
-      contextConsistency: contextConsistency ?? { status: "unknown", note: "" },
-    });
-  }
-  return results;
+  // Scored in parallel; `map` preserves spec order. Global API concurrency is
+  // bounded by the LLM client wrapper (see _harnessService.limitConcurrency).
+  return Promise.all(
+    processSpec.outputWorkProducts.map(async (wp) => {
+      const { scorePercent, evidence, gaps, contextConsistency } = await scorer.scoreWP({
+        process: processSpec,
+        wp,
+        artifacts,
+        projectFingerprint,
+      });
+      return {
+        wpId: wp.id,
+        name: wp.name,
+        rating: percentToRating(scorePercent),
+        scorePercent,
+        evidence,
+        gaps,
+        contextConsistency: contextConsistency ?? { status: "unknown", note: "" },
+      };
+    })
+  );
 }

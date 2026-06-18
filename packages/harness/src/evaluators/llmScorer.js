@@ -99,7 +99,7 @@ function fallback(reason, raw) {
     evidence: [],
     gaps: [`LLM verdict rejected: ${reason}`],
     contextConsistency: { status: "unknown", note: "" },
-    standardReferences: { pam: [], pamNote: [], bgbRL: [], iso: [] },
+    standardReferences: { pam: [], pamNote: [], bgbRL: [], iso: [], incose: [] },
     findings: [],
     ...(raw ? { rawLlmResponse: raw } : {}),
   };

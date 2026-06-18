@@ -79,6 +79,38 @@ function memoizeLlmClient(client) {
   };
 }
 
+// Bound the number of concurrent generateJson calls. The evaluators fan out
+// BP/WP/GP scoring in parallel (and processes run in parallel on top of that),
+// so this central gate is what actually keeps API concurrency — and therefore
+// rate-limit exposure — at `max`. Wrapped *inside* memoize so cache hits return
+// instantly without consuming a slot.
+function limitConcurrency(client, max) {
+  let active = 0;
+  const queue = [];
+  const pump = () => {
+    while (active < max && queue.length) {
+      const { prompt, resolve, reject } = queue.shift();
+      active++;
+      Promise.resolve()
+        .then(() => client.generateJson(prompt))
+        .then(resolve, reject)
+        .finally(() => {
+          active--;
+          pump();
+        });
+    }
+  };
+  return {
+    ...client,
+    generateJson(prompt) {
+      return new Promise((resolve, reject) => {
+        queue.push({ prompt, resolve, reject });
+        pump();
+      });
+    },
+  };
+}
+
 // Resolve which LLM provider/key/model to use from the server env. Mirrors the
 // harness resolveProvider precedence but reads the explicitly-passed `env`
 // object (Vercel serverless and the Vite dev middleware each hand us their own).
@@ -92,8 +124,18 @@ function resolveLlmConfig(env = {}) {
   if (!provider) return null;
   const apiKey = provider === "anthropic" ? env.ANTHROPIC_API_KEY : env.OPENAI_API_KEY;
   if (!apiKey) return null;
-  const model = env.ASPICE_LLM_MODEL || (provider === "anthropic" ? "claude-opus-4-7" : "gpt-4o");
-  return { provider, apiKey, model };
+  const model = env.ASPICE_LLM_MODEL || (provider === "anthropic" ? "claude-sonnet-4-6" : "gpt-4o");
+  // Cap on concurrent in-flight LLM calls across the whole evaluation. The
+  // evaluators now fan out BP/WP/GP scoring in parallel, so without a global
+  // cap a project run could open dozens of API calls at once and hit rate
+  // limits. 5 is a safe default; override with ASPICE_LLM_CONCURRENCY.
+  const concurrency = parseConcurrency(env.ASPICE_LLM_CONCURRENCY, 5);
+  return { provider, apiKey, model, concurrency };
+}
+
+function parseConcurrency(raw, fallback) {
+  const n = Number.parseInt(raw, 10);
+  return Number.isFinite(n) && n > 0 ? n : fallback;
 }
 
 /** Build a single scorer for one engine id. */
@@ -110,7 +152,7 @@ function buildSingleScorer(engine, llmConfig, customRules) {
     );
   }
   const rawClient = createLlmClient(llmConfig);
-  const client = memoizeLlmClient(rawClient);
+  const client = memoizeLlmClient(limitConcurrency(rawClient, llmConfig.concurrency ?? 5));
   const llm = createLlmScorer({ client });
   if (engine === "llm") return llm;
   if (engine === "hybrid") return createHybridScorer({ rule: ruleScorer, llm });

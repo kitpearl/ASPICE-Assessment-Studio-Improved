@@ -45,6 +45,13 @@ const BGB_RL_RE = /^(?:RL\d+(?:\.\d+)?|\[[A-Z][A-Z0-9.]*\.RL\.(?:\d+|xx)\])$/;
 // clause 표기 (§8.4.5 또는 clause 8.4.5) 를 허용.
 const ISO_CLAUSE_RE =
   /^(?:ISO(?:\/(?:IEC|SAE))?|IEC|IATF)\s+\d+(?:-\d+)?(?::\d{4})?(?:\s+(?:§[\d.]+|clause\s+[\d.]+))?$/;
+// INCOSE GtWR (Guide to Writing Requirements) V4 인용:
+//   특성  : "INCOSE GtWR C7"  (C1–C15)
+//   작성 룰: "INCOSE GtWR R18" (R1–R42)
+//   속성  : "INCOSE GtWR A6"  (A1–A49)
+// "GtWR" 는 선택(LLM 이 생략해도 수용)하고, 식별자 뒤에 짧은 이름이 따라와도
+// 무방하다 (예: "INCOSE GtWR C7 Verifiable").
+const INCOSE_REF_RE = /^INCOSE(?:\s+GtWR)?\s+(?:C|R|A)\d{1,2}(?:\s+\S.*)?$/;
 
 /** @param {string|undefined} citation */
 export function hasPamCitation(citation) {
@@ -66,6 +73,11 @@ export function hasIsoClause(ref) {
   return typeof ref === "string" && ISO_CLAUSE_RE.test(ref.trim());
 }
 
+/** @param {string|undefined} ref */
+export function hasIncoseRef(ref) {
+  return typeof ref === "string" && INCOSE_REF_RE.test(ref.trim());
+}
+
 /**
  * 임의의 raw 값을 깨끗한 StandardReferences 로 정규화. 형식에 맞지 않는
  * 항목은 silently drop (UI 가 잘못된 표기를 보여주는 것보다 누락이 안전).
@@ -75,7 +87,7 @@ export function hasIsoClause(ref) {
  * @returns {{refs: import("../model/finding.js").StandardReferences, dropped: string[]}}
  */
 export function normalizeStandardReferences(raw) {
-  const refs = { pam: [], pamNote: [], bgbRL: [], iso: [] };
+  const refs = { pam: [], pamNote: [], bgbRL: [], iso: [], incose: [] };
   const dropped = [];
   if (!raw || typeof raw !== "object") return { refs, dropped };
   const filterPush = (arr, key, validator, source) => {
@@ -94,6 +106,7 @@ export function normalizeStandardReferences(raw) {
   filterPush(refs.pamNote, "pamNote", hasPamNote, raw.pamNote);
   filterPush(refs.bgbRL, "bgbRL", hasBgbRL, raw.bgbRL);
   filterPush(refs.iso, "iso", hasIsoClause, raw.iso);
+  filterPush(refs.incose, "incose", hasIncoseRef, raw.incose);
   return { refs, dropped };
 }
 

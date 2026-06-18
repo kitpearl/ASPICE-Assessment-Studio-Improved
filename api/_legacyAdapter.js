@@ -80,7 +80,7 @@ export function toLegacyShape(v, skipped = []) {
       // collapsed legacy rationale. When findings is empty the UI falls
       // back to the rationale + evidence path above.
       findings: Array.isArray(b.findings) ? b.findings : [],
-      standardReferences: b.standardReferences ?? { pam: [], pamNote: [], bgbRL: [], iso: [] },
+      standardReferences: b.standardReferences ?? { pam: [], pamNote: [], bgbRL: [], iso: [], incose: [] },
     };
   });
   const strong = (v.bps || []).filter((b) => b.scorePercent >= 68);

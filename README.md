@@ -32,10 +32,11 @@ api/analyze.js  ─────┐    ┌────── api/project.js
 
 | 변수 | 필수 | 용도 |
 |---|---|---|
-| `ANTHROPIC_API_KEY` | engine=`llm`/`hybrid` 사용 시 (기본 provider) | `claude-opus-4-7`로 LLM 채점 |
+| `ANTHROPIC_API_KEY` | engine=`llm`/`hybrid` 사용 시 (기본 provider) | `claude-sonnet-4-6`로 LLM 채점 |
 | `OPENAI_API_KEY` | engine=`llm`/`hybrid` 사용 시 (대체 provider) | `gpt-4o`로 LLM 채점 |
 | `ASPICE_LLM_PROVIDER` | 선택 | `anthropic`/`openai` 강제 지정. 미설정 시 사용 가능한 키로 자동 선택(Anthropic 우선) |
-| `ASPICE_LLM_MODEL` | 선택 | 모델 override. 기본값: Anthropic `claude-opus-4-7` / OpenAI `gpt-4o` |
+| `ASPICE_LLM_MODEL` | 선택 | 모델 override. 기본값: Anthropic `claude-sonnet-4-6` / OpenAI `gpt-4o` |
+| `ASPICE_LLM_CONCURRENCY` | 선택 | 평가 중 동시 LLM 호출 상한(rate-limit 보호). 기본값 `5` |
 | `SUPABASE_JWT_SECRET` | 운영 권장 | `/api/*` Bearer JWT 검증. 미설정 시 인증 스킵(개발용) |
 
 브라우저로 노출되는 변수는 `VITE_` prefix만 — 위 키들에는 절대 붙이지 말 것.

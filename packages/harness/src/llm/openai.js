@@ -17,7 +17,7 @@ function usesReasoningContract(model = "") {
   return /^(gpt-5|o[1-9])/i.test(model);
 }
 
-export function createOpenAIClient({ apiKey, model = "gpt-4o", maxTokens = 8192, temperature = 0, seed = 42 } = {}) {
+export function createOpenAIClient({ apiKey, model = "gpt-4o", maxTokens = 16384, temperature = 0, seed = 42 } = {}) {
   if (!apiKey) throw new Error("OpenAI apiKey required");
   const client = new OpenAI({ apiKey });
   const reasoning = usesReasoningContract(model);
@@ -52,7 +52,16 @@ export function createOpenAIClient({ apiKey, model = "gpt-4o", maxTokens = 8192,
 
       const res = await client.chat.completions.create(params);
 
-      const text = res.choices?.[0]?.message?.content ?? "";
+      const choice = res.choices?.[0];
+      const text = choice?.message?.content ?? "";
+      // A "length" finish_reason means the JSON was cut off at the token cap and
+      // JSON.parse would throw the cryptic "Unexpected end of JSON input".
+      if (choice?.finish_reason === "length") {
+        throw new Error(
+          `model output truncated at max_tokens=${maxTokens} (incomplete JSON); raise ASPICE_LLM_MAX_TOKENS or reduce excerpt size`,
+        );
+      }
+      if (!text.trim()) throw new Error("empty model output (no message content returned)");
       return { parsed: JSON.parse(text), raw: text, usage: res.usage };
     },
   };

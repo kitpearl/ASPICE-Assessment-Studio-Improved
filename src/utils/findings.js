@@ -23,14 +23,19 @@ export const scopeBgbRefs = (bgbRL, processId) => {
   return bgbRL.filter((r) => typeof r === "string" && r.startsWith(prefix));
 };
 
-// 표준 인용(PAM / PAM Note / BGB) 을 {kind, text} 리스트로 평탄화한다.
+// 표준 인용(PAM / PAM Note / BGB / INCOSE) 을 {kind, text} 리스트로 평탄화한다.
 // ISO 근거(refs.iso)는 BP 평가에서 제외한다 (요청): PAM·BGB 만 노출.
+// INCOSE GtWR 인용(refs.incose)은 요구사항 분석 프로세스(SYS.2/SWE.1/HWE.1)에서만
+// 채워지므로 별도 스코프 필터 없이 그대로 노출한다.
 export const flattenStandardRefs = (refs, processId) => {
   if (!refs) return [];
   return [
     ...(refs.pam ?? []).map((r) => ({ kind: "PAM", text: r })),
     ...(refs.pamNote ?? []).map((r) => ({ kind: "Note", text: r })),
     ...scopeBgbRefs(refs.bgbRL, processId).map((r) => ({ kind: "BGB", text: r })),
+    // 표시용 텍스트는 선행 "INCOSE " 접두어를 떼어 kind 배지("INCOSE")와의 중복을
+    // 피한다 (예: 인용 "INCOSE GtWR C7" → 배지 INCOSE + 텍스트 "GtWR C7").
+    ...(refs.incose ?? []).map((r) => ({ kind: "INCOSE", text: String(r).replace(/^INCOSE\s+/, "") })),
   ];
 };
 

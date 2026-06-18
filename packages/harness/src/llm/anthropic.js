@@ -10,7 +10,7 @@ import Anthropic from "@anthropic-ai/sdk";
  * `cache_control: ephemeral` so that repeated per-BP / per-GP calls for the
  * same process reuse the prefix. The `task` block is dynamic and not cached.
  */
-export function createAnthropicClient({ apiKey, model = "claude-opus-4-7", maxTokens = 8192, temperature = 0 } = {}) {
+export function createAnthropicClient({ apiKey, model = "claude-sonnet-4-6", maxTokens = 16384, temperature = 0 } = {}) {
   if (!apiKey) throw new Error("Anthropic apiKey required");
   const client = new Anthropic({ apiKey });
 
@@ -40,16 +40,33 @@ export function createAnthropicClient({ apiKey, model = "claude-opus-4-7", maxTo
         .filter((b) => b.type === "text")
         .map((b) => b.text)
         .join("");
+      // A truncated response (model hit the output token cap) yields JSON that
+      // begins with `{` but is cut off mid-object — JSON.parse then throws the
+      // cryptic "Unexpected end of JSON input". Surface a clear, actionable
+      // cause here instead so the harness logs/fallback explain what happened.
+      if (res.stop_reason === "max_tokens") {
+        throw new Error(
+          `model output truncated at max_tokens=${maxTokens} (incomplete JSON); raise ASPICE_LLM_MAX_TOKENS or reduce excerpt size`,
+        );
+      }
       return { parsed: parseJsonStrict(text), raw: text, usage: res.usage };
     },
   };
 }
 
-function parseJsonStrict(text) {
+export function parseJsonStrict(text) {
+  if (!text || !text.trim()) throw new Error("empty model output (no text content returned)");
   // Accept raw JSON OR JSON wrapped in ```json ... ``` fences.
   const cleaned = text.trim().replace(/^```(?:json)?\s*/i, "").replace(/```$/, "").trim();
   const start = cleaned.indexOf("{");
   const end = cleaned.lastIndexOf("}");
   if (start < 0 || end <= start) throw new Error("No JSON object found in model output");
-  return JSON.parse(cleaned.slice(start, end + 1));
+  try {
+    return JSON.parse(cleaned.slice(start, end + 1));
+  } catch (err) {
+    // Likely truncated/malformed JSON — include length + a tail snippet so the
+    // failure is diagnosable from the logs rather than just "Unexpected end of JSON input".
+    const snippet = cleaned.slice(Math.max(0, cleaned.length - 120));
+    throw new Error(`failed to parse model JSON (${err.message}); output length=${cleaned.length}, tail=…${snippet}`);
+  }
 }

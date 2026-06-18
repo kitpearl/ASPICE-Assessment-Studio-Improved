@@ -5,6 +5,7 @@ import {
   hasPamNote,
   hasBgbRL,
   hasIsoClause,
+  hasIncoseRef,
   normalizeStandardReferences,
   normalizeFindings,
   validateLlmResult,
@@ -156,9 +157,32 @@ test("normalizeStandardReferences: keeps valid entries, drops malformed ones", (
 test("normalizeStandardReferences: undefined / non-object yields empty slots", () => {
   for (const x of [undefined, null, 42, "string", []]) {
     const { refs, dropped } = normalizeStandardReferences(x);
-    assert.deepEqual(refs, { pam: [], pamNote: [], bgbRL: [], iso: [] });
+    assert.deepEqual(refs, { pam: [], pamNote: [], bgbRL: [], iso: [], incose: [] });
     assert.deepEqual(dropped, []);
   }
+});
+
+test("hasIncoseRef: accepts INCOSE GtWR characteristic / rule / attribute citations", () => {
+  assert.ok(hasIncoseRef("INCOSE GtWR C7"));
+  assert.ok(hasIncoseRef("INCOSE GtWR R18"));
+  assert.ok(hasIncoseRef("INCOSE GtWR A6"));
+  assert.ok(hasIncoseRef("INCOSE C5")); // GtWR optional
+  assert.ok(hasIncoseRef("INCOSE GtWR C7 Verifiable")); // trailing name allowed
+  assert.ok(!hasIncoseRef("INCOSE"));
+  assert.ok(!hasIncoseRef("INCOSE GtWR X1"));
+  assert.ok(!hasIncoseRef("incose c7"));
+  assert.ok(!hasIncoseRef("GtWR C7"));
+  assert.ok(!hasIncoseRef(""));
+  assert.ok(!hasIncoseRef(undefined));
+});
+
+test("normalizeStandardReferences: keeps valid incose refs, drops malformed ones", () => {
+  const { refs, dropped } = normalizeStandardReferences({
+    incose: ["INCOSE GtWR C7", "INCOSE GtWR R18", "not incose", "INCOSE GtWR Z9"],
+  });
+  assert.deepEqual(refs.incose, ["INCOSE GtWR C7", "INCOSE GtWR R18"]);
+  assert.ok(dropped.includes("incose:not incose"));
+  assert.ok(dropped.includes("incose:INCOSE GtWR Z9"));
 });
 
 test("validateLlmResult: surfaces standardReferences when supplied", () => {
@@ -188,7 +212,7 @@ test("validateLlmResult: missing standardReferences yields empty slots and no dr
     pamCitation: "PAM §SWE.2 BP1",
   });
   assert.ok(v.ok);
-  assert.deepEqual(v.result.standardReferences, { pam: [], pamNote: [], bgbRL: [], iso: [] });
+  assert.deepEqual(v.result.standardReferences, { pam: [], pamNote: [], bgbRL: [], iso: [], incose: [] });
   assert.deepEqual(v.result.droppedRefs, []);
 });
 

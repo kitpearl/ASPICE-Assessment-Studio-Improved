@@ -1,0 +1,23 @@
+{
+  "source": "INCOSE Guide to Writing Requirements V4 — Summary Sheet (INCOSE-TP-2010-006-04, June 2023)",
+  "note": "C1–C9 apply to individual needs/requirements; C10–C15 apply to sets of needs/requirements.",
+  "individual": [
+    { "id": "C1", "name": "Necessary", "group": "Formal Transformation", "description": "The statement defines a capability, characteristic, constraint, or quality factor needed to satisfy a lifecycle concept, need, source, or higher-level requirement." },
+    { "id": "C2", "name": "Appropriate", "group": "Formal Transformation", "description": "The intent and amount of detail is appropriate to the level (of abstraction, organization, or system architecture) of the entity to which it refers." },
+    { "id": "C3", "name": "Unambiguous", "group": "Agreed-to Obligation", "description": "Stated such that the intent is clear and can be interpreted in only one way by all intended audiences." },
+    { "id": "C4", "name": "Complete", "group": "Agreed-to Obligation", "description": "Sufficiently describes the necessary capability, characteristic, constraint, conditions, or quality factor to meet the source from which it was transformed." },
+    { "id": "C5", "name": "Singular", "group": "Formal Transformation", "description": "States a single capability, characteristic, constraint, or quality factor." },
+    { "id": "C6", "name": "Feasible", "group": "Agreed-to Obligation", "description": "Can be realized within entity constraints (cost, schedule, technical, legal, ethical, safety) with acceptable risk." },
+    { "id": "C7", "name": "Verifiable", "group": "Agreed-to Obligation", "description": "Structured and worded such that its realization can be validated (need) / verified (requirement) to the approving authority's satisfaction." },
+    { "id": "C8", "name": "Correct", "group": "Formal Transformation", "description": "An accurate representation of the need, source, or higher-level requirement from which it was transformed." },
+    { "id": "C9", "name": "Conforming", "group": "Formal Transformation", "description": "Conforms to an approved standard pattern and style guide for writing and managing needs and requirements." }
+  ],
+  "set": [
+    { "id": "C10", "name": "Complete (set)", "group": "Formal Transformation", "description": "The set stands alone and sufficiently describes the necessary capabilities, constraints, conditions, interactions, standards, safety, security, and quality factors without requiring other sets at the appropriate level of abstraction." },
+    { "id": "C11", "name": "Consistent", "group": "Formal Transformation", "description": "Individual members are unique, do not conflict or overlap, use homogeneous units, and use consistent language aligned with the architectural model, glossary, and data dictionary." },
+    { "id": "C12", "name": "Feasible (set)", "group": "Agreed-to Obligation", "description": "The set can be realized within entity constraints (cost, schedule, technical) with acceptable risk." },
+    { "id": "C13", "name": "Comprehensible", "group": "Agreed-to Obligation", "description": "Written such that it is clear what is expected of the entity and its relation to the macro system of which it is a part." },
+    { "id": "C14", "name": "Able to be validated", "group": "Agreed-to Obligation", "description": "It is possible to validate that the set will lead to achievement of goals, stakeholder expectations, and lifecycle concepts within constraints with acceptable risk." },
+    { "id": "C15", "name": "Correct (set)", "group": "Formal Transformation", "description": "The set is an accurate representation of the needs, sources, or higher-level requirements from which it was transformed." }
+  ]
+}

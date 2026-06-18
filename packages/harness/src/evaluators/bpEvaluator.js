@@ -1,5 +1,6 @@
 import { percentToRating } from "../model/rating.js";
 import { lookupStandardRefs } from "../../spec/standardRefs.js";
+import { isIncoseApplicable, lookupIncoseRefs } from "../../spec/incose/index.js";
 import { unionStandardReferences } from "./findingBuilders.js";
 
 /**
@@ -19,8 +20,13 @@ import { unionStandardReferences } from "./findingBuilders.js";
  */
 export async function evaluateBPs(processSpec, artifacts, scorer, options = {}) {
   const { projectFingerprint, mode } = options;
-  const results = [];
-  for (const bp of processSpec.basePractices) {
+  // BPs are scored in parallel; `map` preserves spec order in the result array.
+  // Real API concurrency is bounded centrally by the LLM client wrapper (see
+  // _harnessService.limitConcurrency), so fanning out here does not risk rate
+  // limits. The rule/custom scorers are effectively synchronous, so this is a
+  // no-op cost for them.
+  return Promise.all(
+    processSpec.basePractices.map(async (bp) => {
     const {
       scorePercent,
       evidence,
@@ -47,22 +53,30 @@ export async function evaluateBPs(processSpec, artifacts, scorer, options = {}) 
     // spec/iso/*.csv 의 매핑은 더 이상 병합하지 않고, scorer (예: LLM 모드)가
     // 출력한 iso 인용도 여기서 제거하여 어떤 모드에서도 ISO 가 노출되지 않게 한다.
     const csvRefs = lookupStandardRefs(bpFullId);
+    // INCOSE GtWR V4 렌즈: 요구사항 분석 프로세스(SYS.2/SWE.1/HWE.1)의 BP 에만
+    // 적용된다. BP-level 에는 "이 BP 가 평가된 INCOSE 특성" 목록을 부착하고,
+    // 각 Finding 은 LLM 이 구체 위반으로 인용한 INCOSE 참조만 유지한다.
+    const incoseApplicable = isIncoseApplicable(processSpec.id);
+    const incoseRefs = incoseApplicable ? lookupIncoseRefs(bpFullId) : [];
     const mergedRefs = unionStandardReferences(
-      standardReferences ?? { pam: [], pamNote: [], bgbRL: [], iso: [] },
-      { pam: [], pamNote: [], bgbRL: csvRefs.bgbRL, iso: [] }
+      standardReferences ?? { pam: [], pamNote: [], bgbRL: [], iso: [], incose: [] },
+      { pam: [], pamNote: [], bgbRL: csvRefs.bgbRL, iso: [], incose: incoseRefs }
     );
     mergedRefs.iso = [];
+    if (!incoseApplicable) mergedRefs.incose = [];
     const enrichedFindings = (Array.isArray(findings) ? findings : []).map((f) => {
       const refs = unionStandardReferences(f.standardReferences, {
         pam: [],
         pamNote: [],
         bgbRL: csvRefs.bgbRL,
         iso: [],
+        incose: [],
       });
       refs.iso = [];
+      if (!incoseApplicable) refs.incose = [];
       return { ...f, standardReferences: refs };
     });
-    results.push({
+    return {
       id: bp.id,
       title: bp.title,
       rating: percentToRating(scorePercent),
@@ -73,7 +87,7 @@ export async function evaluateBPs(processSpec, artifacts, scorer, options = {}) 
       contextConsistency: contextConsistency ?? { status: "unknown", note: "" },
       standardReferences: mergedRefs,
       findings: enrichedFindings,
-    });
-  }
-  return results;
+    };
+    })
+  );
 }

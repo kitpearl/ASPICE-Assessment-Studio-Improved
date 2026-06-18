@@ -32,36 +32,40 @@ export async function evaluatePAs(
   for (const [paId, paSpec] of Object.entries(paSpecs)) {
     if (paSpec.level > maxLevel) continue;
 
-    const gps = [];
-    for (const gp of paSpec.genericPractices) {
-      const {
-        scorePercent,
-        evidence,
-        gaps,
-        contextConsistency,
-        standardReferences,
-        findings,
-      } = await scorer.scoreGP({
-        process: processSpec,
-        paSpec,
-        gp,
-        bpResults,
-        wpResults,
-        artifacts,
-        projectFingerprint,
-      });
-      gps.push({
-        id: gp.id,
-        title: gp.title,
-        rating: percentToRating(scorePercent),
-        scorePercent,
-        evidence,
-        gaps,
-        contextConsistency: contextConsistency ?? { status: "unknown", note: "" },
-        standardReferences: standardReferences ?? { pam: [], pamNote: [], bgbRL: [], iso: [] },
-        findings: Array.isArray(findings) ? findings : [],
-      });
-    }
+    // GPs scored in parallel; `map` preserves spec order. Global API
+    // concurrency is bounded by the LLM client wrapper (see
+    // _harnessService.limitConcurrency).
+    const gps = await Promise.all(
+      paSpec.genericPractices.map(async (gp) => {
+        const {
+          scorePercent,
+          evidence,
+          gaps,
+          contextConsistency,
+          standardReferences,
+          findings,
+        } = await scorer.scoreGP({
+          process: processSpec,
+          paSpec,
+          gp,
+          bpResults,
+          wpResults,
+          artifacts,
+          projectFingerprint,
+        });
+        return {
+          id: gp.id,
+          title: gp.title,
+          rating: percentToRating(scorePercent),
+          scorePercent,
+          evidence,
+          gaps,
+          contextConsistency: contextConsistency ?? { status: "unknown", note: "" },
+          standardReferences: standardReferences ?? { pam: [], pamNote: [], bgbRL: [], iso: [], incose: [] },
+          findings: Array.isArray(findings) ? findings : [],
+        };
+      })
+    );
 
     const avg =
       gps.length === 0 ? 0 : gps.reduce((s, g) => s + g.scorePercent, 0) / gps.length;

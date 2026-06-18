@@ -16,7 +16,7 @@ import { makeFinding } from "../model/finding.js";
  * bgbRL / iso 는 P5 의 CSV ingest 가 끝난 뒤 별도 단계에서 보강한다.
  */
 
-const STANDARD_REFS_EMPTY = { pam: [], pamNote: [], bgbRL: [], iso: [] };
+const STANDARD_REFS_EMPTY = { pam: [], pamNote: [], bgbRL: [], iso: [], incose: [] };
 
 function locationFromEvidence(evidence) {
   if (!Array.isArray(evidence) || evidence.length === 0) return null;
@@ -51,7 +51,7 @@ export function buildRuleObservationFinding({
   scoreReason,
 }) {
   const refs = pamCitation
-    ? { pam: [pamCitation], pamNote: [], bgbRL: [], iso: [] }
+    ? { pam: [pamCitation], pamNote: [], bgbRL: [], iso: [], incose: [] }
     : { ...STANDARD_REFS_EMPTY };
   return makeFinding({
     id: `F-rule-${bpFullId}-01`,
@@ -138,5 +138,6 @@ export function unionStandardReferences(a, b) {
     pamNote: uniq(aa.pamNote, bb.pamNote),
     bgbRL: uniq(aa.bgbRL, bb.bgbRL),
     iso: uniq(aa.iso, bb.iso),
+    incose: uniq(aa.incose, bb.incose),
   };
 }

@@ -18,6 +18,7 @@
  * @property {string[]} pamNote   e.g. ["PAM Note SWE.2-1"]
  * @property {string[]} bgbRL     e.g. ["RL3", "RL3.2"]
  * @property {string[]} iso       e.g. ["ISO 26262-6:2018 §8.4.5"]
+ * @property {string[]} incose    e.g. ["INCOSE GtWR C7", "INCOSE GtWR R18"]
  *
  * @typedef {Object} FindingLocation
  * @property {?string} found       산출물에서 관찰된 정확한 위치 (없으면 null)
@@ -47,7 +48,7 @@
 
 /** @returns {StandardReferences} */
 export function makeEmptyStandardReferences() {
-  return { pam: [], pamNote: [], bgbRL: [], iso: [] };
+  return { pam: [], pamNote: [], bgbRL: [], iso: [], incose: [] };
 }
 
 /** @returns {FindingLocation} */

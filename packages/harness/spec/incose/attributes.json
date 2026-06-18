@@ -1,0 +1,80 @@
+{
+  "source": "INCOSE Guide to Writing Requirements V4 — Summary Sheet — Attributes of Need and Requirement Statements (defined in the NRM)",
+  "note": "minimum=true marks the minimum set of attributes that should be defined for each requirement (asterisk in the source).",
+  "groups": [
+    {
+      "group": "Help Define Needs & Requirements and Their Intent",
+      "attributes": [
+        { "id": "A1", "name": "Rationale", "minimum": true },
+        { "id": "A2", "name": "Trace to Parent", "minimum": true },
+        { "id": "A3", "name": "Trace to Source", "minimum": true },
+        { "id": "A4", "name": "States and Modes", "minimum": false },
+        { "id": "A5", "name": "Allocation/Budgeting", "minimum": true }
+      ]
+    },
+    {
+      "group": "System Verification & System Validation",
+      "attributes": [
+        { "id": "A6", "name": "Verification/Validation Success Criteria", "minimum": true },
+        { "id": "A7", "name": "Verification/Validation Strategy", "minimum": true },
+        { "id": "A8", "name": "Verification/Validation Method", "minimum": true },
+        { "id": "A9", "name": "Verification/Validation Responsible Organization", "minimum": true },
+        { "id": "A10", "name": "Verification/Validation Level", "minimum": false },
+        { "id": "A11", "name": "Verification/Validation Phase", "minimum": false },
+        { "id": "A12", "name": "Condition of Use", "minimum": false },
+        { "id": "A13", "name": "Verification/Validation Results", "minimum": false },
+        { "id": "A14", "name": "Verification/Validation Status", "minimum": false }
+      ]
+    },
+    {
+      "group": "Maintain the Requirements",
+      "attributes": [
+        { "id": "A15", "name": "Unique Identifier", "minimum": true },
+        { "id": "A16", "name": "Unique Name", "minimum": false },
+        { "id": "A17", "name": "Originator/Author", "minimum": true },
+        { "id": "A18", "name": "Date Requirement Entered", "minimum": false },
+        { "id": "A19", "name": "Owner", "minimum": true },
+        { "id": "A20", "name": "Stakeholders", "minimum": false },
+        { "id": "A21", "name": "Change Board", "minimum": false },
+        { "id": "A22", "name": "Change Proposed", "minimum": false },
+        { "id": "A23", "name": "Version Number", "minimum": false },
+        { "id": "A24", "name": "Approval Date", "minimum": false },
+        { "id": "A25", "name": "Date of Last Change", "minimum": false },
+        { "id": "A26", "name": "Stability/Volatility", "minimum": false },
+        { "id": "A27", "name": "Responsible Person", "minimum": false },
+        { "id": "A28", "name": "Need or Requirement Verification Status", "minimum": true },
+        { "id": "A29", "name": "Need or Requirement Validation Status", "minimum": true },
+        { "id": "A30", "name": "Status of the Need or Requirement", "minimum": false },
+        { "id": "A31", "name": "Status (of Implementation)", "minimum": false },
+        { "id": "A32", "name": "Trace to Interface Definition", "minimum": false },
+        { "id": "A33", "name": "Trace to Dependent Peer Requirements", "minimum": false },
+        { "id": "A34", "name": "Priority", "minimum": true },
+        { "id": "A35", "name": "Criticality or Essentiality", "minimum": true },
+        { "id": "A36", "name": "Risk (of Implementation)", "minimum": true },
+        { "id": "A37", "name": "Risk (Mitigation)", "minimum": false },
+        { "id": "A38", "name": "Key Driving Need or Requirement (KDN/KDR)", "minimum": false },
+        { "id": "A39", "name": "Additional Comments", "minimum": false },
+        { "id": "A40", "name": "Type/Category", "minimum": false }
+      ]
+    },
+    {
+      "group": "Show Applicability and Allow Reuse",
+      "attributes": [
+        { "id": "A41", "name": "Applicability", "minimum": false },
+        { "id": "A42", "name": "Region", "minimum": false },
+        { "id": "A43", "name": "Country", "minimum": false },
+        { "id": "A44", "name": "State/Province", "minimum": false },
+        { "id": "A45", "name": "Market Segment", "minimum": false },
+        { "id": "A46", "name": "Business Unit", "minimum": false }
+      ]
+    },
+    {
+      "group": "Aid in Product Line Management",
+      "attributes": [
+        { "id": "A47", "name": "Product Line", "minimum": false },
+        { "id": "A48", "name": "Product Line Common Needs and Requirements", "minimum": false },
+        { "id": "A49", "name": "Product Line Variant Needs and Requirements", "minimum": false }
+      ]
+    }
+  ]
+}

@@ -1,4 +1,5 @@
 import { ASSESSOR_PERSONA } from "./assessorPersona.js";
+import { buildIncoseGuidance } from "../../../spec/incose/index.js";
 
 /**
  * Build the assessor prompt for one Base Practice.
@@ -52,10 +53,17 @@ export function buildBpPrompt({
 
   const bpFullId = `${process.id}.${bp.id}`;
 
+  // INCOSE GtWR V4 렌즈: 요구사항 분석 프로세스(SYS.2/SWE.1/HWE.1)의 BP 에만
+  // 비어 있지 않은 가이드가 반환된다. 비적용 BP 의 task/schema 는 기존과
+  // byte-identical 로 유지되어 prompt cache 와 회귀 테스트가 깨지지 않는다.
+  const incoseGuidance = buildIncoseGuidance(bpFullId);
+  const incoseApplicable = Boolean(incoseGuidance);
+
   const task = [
     `# 평가 대상 Base Practice`,
     `  ${bpFullId}: ${bp.title}`,
     bp.description ? `  ${bp.description}` : "",
+    ...(incoseApplicable ? ["", incoseGuidance] : []),
     "",
     `# 작업`,
     `- 0~100 점으로 충족도를 평가하라.`,
@@ -65,6 +73,12 @@ export function buildBpPrompt({
     `- findings 배열에 최소 1개의 Finding 을 작성하라 (가이드: 시스템 메시지 § Finding 작성 룰).`,
     `  - 각 Finding 의 bpId 는 "${bpFullId}" 로 고정하라.`,
     `  - id 는 "F-${bpFullId}-NN" 형식으로 부여하라 (NN 은 01 부터).`,
+    ...(incoseApplicable
+      ? [
+          `- INCOSE GtWR V4 렌즈(위 "# INCOSE GtWR V4 ..." 절)로 요구사항 명세 품질과 검증가능성을 추가 평가하라.`,
+          `  요구사항 진술/집합의 INCOSE 특성 위반·충족을 Finding 으로 보고하고, 적용 INCOSE 인용을 standardReferences.incose 에 기록하라 (예: "INCOSE GtWR C7", "INCOSE GtWR R18").`,
+        ]
+      : []),
     "",
     `# 출력 JSON 스키마`,
     `{`,
@@ -77,7 +91,8 @@ export function buildBpPrompt({
     `    "pam": ["PAM §..."],`,
     `    "pamNote": ["PAM Note ${process.id}-N"],`,
     `    "bgbRL": ["RL3"],`,
-    `    "iso": []`,
+    `    "iso": []${incoseApplicable ? "," : ""}`,
+    ...(incoseApplicable ? [`    "incose": ["INCOSE GtWR C7", "INCOSE GtWR R18"]`] : []),
     `  },`,
     `  "findings": [`,
     `    {`,
@@ -90,7 +105,7 @@ export function buildBpPrompt({
     `      "recommendation": "<weakness 인 경우 동사로 시작하는 권고>",`,
     `      "location": { "found": "<발견 위치 또는 null>", "recommended": "<부재 시 권고 위치 또는 null>" },`,
     `      "evidence": [{"artifactName": "...", "quote": "..."}],`,
-    `      "standardReferences": {"pam": ["..."], "pamNote": [], "bgbRL": [], "iso": []},`,
+    `      "standardReferences": {"pam": ["..."], "pamNote": [], "bgbRL": [], "iso": []${incoseApplicable ? ', "incose": ["INCOSE GtWR C7"]' : ""}},`,
     `      "ratingImpact": {"ruleApplied": false, "ruleId": null, "scoreDelta": 0, "reason": "..."}`,
     `    }`,
     `  ]`,
