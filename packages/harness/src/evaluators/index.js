@@ -7,3 +7,4 @@ export { createLlmScorer } from "./llmScorer.js";
 export { createHybridScorer } from "./hybridScorer.js";
 export { createCustomScorer, sanitizeRuleBook } from "./customScorer.js";
 export { validateLlmResult, hasPamCitation } from "./citationGuard.js";
+export { applyAppliedRules, capForEffect, normalizeGuidelineCitations, RATING_CAP_PERCENT } from "./guidelineEffects.js";

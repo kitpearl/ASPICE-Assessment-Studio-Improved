@@ -71,3 +71,36 @@ test("validateLlmResult: rejects out-of-range score", () => {
   assert.ok(!v.ok);
   assert.match(v.reason, /out of range/);
 });
+
+test("hasPamCitation accepts PAM 4.1 and Annex B forms", () => {
+  assert.ok(hasPamCitation("PAM 4.1 §4.4.1 SWE.1.BP2"));
+  assert.ok(hasPamCitation("PAM 4.1 §5.3.1 GP 2.1.1"));
+  assert.ok(hasPamCitation("PAM 4.1 §4.4.1 BP2"));
+  assert.ok(hasPamCitation("PAM 4.1 Annex B 17-00"));
+  assert.ok(hasPamCitation("PAM §4.3.2 BP5"));
+  assert.ok(hasPamCitation("PAM §5 GP 1.1.1"));
+});
+
+test("validateLlmResult keeps known guideline citations only", () => {
+  const v = validateLlmResult(
+    {
+      scorePercent: 50,
+      pamCitation: "PAM 4.1 §4.4.1 SWE.1.BP2",
+      evidence: [],
+      gaps: [],
+      guidelineCitations: [
+        { ruleId: "SWE.1.RL.4", applied: true },
+        { ruleId: "X.RL.1", applied: true },
+      ],
+    },
+    { knownRuleIds: new Set(["SWE.1.RL.4"]) },
+  );
+  assert.ok(v.ok);
+  assert.deepEqual(v.result.appliedRules.map((a) => a.ruleId), ["SWE.1.RL.4"]);
+});
+
+test("validateLlmResult without opts drops all guideline citations", () => {
+  const v = validateLlmResult({ scorePercent: 50, pamCitation: "PAM §4.3.2", guidelineCitations: [{ ruleId: "A", applied: true }] });
+  assert.ok(v.ok);
+  assert.deepEqual(v.result.appliedRules, []);
+});

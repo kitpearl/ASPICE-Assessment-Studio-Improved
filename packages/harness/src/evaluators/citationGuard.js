@@ -13,7 +13,11 @@
  *   PAM §5 GP 1.1.1     ← top-level GP section, no subsection dots
  */
 
-const CITATION_RE = /PAM\s*§\s*\d+(?:\.\d+){0,3}(?:\s+(?:BP\d+|GP\s?\d\.\d\.\d))?/;
+import { normalizeGuidelineCitations } from "./guidelineEffects.js";
+
+// Section form: "PAM [4.1] §x.y.z [SWE.1.BP2 | BP2 | GP 2.1.1]"; Annex form: "PAM [4.1] Annex B 17-00".
+const CITATION_RE =
+  /PAM(?:\s*4\.1)?\s*§\s*\d+(?:\.\d+){0,3}(?:\s+(?:(?:[A-Z]{3}\.\d+\.)?BP\d+|GP\s?\d\.\d\.\d))?|PAM(?:\s*4\.1)?\s+Annex\s+B\s+\d{2}-\d{2}/;
 
 /** @param {string|undefined} citation */
 export function hasPamCitation(citation) {
@@ -41,7 +45,7 @@ export function normalizeContextConsistency(raw) {
  * @param {any} raw  LLM JSON response
  * @returns {{ok: true, result: any} | {ok: false, reason: string}}
  */
-export function validateLlmResult(raw) {
+export function validateLlmResult(raw, opts = {}) {
   if (!raw || typeof raw !== "object") {
     return { ok: false, reason: "response is not an object" };
   }
@@ -62,6 +66,7 @@ export function validateLlmResult(raw) {
       gaps,
       pamCitation: raw.pamCitation,
       contextConsistency,
+      appliedRules: normalizeGuidelineCitations(raw.guidelineCitations, opts.knownRuleIds ?? new Set()),
     },
   };
 }
