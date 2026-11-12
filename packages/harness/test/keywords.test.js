@@ -22,3 +22,15 @@ test("bpKeywordSources falls back to title/description for english-only BPs", ()
   assert.equal(s.ko, "일관성 보장");
   assert.equal(s.en, "Consistency Ensure");
 });
+
+test("korean compound particles and verb endings are stripped", () => {
+  const kws = extractKoreanKeywords("이해관계자와의 합의는 시스템에서는 요구사항과의 일관성이 검토되어야 하며 승인되고 관리되며 구현할 수 있도록 확인해야 한다");
+  for (const k of ["이해관계자", "시스템", "요구사항", "일관성"]) assert.ok(kws.includes(k), `missing ${k}: ${kws}`);
+  for (const k of ["이해관계자와", "시스템에서", "요구사항과", "검토되어야", "관리되며", "승인되고", "구현할", "확인해야", "있도록", "하며"]) {
+    assert.ok(!kws.includes(k), `junk ${k}`);
+  }
+});
+
+test("산출물 is kept as a keyword", () => {
+  assert.ok(extractKoreanKeywords("산출물을 검토한다").includes("산출물"));
+});

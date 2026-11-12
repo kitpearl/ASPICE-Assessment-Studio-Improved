@@ -148,3 +148,39 @@ test("ruleScorer.scoreBP bilingual: english artifact unaffected by korean keywor
   const r = await ruleScorer.scoreBP({ process: { id: "SWE.1" }, bp: bilingualBp, artifacts: [{ name: "Traceability_Matrix.xlsx", text: "This traceability matrix ensures consistency and bidirectional traceability between software requirements and system requirements." }] });
   assert.ok(r.scorePercent >= 51, `got ${r.scorePercent}`);
 });
+
+test("ruleScorer.scoreWP: alias hit scores 60 and evidence points at the matching artifact", async () => {
+  const wp = { id: "17-00", name: "요구사항 명세", nameEn: "Requirement", aliases: ["srs document"] };
+  const r = await ruleScorer.scoreWP({ wp, artifacts: [
+    { name: "a.txt", text: "nothing relevant" },
+    { name: "b.txt", text: "This is the SRS Document for the project." },
+  ] });
+  assert.equal(r.scorePercent, 60);
+  assert.equal(r.evidence[0].artifactName, "b.txt");
+  assert.match(r.evidence[0].quote, /SRS Document/);
+});
+
+test("ruleScorer.scoreWP: nameEn hit when name is Korean", async () => {
+  const wp = { id: "17-00", name: "요구사항 명세", nameEn: "Requirement", aliases: [] };
+  const r = await ruleScorer.scoreWP({ wp, artifacts: [{ name: "a.txt", text: "Software requirement list" }] });
+  assert.equal(r.scorePercent, 60);
+});
+
+test("ruleScorer.scoreWP: korean name shorter than 5 chars is not a needle", async () => {
+  const wp = { id: "17-00", name: "요구사항", nameEn: "Requirement", aliases: [] };
+  const r = await ruleScorer.scoreWP({ wp, artifacts: [{ name: "a.txt", text: "요구사항 목록" }] });
+  assert.equal(r.scorePercent, 0);
+});
+
+test("ruleScorer.scoreWP: exact name hit still scores 60", async () => {
+  const wp = { id: "17-00", name: "Requirement" };
+  const r = await ruleScorer.scoreWP({ wp, artifacts: [{ name: "a.txt", text: "The requirement set" }] });
+  assert.equal(r.scorePercent, 60);
+});
+
+test("ruleScorer.scoreBP english-only BP: half of english keywords matched scores 50", async () => {
+  const bp = { id: "BP1", title: "alpha bravo", description: "charlie delta" };
+  const r = await ruleScorer.scoreBP({ bp, artifacts: [{ name: "x.txt", text: "alpha bravo only" }] });
+  assert.equal(r.scorePercent, 50);
+  assert.deepEqual(r.gaps[0], "No evidence found for keywords: charlie, delta");
+});
