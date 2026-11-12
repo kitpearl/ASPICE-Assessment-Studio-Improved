@@ -62,6 +62,22 @@ test("guideline: rating conditions", { skip: !ko }, () => {
   // in another process: MAN.3.RL.17–21 and REU.2.RL.3 (see task-3-report.md).
   assert.equal(rules.filter((r) => r.condition.crossProcess).length, 6);
 });
+test("guideline: comma-separated target lists are kept whole", { skip: !ko }, () => {
+  assert.deepEqual(by("MAN.3.RL.11").targets, ["BP4", "BP5", "BP6", "BP7", "BP8"].map((id) => ({ kind: "bp", process: "MAN.3", id })));
+  assert.deepEqual(by("PA3.1.RL.23").targets, ["3.1.1", "3.1.2", "3.1.3", "3.1.4"].map((n) => ({ kind: "gp", id: `GP ${n}` })));
+  assert.deepEqual(by("AGE.RL.1").targets.map((t) => `${t.process}.${t.id}`), ["MAN.3.BP4", "MAN.3.BP9", "SPL.2.BP1"]);
+  assert.deepEqual(by("SUP.8.RL.2").targets.map((t) => t.id), ["BP4", "BP5", "BP6"]);
+  assert.deepEqual(by("SUP.1.RL.3").condition.source, { kind: "bp", process: "SUP.1", id: "BP3" });
+  assert.deepEqual(by("SWE.1.RL.4").condition, { kind: "evidence" });
+  assert.deepEqual(by("DEX.RL.7").effect, { kind: "must-not-downrate" });  // "안 되지만"
+});
+test("guideline: wrapped rule text", { skip: !ko }, () => {
+  assert.match(by("SPL.2.RL.3").textEn, /then SPL\.2\.PA1\.1 shall not be rated higher than P\.$/);
+  assert.match(by("PA3.1.RL.21").textEn, /GP 3\.1\.4 shall be downrated\.$/);
+  assert.match(by("MAN.3.RL.5").textEn, /shall not be rated higher than P\.$/);
+  assert.match(by("MAN.3.RL.5").text, /- 시작일과 종료일 - 계획 노력과 실제 노력 - .*종료일의 수정$/);
+  assert.equal(by("SUP.10.RL.11").textEn.endsWith("the indicator BP6 shall be downrated."), true);  // EN OCR junk bullet not appended
+});
 test("guideline: notes", { skip: !ko }, () => {
   const n = g.notes.process["SWE.1"];
   assert.ok(n.some((x) => x.heading.startsWith("3.8.1.2") && /운영 환경/.test(x.text)));

@@ -67,7 +67,8 @@ function effectOf(part) {
   if (/L보다 높게/.test(part)) return { effect: { kind: "cap", maxRating: "L" } };
   if (/F로 등급 평가해서는 안/.test(part)) return { effect: { kind: "cap", maxRating: "L" } };
   if (/그보다 높게/.test(part)) return { effect: { kind: "cap-source" } };
-  if (/하향 평가해서는 안 된다/.test(part)) return { effect: { kind: "must-not-downrate" } };
+  // DEX.RL.7: "…하향 평가해서는 안 되지만 …"
+  if (/하향 평가해서는 안 (?:된다|되지만)/.test(part)) return { effect: { kind: "must-not-downrate" } };
   if (/하향 평가해야 한다/.test(part)) return { effect: { kind: "must-downrate" } };
   // SYS.2.RL.5: "…로 등급 평가해야 한다" — rating value lost in the OCR source.
   if (/…\s*로 등급 평가해야/.test(part)) return { effect: { kind: "cap", maxRating: "N" }, inferred: true };
@@ -88,15 +89,60 @@ function conditionOf(part, scope) {
   return cond;
 }
 
+// Clause endings of the condition part. The last one followed by ", " marks the
+// split; a plain last-comma split would cut target lists like "BP4, BP5, BP6".
+const CLAUSE_END_RE = /(?:다면|더라도|경우|되면)\)?,\s/g;
+
+/** Split a Korean rule sentence into { condPart, effPart }. */
+function splitRule(text) {
+  let cut = -1;
+  for (const m of text.matchAll(CLAUSE_END_RE)) cut = m.index + m[0].length;
+  if (cut >= 0) return { condPart: text.slice(0, cut).replace(/,\s$/, ""), effPart: text.slice(cut) };
+  const comma = text.lastIndexOf(", ");
+  return comma >= 0
+    ? { condPart: text.slice(0, comma), effPart: text.slice(comma + 2) }
+    : { condPart: null, effPart: text };
+}
+
+const BULLET_RE = /^(?:[-*•°]|·)\s/;
+const isStop = (t) => !t || HEADING_RE.test(t) || PAGE_RE.test(t) || RULE_RE.test(t);
+
+/**
+ * Lines that continue the rule on line `i` (text `first`): wrapped text when
+ * the sentence does not end with "." and, with `bullets` (KO only — the EN
+ * file has OCR junk bullets after some rules), bullet lists after it. Single blank
+ * lines are bridged; stops at a tag line, heading, page marker or a blank line
+ * followed by another blank/stop line. Returns { text, last } (last consumed index).
+ */
+function continueRule(lines, i, first, { bullets = false } = {}) {
+  let text = first;
+  let last = i;
+  for (let j = i + 1; j < lines.length; j++) {
+    const t = lines[j].trim();
+    if (!t) {
+      if (isStop((lines[j + 1] ?? "").trim())) break;
+      continue;
+    }
+    if (isStop(t)) break;
+    if (/\.$/.test(text) && !(bullets && BULLET_RE.test(t))) break;
+    text += " " + t;
+    last = j;
+  }
+  return { text: text.replace(/\s+/g, " ").trim(), last };
+}
+
 /** Map of normalized rule id → body text from the English file. */
 function englishRuleMap(enText) {
   const map = new Map();
   if (!enText) return map;
-  for (const raw of String(enText).split(/\r?\n/)) {
-    const m = RULE_RE.exec(raw.trim());
+  const lines = String(enText).split(/\r?\n/);
+  for (let i = 0; i < lines.length; i++) {
+    const m = RULE_RE.exec(lines[i].trim());
     if (!m) continue;
     const id = `${normalizePrefix(m[1])}.RL.${m[3]}`;
-    if (!map.has(id)) map.set(id, m[4].trim());
+    const { text, last } = continueRule(lines, i, m[4].trim());
+    if (!map.has(id)) map.set(id, text);
+    i = last;
   }
   return map;
 }
@@ -167,11 +213,13 @@ export function parseGuideline2026(koText, enText) {
     if (rm) {
       const prefix = normalizePrefix(rm[1]);
       const id = `${prefix}.RL.${rm[3]}`;
-      const text = rm[4].trim();
       const scope = scopeOf(prefix);
-      const comma = text.lastIndexOf(", ");
-      const condPart = comma >= 0 ? text.slice(0, comma) : null;
-      const effPart = comma >= 0 ? text.slice(comma + 2) : text;
+      // Condition/effect come from the tag line itself; continuation lines
+      // (e.g. MAN.3.RL.5 bullets) only extend the stored text.
+      const { condPart, effPart } = splitRule(rm[4].trim());
+      const cont = continueRule(lines, i, rm[4].trim(), { bullets: true });
+      const text = cont.text;
+      i = cont.last;
       const { effect, inferred } = effectOf(effPart);
       const sectionNum = current ? current.num : "";
       const rule = {
