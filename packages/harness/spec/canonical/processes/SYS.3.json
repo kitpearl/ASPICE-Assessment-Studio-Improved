@@ -1,115 +1,173 @@
 {
   "id": "SYS.3",
-  "name": "System Architectural Design",
+  "name": "시스템 아키텍처 설계",
+  "nameEn": "System Architectural Design",
+  "pamVersion": "4.1",
   "category": "SYS",
   "pamSection": "4.3.3",
-  "purpose": "The purpose is to establish an analyzed system architecture, comprising static and dynamic aspects, consistent with the system requirements.",
+  "page": 42,
+  "purpose": "프로세스 목적은 시스템 요구사항과 일관된, 정적 및 동적 측면을 포함한 분석된 시스템 아키텍처를 수립하는 것이다.",
   "outcomes": [
     {
       "id": 1,
-      "text": "A system architecture is designed including a definition of the system elements with their behavior, their interfaces, their relationships, and their interactions."
+      "text": "시스템 아키텍처가 시스템 엘리먼트의 동작, 인터페이스, 관계, 상호작용에 대한 정의를 포함하여 설계된다."
     },
     {
       "id": 2,
-      "text": "The system architecture is analyzed against defined criteria, and special characteristics are identified."
+      "text": "시스템 아키텍처가 정의된 기준에 따라 분석되고 특별 특성이 식별된다."
     },
     {
       "id": 3,
-      "text": "Consistency and bidirectional traceability are established between system architecture and system requirements."
+      "text": "시스템 아키텍처와 시스템 요구사항 간의 일관성 및 양방향 추적성이 수립된다."
     },
     {
       "id": 4,
-      "text": "The agreed system architecture and the special characteristics are communicated to all affected parties."
+      "text": "합의된 시스템 아키텍처와 특별 특성이 영향받는 모든 당사자에게 의사소통된다."
     }
   ],
   "basePractices": [
     {
       "id": "BP1",
-      "title": "Specify static aspects of the system architecture",
-      "description": "Specify and document the static aspects of the system architecture with respect to the functional and non-functional system requirements, including external interfaces and a defined set of system elements with their interfaces and relationships.",
-      "pamCitation": "PAM §SYS.3 BP1"
+      "title": "시스템 아키텍처의 정적 측면을 명세한다",
+      "description": "기능적 및 비기능적 시스템 요구사항과 관련하여, 외부 인터페이스와 시스템 엘리먼트 간 인터페이스 및 관계를 갖는 정의된 시스템 엘리먼트 집합을 포함하는 시스템 아키텍처의 정적 측면을 명세하고 문서화한다.",
+      "notes": [],
+      "page": 42,
+      "pamCitation": "PAM 4.1 §4.3.3 SYS.3.BP1",
+      "titleEn": "Specify the static aspects of the system architecture",
+      "descriptionEn": "Specify and document the static aspects of the system architecture with respect to the functional and non-functional system requirements, including the external interfaces and a defined set of system elements with their interfaces and relationships."
     },
     {
       "id": "BP2",
-      "title": "Specify dynamic aspects of the system architecture",
-      "description": "Specify and document the dynamic aspects of the system architecture with respect to the functional and non-functional system requirements including the behavior of the system elements and their interaction in different system modes. mechanical components, processing times of ECUs, and signal propagation times of bus systems. aspects, consistent with the system requirements. | | | behavior, their interfaces, their relationships, and their interactions. 2) The system architecture is analyzed against defined criteria, and special characteristics are identified. 3) Consistency and bidirectional traceability are established between system architecture and system requirements. 4) The agreed system architecture and the special characteristics are communicated to all affected parties. | | | static aspects of the system architecture with respect to the functional and non-functional system requirements, including external interfaces and a defined set of system elements with their interfaces and relationships. | | | dynamic aspects of the system architecture with respect to the functional and non-functional system requirements including the behavior of the system elements and their interaction in different system modes. mechanical components, processing times of ECUs, and signal propagation times of bus systems. | | |",
-      "pamCitation": "PAM §SYS.3 BP2"
+      "title": "시스템 아키텍처의 동적 측면을 명세한다",
+      "description": "기능적 및 비기능적 시스템 요구사항과 관련하여, 시스템 엘리먼트의 동작 및 다양한 시스템 모드에서의 상호작용을 포함한 시스템 아키텍처의 동적 측면을 명세하고 문서화한다.",
+      "notes": [
+        "비고 1: 시스템 엘리먼트 상호작용의 예로는 기계 컴포넌트의 관성을 반영한 타이밍 다이어그램, ECU 의 처리 시간, 버스 시스템의 신호 전파 시간이 있다."
+      ],
+      "page": 42,
+      "pamCitation": "PAM 4.1 §4.3.3 SYS.3.BP2",
+      "titleEn": "Specify the dynamic aspects of the system architecture",
+      "descriptionEn": "Specify and document the dynamic aspects of the system architecture with respect to the functional and non-functional system requirements including the behavior of the system elements and their interaction in different system modes.",
+      "notesEn": [
+        "Examples of interactions of system elements are timing diagrams reflecting inertia of mechanical components, processing times of ECUs, and signal propagation times of bus systems."
+      ]
     },
     {
       "id": "BP3",
-      "title": "Analyze system architecture",
-      "description": "Analyze the system architecture regarding relevant technical design aspects related to the product lifecycle, and to support project management regarding project estimates, and derive special characteristics for non-software system elements. Document a rationale for the system architectural design decisions. decommissioning. system elements to be reused, or availability of system elements. simulations, and qualitative analyses (e.g., FMEA approaches) line), a make-or-buy decision, or found in an evolutionary way (e.g., set-based design).",
-      "pamCitation": "PAM §SYS.3 BP3"
+      "title": "시스템 아키텍처를 분석한다",
+      "description": "제품 수명주기와 관련된 기술 설계 측면에 따라, 프로젝트 추정 관련 프로젝트 관리를 지원하기 위해, 시스템 아키텍처를 분석하고 소프트웨어가 아닌 시스템 엘리먼트의 특별 특성을 도출한다. 시스템 아키텍처 설계 결정에 대한 근거를 문서화한다.",
+      "notes": [
+        "비고 2: 프로젝트 실현가능성은 MAN.3.BP3, 프로젝트 추정은 MAN.3.BP5 를 참조한다.",
+        "비고 3: 제품 수명주기 단계의 예로는 생산, 유지보수 및 수리, 폐기가 있다.",
+        "비고 4: 기술적 측면의 예로는 생산을 위한 제조가능성, 재사용될 기존 시스템 엘리먼트의 적합성 또는 시스템 엘리먼트의 가용성이 있다.",
+        "비고 5: 기술적 측면을 분석하는 데 적합한 방법의 예로는 프로토타입, 시뮬레이션, 정성적 분석(예: FMEA 접근법)이 있다.",
+        "비고 6: 설계 근거의 예는 실증 논거(proven-in-use), 제품 플랫폼 또는 제품 라인의 재사용, 제작/구매(make-or-buy) 결정, 또는 진화적 방식(예: 집합 기반 설계(set-based design))으로 도출된 경우가 있다."
+      ],
+      "page": 43,
+      "pamCitation": "PAM 4.1 §4.3.3 SYS.3.BP3",
+      "titleEn": "Analyze the system architecture",
+      "descriptionEn": "Analyze the system architecture regarding relevant technical design aspects related to the product lifecycle, and to support the project management regarding project estimates, and derive the special characteristics for non-software system elements. Document the rationales for the system architectural design decisions.",
+      "notesEn": [
+        "See MAN.3.BP3 for project feasibility and MAN.3.BP5 for project estimates.",
+        "Examples of product lifecycle phases are production, maintenance & repair, decommissioning.",
+        "Examples of technical aspects are manufacturability for production, suitability of pre-existing system elements to be reused, or availability of system elements.",
+        "Examples of suitable methods for analyzing technical aspects are prototypes, simulations, and qualitative analyses (e.g., FMEA approaches).",
+        "Examples of design rationales are proven-in-use, reuse of a product platform or product line), a make-or-buy decision, or found in an evolutionary way (e.g., set-based design)."
+      ]
     },
     {
       "id": "BP4",
-      "title": "Ensure consistency and establish bidirectional traceability",
-      "description": "Ensure consistency and establish bidirectional traceability between the elements of the system architecture and the system requirements that represent properties or characteristics of the physical end product. change requests, and demonstration of verification coverage. Traceability alone, e.g., the existence of links, does not necessarily mean that the information is consistent with each other. trace to. Examples are do not address, or represent, direct properties or characteristics of the physical end product. Such requirements are still subject to verification.",
-      "pamCitation": "PAM §SYS.3 BP4"
+      "title": "일관성을 보장하고 양방향 추적성을 수립한다",
+      "description": "시스템 아키텍처 엘리먼트와 물리적 최종 제품의 특성 또는 특징을 나타내는 시스템 요구사항 간의 일관성을 보장하고 양방향 추적성을 수립한다.",
+      "notes": [
+        "비고 7: 양방향 추적성은 일관성을 한층 더 지원하고, 변경 요청의 영향 분석 및 커버리지 입증을 용이하게 한다. 예를 들어, 링크의 존재와 같은 추적성 자체만으로는 정보에 일관성이 있다는 것을 의미하지는 않는다.",
+        "비고 8: 시스템 아키텍처 설계가 추적하지 않는 비기능적 요구사항이 있을 수 있다. 예를 들어, 최종 물리적 제품의 직접적인 특성이나 특징을 다루거나 나타내지 않는 경우가 이에 해당된다. 이러한 요구사항도 여전히 검증 대상이다."
+      ],
+      "page": 43,
+      "pamCitation": "PAM 4.1 §4.3.3 SYS.3.BP4",
+      "titleEn": "Ensure consistency and establish bidirectional traceability",
+      "descriptionEn": "Ensure consistency and establish bidirectional traceability between the elements of the system architecture and the system requirements that represent properties or characteristics of the physical end product.",
+      "notesEn": [
+        "Bidirectional traceability further supports consistency, and facilitates the impact analysis of change requests, and the demonstration of coverage. Traceability alone, e.g., the existence of links, does not necessarily mean that the information is consistent.",
+        "There may be non-functional requirements that the system architectural design does not trace to. Examples are requirements that do not address, or represent, direct properties or characteristics of the physical end product. Such requirements are still subject to verification."
+      ]
     },
     {
       "id": "BP5",
-      "title": "Communicate agreed system architecture",
-      "description": "Communicate the agreed system architecture, including the special characteristics, to all affected parties. SYS.3 System Architectural Design 1 emoctuO 2 emoctuO 3 emoctuO 4 emoctuO",
-      "pamCitation": "PAM §SYS.3 BP5"
+      "title": "합의된 시스템 아키텍처를 의사소통한다",
+      "description": "특별 특성을 포함한 합의된 시스템 아키텍처를 영향받는 모든 당사자에게 의사소통한다.",
+      "notes": [],
+      "page": 43,
+      "pamCitation": "PAM 4.1 §4.3.3 SYS.3.BP5",
+      "titleEn": "Communicate the agreed system architecture",
+      "descriptionEn": "Communicate the agreed system architecture, including the special characteristics, to all affected parties."
     }
   ],
   "outputWorkProducts": [
     {
       "id": "04-06",
-      "name": "System Architecture"
+      "name": "시스템 아키텍처",
+      "nameEn": "System Architecture"
     },
     {
       "id": "13-51",
-      "name": "Consistency Evidence"
+      "name": "일관성 증거",
+      "nameEn": "Consistency Evidence"
     },
     {
       "id": "13-52",
-      "name": "Communication Evidence"
+      "name": "의사소통 증거",
+      "nameEn": "Communication evidence"
     },
     {
       "id": "15-51",
-      "name": "Analysis Results"
+      "name": "분석 결과",
+      "nameEn": "Analysis results"
     },
     {
       "id": "17-57",
-      "name": "Special Characteristics"
+      "name": "특별 특성",
+      "nameEn": "Special Characteristics"
     }
   ],
   "inputWorkProducts": [
     {
       "id": "08-56",
-      "name": "Schedule",
+      "name": "일정",
+      "nameEn": "Schedule",
       "fromProcess": "MAN.3"
     },
     {
       "id": "13-16",
-      "name": "Change request",
+      "name": "변경 요청",
+      "nameEn": "Change request",
       "fromProcess": "SUP.10"
     },
     {
       "id": "13-19",
-      "name": "Review evidence",
+      "name": "검토 증거",
+      "nameEn": "Review evidence",
       "fromProcess": "SUP.1"
     },
     {
       "id": "15-07",
-      "name": "Reuse analysis evidence",
+      "name": "재사용 분석 증거",
+      "nameEn": "Reuse analysis evidence",
       "fromProcess": "REU.2"
     },
     {
       "id": "17-00",
-      "name": "Requirement",
+      "name": "요구사항",
+      "nameEn": "Requirement",
       "fromProcess": "SYS.2"
     },
     {
       "id": "17-54",
-      "name": "Requirement Attribute",
+      "name": "요구사항 속성",
+      "nameEn": "Requirement Attribute",
       "fromProcess": "SYS.2"
     }
   ],
   "traceBPs": [
-    "BP2",
     "BP4"
   ]
 }

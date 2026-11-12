@@ -1,156 +1,256 @@
 {
   "id": "MAN.3",
-  "name": "Project Management",
+  "name": "프로젝트 관리",
+  "nameEn": "Project Management",
+  "pamVersion": "4.1",
   "category": "MAN",
   "pamSection": "4.9.1",
-  "purpose": "The purpose is to identify and control the activities, and establish resources necessary for a project to develop a product, in the context of the project’s requirements and constraints.",
+  "page": 101,
+  "purpose": "프로세스 목적은 프로젝트의 요구사항 및 제약 조건 내에서 프로젝트가 제품을 개발하기 위해 필요한 활동을 식별 및 통제하고, 자원을 수립하는 것이다.",
   "outcomes": [
     {
       "id": 1,
-      "text": "The scope of the work for the project is defined."
+      "text": "프로젝트의 업무 범위가 정의된다."
     },
     {
       "id": 2,
-      "text": "The feasibility of achieving the goals of the project with available resources and constraints is evaluated."
+      "text": "가용한 자원 및 제약 사항을 고려하여 프로젝트 목표 달성의 실현가능성이 평가된다."
     },
     {
       "id": 3,
-      "text": "The activities and resources necessary to complete the work are sized and estimated."
+      "text": "작업 완료에 필요한 활동 및 자원의 규모가 산정되고 추정된다."
     },
     {
       "id": 4,
-      "text": "Interfaces within the project, and with other projects and organizational units, are identified and monitored."
+      "text": "프로젝트 내의 인터페이스와 다른 프로젝트 및 조직 단위에 대한 인터페이스가 식별되고 모니터링된다."
     },
     {
       "id": 5,
-      "text": "Plans for the execution of the project are developed, implemented and maintained."
+      "text": "프로젝트의 실행 계획이 개발, 이행, 유지관리된다."
     },
     {
       "id": 6,
-      "text": "Progress of the project is monitored and reported."
+      "text": "프로젝트의 진척이 모니터링 및 보고된다."
     },
     {
       "id": 7,
-      "text": "Adjustment is performed when project goals are not achieved."
+      "text": "프로젝트 목표가 달성되지 않을 경우, 조정이 수행된다."
     }
   ],
   "basePractices": [
     {
       "id": "BP1",
-      "title": "Define the scope of work",
-      "description": "Identify the project's goals, motivation and boundaries.",
-      "pamCitation": "PAM §MAN.3 BP1"
+      "title": "업무 범위를 정의한다",
+      "description": "프로젝트의 목표, 동기, 경계를 식별한다.",
+      "notes": [],
+      "page": 101,
+      "pamCitation": "PAM 4.1 §4.9.1 MAN.3.BP1",
+      "titleEn": "Define the scope of work",
+      "descriptionEn": "Identify the project's goals, motivation and boundaries."
     },
     {
       "id": "BP2",
-      "title": "Define project life cycle",
-      "description": "Define the life cycle for the project, which is appropriate to the scope, context, and complexity of the project. Define a release scope for relevant milestones. process.",
-      "pamCitation": "PAM §MAN.3 BP2"
+      "title": "프로젝트 수명주기를 정의한다",
+      "description": "프로젝트의 범위, 맥락, 복잡성에 적절한 프로젝트의 수명주기를 정의한다. 관련 마일스톤의 출시 범위를 정의한다.",
+      "notes": [
+        "비고 1: 이는 프로젝트 수명주기를 고객의 개발 프로세스에 맞추어 정렬하는 것을 포함할 수 있다."
+      ],
+      "page": 101,
+      "pamCitation": "PAM 4.1 §4.9.1 MAN.3.BP2",
+      "titleEn": "Define the project lifecycle",
+      "descriptionEn": "Define the lifecycle for the project, which is appropriate to the scope, context, and complexity of the project. Define a release scope for relevant milestones.",
+      "notesEn": [
+        "This may include the alignment of the project lifecycle with the customer's development process."
+      ]
     },
     {
       "id": "BP3",
-      "title": "Evaluate feasibility of the project",
-      "description": "Evaluate the feasibility of achieving the goals of the project with respect to time, project estimates, and available resources.",
-      "pamCitation": "PAM §MAN.3 BP3"
+      "title": "프로젝트의 실현가능성을 평가한다",
+      "description": "프로젝트 목표 달성의 실현가능성을 시간, 프로젝트 추정치, 가용한 자원의 관점에서 평가한다.",
+      "notes": [
+        "비고 2: 실현가능성 평가는 프로젝트의 기술적 제약 사항을 고려할 수 있다."
+      ],
+      "page": 101,
+      "pamCitation": "PAM 4.1 §4.9.1 MAN.3.BP3",
+      "titleEn": "Evaluate the feasibility of the project",
+      "descriptionEn": "Evaluate the feasibility of achieving the goals of the project with respect to time, project estimates, and available resources.",
+      "notesEn": [
+        "The evaluation of feasibility may consider technical constraints of the project."
+      ]
     },
     {
       "id": "BP4",
-      "title": "Define and monitor work packages",
-      "description": "Define and monitor work packages and their dependencies according to defined project life cycle and estimations. project to develop a product, in the context of the project’s requirements and constraints. | | | 2) The feasibility of achieving the goals of the project with available resources and constraints is evaluated. 3) The activities and resources necessary to complete the work are sized and estimated. 4) Interfaces within the project, and with other projects and organizational units, are identified and monitored. 5) Plans for the execution of the project are developed, implemented and maintained. 6) Progress of the project is monitored and reported. 7) Adjustment is performed when project goals are not achieved. | | | to the scope, context, and complexity of the project. Define a release scope for relevant milestones. process. | | | of the project with respect to time, project estimates, and available resources. dependencies according to defined project life cycle and estimations.",
-      "pamCitation": "PAM §MAN.3 BP4"
+      "title": "작업 패키지를 정의하고 모니터링한다",
+      "description": "적절한 크기의 작업 패키지 및 그 종속성을 정의된 프로젝트 수명주기 및 추정에 따라 정의하고 모니터링한다.",
+      "notes": [
+        "비고 3: 작업 패키지의 구조 및 규모는 적정한 진척 모니터링을 지원한다.",
+        "비고 4: 작업 패키지는 작업 분할 구조로 구성될 수 있다."
+      ],
+      "page": 102,
+      "pamCitation": "PAM 4.1 §4.9.1 MAN.3.BP4",
+      "titleEn": "Define and monitor the work packages",
+      "descriptionEn": "Define and monitor adequately sized work packages and their dependencies according to defined project lifecycle and estimations.",
+      "notesEn": [
+        "The structure and the size of the work packages support an adequate progress monitoring.",
+        "Work packages may be organized in a work breakdown structure."
+      ]
     },
     {
       "id": "BP5",
-      "title": "Define and monitor project estimates and resources",
-      "description": "Define and monitor project estimates of effort and resources based on project's goals, project risks, motivation and boundaries. processes.",
-      "pamCitation": "PAM §MAN.3 BP5"
+      "title": "프로젝트 추정치 및 자원을 정의하고 모니터링한다",
+      "description": "프로젝트 목표, 프로젝트 위험, 동기, 경계를 기반으로 공수 및 자원의 프로젝트 추정치를 정의하고 모니터링한다.",
+      "notes": [
+        "비고 5: 필요한 자원의 예로는 예산, 인력, 제품 샘플, 또는 인프라가 있다.",
+        "비고 6: 추정치 및 자원은 엔지니어링, 관리, 지원 프로세스를 포함할 수 있다."
+      ],
+      "page": 102,
+      "pamCitation": "PAM 4.1 §4.9.1 MAN.3.BP5",
+      "titleEn": "Define and monitor the project estimates and resources",
+      "descriptionEn": "Define and monitor the project estimates of effort and resources based on the project's goals, risks, motivation and boundaries.",
+      "notesEn": [
+        "Examples of necessary resources are budget, people, product samples, or infrastructure.",
+        "Estimations and resources may include engineering, management and supporting processes."
+      ]
     },
     {
       "id": "BP6",
-      "title": "Define and monitor required skills, knowledge, and experience",
-      "description": "Identify and monitor the required skills, knowledge, and experience for the project in line with the estimates and work packages. required skills and knowledge.",
-      "pamCitation": "PAM §MAN.3 BP6"
+      "title": "요구되는 기술, 지식, 경험을 정의하고 모니터링한다",
+      "description": "프로젝트에 요구되는 기술, 지식, 경험을 추정치 및 작업 패키지에 따라 식별하고 모니터링한다.",
+      "notes": [
+        "비고 7: 개인의 훈련, 멘토링 또는 코칭은 요구되는 기술 및 지식의 편차를 해결하기 위해 적용될 수 있다."
+      ],
+      "page": 102,
+      "pamCitation": "PAM 4.1 §4.9.1 MAN.3.BP6",
+      "titleEn": "Define and monitor the required skills, knowledge, and experience",
+      "descriptionEn": "Identify and monitor the required skills, knowledge, and experience for the project in line with the estimates and work packages.",
+      "notesEn": [
+        "Training, mentoring or coaching of individuals may be applied to resolve deviations from required skills and knowledge."
+      ]
     },
     {
       "id": "BP7",
-      "title": "Define and monitor project interfaces and agreed commitments",
-      "description": "Identify and agree interfaces of the project with affected stakeholders and monitor agreed commitments. Define an escalation mechanism for commitments that are not fulfilled. service providers.",
-      "pamCitation": "PAM §MAN.3 BP7"
+      "title": "프로젝트 인터페이스 및 합의된 책무를 정의하고 모니터링한다",
+      "description": "영향받는 이해관계자에 대한 프로젝트 인터페이스를 식별 및 합의하고, 합의된 책무를 모니터링한다. 충족되지 않은 책무에 대한 에스컬레이션 체계를 정의한다.",
+      "notes": [
+        "비고 8: 영향받는 이해관계자는 다른 프로젝트, 조직 단위, 하도급업체, 서비스 제공업체 등을 포함할 수 있다."
+      ],
+      "page": 102,
+      "pamCitation": "PAM 4.1 §4.9.1 MAN.3.BP7",
+      "titleEn": "Define and monitor the project interfaces and agreed commitments",
+      "descriptionEn": "Identify and agree the interfaces of the project with affected stakeholders and monitor the agreed commitments. Define an escalation mechanism for commitments that are not fulfilled.",
+      "notesEn": [
+        "Affected stakeholders may include other projects, organizational units, sub-contractors, and service providers."
+      ]
     },
     {
       "id": "BP8",
-      "title": "Define and monitor project schedule",
-      "description": "Allocate resources to work packages and schedule each activity of the project. Monitor the performance of activities against schedule.",
-      "pamCitation": "PAM §MAN.3 BP8"
+      "title": "프로젝트 일정을 정의하고 모니터링한다",
+      "description": "작업 패키지에 자원을 할당하고 프로젝트의 각 활동에 대한 일정을 수립한다. 활동의 수행을 일정 대비 모니터링한다.",
+      "notes": [],
+      "page": 102,
+      "pamCitation": "PAM 4.1 §4.9.1 MAN.3.BP8",
+      "titleEn": "Define and monitor the project schedule",
+      "descriptionEn": "Allocate resources to the work packages and schedule each activity of the project. Monitor the performance of the activities against the schedule."
     },
     {
       "id": "BP9",
-      "title": "Ensure consistency",
-      "description": "Regularly adjust estimates, resources, skills, work packages and their dependencies, schedules, plans, interfaces, and commitments for the project to ensure consistency with the scope of work. management.",
-      "pamCitation": "PAM §MAN.3 BP9"
+      "title": "일관성을 보장한다",
+      "description": "작업 범위에 따른 일관성을 보장하기 위해 프로젝트의 추정치, 자원, 기술, 작업 패키지 및 그 종속성, 일정, 계획, 인터페이스 및 책무를 정기적으로 조정한다.",
+      "notes": [
+        "비고 9: 위험 관리를 위한 입력으로 임계 의존관계가 고려될 수 있다."
+      ],
+      "page": 102,
+      "pamCitation": "PAM 4.1 §4.9.1 MAN.3.BP9",
+      "titleEn": "Ensure consistency",
+      "descriptionEn": "Regularly adjust the estimates, resources, skills, work packages and their dependencies, schedules, plans, interfaces, and commitments for the project to ensure consistency with the scope of work.",
+      "notesEn": [
+        "Critical dependencies, that are an input for risk management may also be considered."
+      ]
     },
     {
       "id": "BP10",
-      "title": "Review and report progress of the project",
-      "description": "Regularly review and report the status of the project and the fulfillment of work packages against estimated effort and duration to all affected parties. Prevent recurrence of identified problems. may contribute to identify best practices and lessons learned. MAN.3 Project Management 1 emoctuO 2 emoctuO 3 emoctuO 4 emoctuO 5 emoctuO 6 emoctuO 7 emoctuO",
-      "pamCitation": "PAM §MAN.3 BP10"
+      "title": "프로젝트 진척을 검토하고 보고한다",
+      "description": "추정 공수 및 기간 대비 작업 패키지의 충족 및 프로젝트의 상태를 영향받는 모든 당사자에게 정기적으로 검토하고 보고한다.",
+      "notes": [
+        "비고 10: 프로젝트 검토는 관리 책임자에 의해 정기적으로 실행될 수 있다. 프로젝트 검토는 모범 사례 및 교훈을 식별하는 데 도움이 될 수 있다."
+      ],
+      "page": 102,
+      "pamCitation": "PAM 4.1 §4.9.1 MAN.3.BP10",
+      "titleEn": "Review and report the progress of the project",
+      "descriptionEn": "Regularly review and report the status of the project and the fulfillment of the work packages against estimated effort and duration to all affected parties.",
+      "notesEn": [
+        "Project reviews may be executed at regular intervals by the management. Project reviews may contribute to identify best practices and lessons learned."
+      ]
     }
   ],
   "outputWorkProducts": [
     {
       "id": "08-53",
-      "name": "Scope of work"
+      "name": "업무 범위",
+      "nameEn": "Scope of work"
     },
     {
       "id": "08-54",
-      "name": "Feasibility analysis"
+      "name": "실현가능성 분석",
+      "nameEn": "Feasibility analysis"
     },
     {
       "id": "14-10",
-      "name": "Work package"
+      "name": "작업 패키지",
+      "nameEn": "Work package"
     },
     {
       "id": "13-52",
-      "name": "Communication evidence"
+      "name": "의사소통 증거",
+      "nameEn": "Communication evidence"
     },
     {
       "id": "13-16",
-      "name": "Change request"
+      "name": "변경 요청",
+      "nameEn": "Change request"
     },
     {
       "id": "13-51",
-      "name": "Consistency evidence"
+      "name": "일관성 증거",
+      "nameEn": "Consistency Evidence"
     },
     {
       "id": "14-02",
-      "name": "Corrective action"
+      "name": "시정 조치",
+      "nameEn": "Corrective action"
     },
     {
       "id": "18-52",
-      "name": "Escalation path"
+      "name": "에스컬레이션 경로",
+      "nameEn": "Escalation path"
     },
     {
       "id": "08-56",
-      "name": "Schedule"
+      "name": "일정",
+      "nameEn": "Schedule"
     },
     {
       "id": "14-50",
-      "name": "Stakeholder groups list"
+      "name": "이해관계자 그룹 목록",
+      "nameEn": "Stakeholder groups list"
     },
     {
       "id": "15-06",
-      "name": "Project status"
+      "name": "프로젝트 상태",
+      "nameEn": "Project status"
     }
   ],
   "inputWorkProducts": [
     {
       "id": "03-06",
-      "name": "Process performance information",
+      "name": "프로세스 수행 정보",
+      "nameEn": "Process performance information",
       "fromProcess": "MAN.6"
     },
     {
       "id": "15-09",
-      "name": "Risk status",
+      "name": "위험 상태",
+      "nameEn": "Risk status",
       "fromProcess": "MAN.5"
     }
   ],

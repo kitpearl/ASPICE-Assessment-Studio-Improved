@@ -8,5 +8,6 @@ export {
   loadProcess,
   loadProcessAttributes,
   loadWorkProducts,
+  loadGuideline,
   ratingScale,
 } from "../spec/canonical/index.js";

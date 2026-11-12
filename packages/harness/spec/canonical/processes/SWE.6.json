@@ -1,108 +1,168 @@
 {
   "id": "SWE.6",
-  "name": "Software Verification",
+  "name": "소프트웨어 검증",
+  "nameEn": "Software Verification",
+  "pamVersion": "4.1",
   "category": "SWE",
   "pamSection": "4.4.6",
-  "purpose": "The purpose of the Software Verification process is to ensure that the integrated software is verified to be consistent with the software requirements.",
+  "page": 62,
+  "purpose": "프로세스 목적은 통합된 소프트웨어가 검증되어 소프트웨어 요구사항과 일관되도록 보장하는 것이다.",
   "outcomes": [
     {
       "id": 1,
-      "text": "Verification measures are specified for software verification of the software based on the software requirements."
+      "text": "검증 방안이 소프트웨어 요구사항을 기반으로 소프트웨어의 소프트웨어 검증을 위해 명세된다."
     },
     {
       "id": 2,
-      "text": "Verification measures are selected according to the release scope considering criteria, including criteria for regression verification."
+      "text": "검증 방안이 회귀 검증의 기준을 포함한 기준을 고려하여 출시 범위에 따라 선택된다."
     },
     {
       "id": 3,
-      "text": "The integrated software is verified using the selected verification measures and the results of software verification are recorded."
+      "text": "통합된 소프트웨어가 선택된 검증 방안을 사용하여 검증되고 소프트웨어 검증 결과가 기록된다."
     },
     {
       "id": 4,
-      "text": "Consistency and bidirectional traceability are established between verification measures and software requirements; and bidirectional traceability is established between verification results and verification measures."
+      "text": "검증 방안과 소프트웨어 요구사항 간의 일관성 및 양방향 추적성이 수립된다."
     },
     {
       "id": 5,
-      "text": "Results of the software verification are summarized and communicated to all affected parties."
+      "text": "검증 결과와 검증 방안 간의 양방향 추적성이 수립된다."
+    },
+    {
+      "id": 6,
+      "text": "소프트웨어 검증의 결과가 요약되고, 영향받는 모든 당사자에게 의사소통된다."
     }
   ],
   "basePractices": [
     {
       "id": "BP1",
-      "title": "Specify verification measures for software verification",
-      "description": "Specify the verification measures for software verification suitable to provide evidence for compliance of the integrated software with the functional and non-functional information in the software requirements, including • techniques for the verification measures, • pass/fail criteria for verification measures, • a definition of entry and exit criteria for the verification measures, • necessary sequence of verification measures, and • the required verification infrastructure and environment setup. content of the respective software requirement (e.g, boundary values and equivalence classes for data range-oriented requirements, positive/sunny-day-test vs. negative testing such as fault injection), or on requirements-based testing vs. “error guessing based on knowledge or experience”. verified to be consistent with the software requirements. | | | software requirements. 2) Verification measures are selected according to the release scope considering criteria, including criteria for regression verification. 3) The integrated software is verified using the selected verification measures and the results of software verification are recorded. 4) Consistency and bidirectional traceability are established between verification measures and software requirements; and bidirectional traceability is established between verification results and verification measures. 5) Results of the software verification are summarized and communicated to all affected parties. | | | measures for software verification suitable to provide evidence for compliance of the integrated software with the functional and non-functional information in the software requirements, including • techniques for the verification measures, • pass/fail criteria for verification measures, • a definition of entry and exit criteria for the verification measures, • necessary sequence of verification measures, and • the required verification infrastructure and environment setup. content of the respective software requirement (e.g, boundary values and equivalence classes for data range-oriented requirements, positive/sunny-day-test vs. negative testing such as fault injection), or on requirements-based testing vs. “error guessing based on knowledge or experience”. |",
-      "pamCitation": "PAM §SWE.6 BP1"
+      "title": "소프트웨어 검증을 위한 검증 방안을 명세한다",
+      "description": "통합된 소프트웨어가 기능 및 비기능 소프트웨어 요구사항을 준수한다는 증거를 제공하는 데 적합한 소프트웨어 검증의 검증 방안을 다음을 포함하여 명세한다. • 검증 방안의 기법 • 검증 방안의 통과/실패 기준 • 검증 방안의 진입 및 종료 기준 정의 • 검증 방안의 필요한 순서 • 요구되는 검증 인프라 및 환경 설정",
+      "notes": [
+        "비고 1: 검증 방안에 적절한 기법의 선택은 해당 소프트웨어 요구사항의 내용(예: 데이터 범위 중심 요구사항의 경계 값 및 등가 클래스, 양성/정상조건 테스트(sunny-day-test) 대 결함 주입 등의 음성 테스트) 또는 요구사항 기반 테스트 대 ‘지식 또는 경험을 기반으로 한 오류 추측’에 따라 달라질 수 있다."
+      ],
+      "page": 63,
+      "pamCitation": "PAM 4.1 §4.4.6 SWE.6.BP1",
+      "titleEn": "Specify verification measures for the software verification",
+      "descriptionEn": "Specify the verification measures for the software verification suitable to provide evidence for compliance of the integrated software with the functional and non-functional software requirements, including • techniques for the verification measures, • pass/fail criteria for the verification measures, • a definition of entry and exit criteria for the verification measures, • necessary sequence of the verification measures, and • the required verification infrastructure and environment setup.",
+      "notesEn": [
+        "The selection of appropriate techniques for verification measures may depend on the content of the respective software requirement (e.g., boundary values and equivalence classes for data range-oriented requirements, positive/sunny-day-test vs. negative testing such as fault injection), or on requirements-based testing vs. “error guessing based on knowledge or experience”."
+      ]
     },
     {
       "id": "BP2",
-      "title": "Select verification measures",
-      "description": "Document the selection of verification measures considering selection criteria including criteria for regression verification. The documented selection of verification measures shall have sufficient coverage according to the release scope. development, the need for regression verification (due to e.g., changes to the software requirements), or the intended use of the delivered product release (test bench, test track, public road etc.)",
-      "pamCitation": "PAM §SWE.6 BP2"
+      "title": "검증 방안을 선택한다",
+      "description": "회귀 검증의 기준을 포함한 선택 기준을 고려하여 검증 방안의 선택을 문서화한다. 문서화된 검증 방안 선택은 출시 범위에 따라 충분한 커버리지를 가져야 한다.",
+      "notes": [
+        "비고 2: 선택 기준의 예로는 요구사항의 우선순위, 지속적인 개발, 회귀 검증의 필요성(예: 소프트웨어 요구사항의 변경으로 인한 필요성), 또는 납품될 제품의 사용 목적(예: 테스트 벤치, 테스트 트랙, 공공 도로)이 있다."
+      ],
+      "page": 63,
+      "pamCitation": "PAM 4.1 §4.4.6 SWE.6.BP2",
+      "titleEn": "Select verification measures",
+      "descriptionEn": "Document the selection of verification measures considering the selection criteria including criteria for the regression verification. The documented selection of verification measures shall have sufficient coverage according to the release scope.",
+      "notesEn": [
+        "Examples for selection criteria can be prioritization of requirements, continuous development, the need for regression verification (due to, e.g., changes to the software requirements), or the intended use of the delivered product release (test bench, test track, public road etc.)."
+      ]
     },
     {
       "id": "BP3",
-      "title": "Verify the integrated software",
-      "description": "Perform the verification of the integrated software using the selected verification measures. Record the verification results including pass/fail status and corresponding verification measure data.",
-      "pamCitation": "PAM §SWE.6 BP3"
+      "title": "통합된 소프트웨어를 검증한다",
+      "description": "선택한 검증 방안을 사용하여 통합된 소프트웨어의 검증을 수행한다. 통과/실패 상태 및 해당 검증 방안 데이터를 포함하여 검증 결과를 기록한다.",
+      "notes": [
+        "비고 3: 기대된 결과와 다른 검증 결과의 처리는 SUP.9 를 참조한다."
+      ],
+      "page": 63,
+      "pamCitation": "PAM 4.1 §4.4.6 SWE.6.BP3",
+      "titleEn": "Verify the integrated software",
+      "descriptionEn": "Perform the verification of the integrated software using the selected verification measures. Record the verification results including pass/fail status and the corresponding verification measure data.",
+      "notesEn": [
+        "See SUP.9 for handling the verification results which deviate from expected results."
+      ]
     },
     {
       "id": "BP4",
-      "title": "Ensure consistency and establish bidirectional traceability",
-      "description": "Ensure consistency and establish bidirectional traceability between verification measures and software requirements. Establish bidirectional traceability between verification results and verification measures. requests, and demonstration of verification coverage. Traceability alone, e.g., the existence of links, does not necessarily mean that the information is consistent with each other.",
-      "pamCitation": "PAM §SWE.6 BP4"
+      "title": "일관성을 보장하고 양방향 추적성을 수립한다",
+      "description": "검증 방안과 소프트웨어 요구사항 간의 일관성을 보장하고 양방향 추적성을 수립한다. 검증 결과와 검증 방안 간의 양방향 추적성을 수립한다.",
+      "notes": [
+        "비고 4: 양방향 추적성은 일관성을 지원하고, 변경 요청의 영향 분석 및 커버리지 입증을 용이하게 한다. 예를 들어, 링크의 존재와 같은 추적성 자체만으로는 정보에 일관성이 있다는 것을 의미하지는 않는다. 기본 사례"
+      ],
+      "page": 63,
+      "pamCitation": "PAM 4.1 §4.4.6 SWE.6.BP4",
+      "titleEn": "Ensure consistency and establish bidirectional traceability",
+      "descriptionEn": "Ensure consistency and establish bidirectional traceability between the verification measures and the software requirements. Establish bidirectional traceability between the verification results and the verification measures.",
+      "notesEn": [
+        "Bidirectional traceability supports consistency, and facilitates impact analysis of change requests, and demonstration of coverage. Traceability alone, e.g., the existence of links, does not necessarily mean that the information is consistent."
+      ]
     },
     {
       "id": "BP5",
-      "title": "Summarize and communicate results",
-      "description": "Summarize the software verification results and communicate them to all affected parties. parties to judge the consequences. SWE.6 Software Verification 1 emoctuO 2 emoctuO 3 emoctuO 4 emoctuO 5 emoctuO",
-      "pamCitation": "PAM §SWE.6 BP5"
+      "title": "결과를 요약하고 의사소통한다",
+      "description": "소프트웨어 검증 결과를 요약하고 영향받는 모든 당사자에게 의사소통한다.",
+      "notes": [
+        "비고 5: 요약에 테스트 케이스 실행으로부터의 모든 필요한 정보를 제공하여 다른 당사자가 결과를 판단할 수 있도록 한다"
+      ],
+      "page": 64,
+      "pamCitation": "PAM 4.1 §4.4.6 SWE.6.BP5",
+      "titleEn": "Summarize and communicate the results",
+      "descriptionEn": "Summarize the software verification results and communicate them to all affected parties.",
+      "notesEn": [
+        "Providing all necessary information from the test case execution in a summary enables other parties to judge the consequences."
+      ]
     }
   ],
   "outputWorkProducts": [
     {
       "id": "08-60",
-      "name": "Verification Measure"
+      "name": "검증 방안",
+      "nameEn": "Verification Measure"
     },
     {
       "id": "03-50",
-      "name": "Verification Measure Data"
+      "name": "검증 방안 데이터",
+      "nameEn": "Verification Measure Data"
     },
     {
       "id": "08-58",
-      "name": "Verification Measure Selection Set"
+      "name": "검증 방안 선택 집합",
+      "nameEn": "Verification Measure Selection Set"
     },
     {
       "id": "15-52",
-      "name": "Verification Results"
+      "name": "검증 결과",
+      "nameEn": "Verification Results"
     },
     {
       "id": "13-51",
-      "name": "Consistency Evidence"
+      "name": "일관성 증거",
+      "nameEn": "Consistency Evidence"
     },
     {
       "id": "13-52",
-      "name": "Communication Evidence"
+      "name": "의사소통 증거",
+      "nameEn": "Communication evidence"
     }
   ],
   "inputWorkProducts": [
     {
       "id": "01-03",
-      "name": "Software Component",
+      "name": "소프트웨어 컴포넌트",
+      "nameEn": "Software Component",
       "fromProcess": "SWE.5"
     },
     {
       "id": "13-19",
-      "name": "Review evidence",
+      "name": "검토 증거",
+      "nameEn": "Review evidence",
       "fromProcess": "SUP.1"
     },
     {
       "id": "17-00",
-      "name": "Requirement",
+      "name": "요구사항",
+      "nameEn": "Requirement",
       "fromProcess": "SWE.1"
     }
   ],
   "traceBPs": [
-    "BP1",
     "BP4"
   ]
 }

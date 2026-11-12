@@ -1,116 +1,191 @@
 {
   "id": "SPL.2",
-  "name": "Product Release",
+  "name": "제품 출시",
+  "nameEn": "Product Release",
+  "pamVersion": "4.1",
   "category": "SPL",
   "pamSection": "4.2.1",
-  "purpose": "The purpose is to control the release of a product to the intended customer.",
+  "page": 35,
+  "purpose": "프로세스 목적은 제품을 의도된 고객에게 출시하는 것을 통제하는 것이다.",
   "outcomes": [
     {
       "id": 1,
-      "text": "The contents of the product releases are determined."
+      "text": "제품 출시의 내용이 결정된다."
     },
     {
       "id": 2,
-      "text": "The release package is assembled from configured items."
+      "text": "출시 패키지는 형상 항목으로부터 구성된다."
     },
     {
       "id": 3,
-      "text": "The release documentation is defined and produced."
+      "text": "출시 문서화가 정의되고 만들어진다."
     },
     {
       "id": 4,
-      "text": "Release approval is performed against defined criteria."
+      "text": "정의된 기준에 따라 출시 승인이 수행된다."
     },
     {
       "id": 5,
-      "text": "The release package is made available to the intended customer."
+      "text": "출시 패키지가 의도된 고객에게 이용가능하게 된다."
     }
   ],
   "basePractices": [
     {
       "id": "BP1",
-      "title": "Define the functional content of releases",
-      "description": "Define the functionality to be included and the release criteria for each release. parameter files (influencing the identified system functionality) that are needed for the release.",
-      "pamCitation": "PAM §SPL.2 BP1"
+      "title": "출시의 기능적인 내용을 정의하고 합의한다",
+      "description": "각 출시에 포함할 기능을 의도된 고객과 정의하고 합의하며, 출시 기준을 정의한다.",
+      "notes": [
+        "비고 1: 출시에 필요한 하드웨어 엘리먼트, 소프트웨어 엘리먼트, (식별된 시스템 기능에 영향을 미치는) 추가 적용 매개변수 파일을 포함할 수 있다.",
+        "비고 2: 의도된 고객은 내부 조직 단위이거나 외부 조직일 수 있다."
+      ],
+      "page": 35,
+      "pamCitation": "PAM 4.1 §4.2.1 SPL.2.BP1",
+      "titleEn": "Define and agree the functional content of the releases",
+      "descriptionEn": "Define and agree the functionality to be included with the intended customer, and define the release criteria for each release.",
+      "notesEn": [
+        "This may include the hardware elements, software elements, and extra application parameter files (influencing the identified system functionality) that are needed for the release.",
+        "The intended customer may be an internal organizational unit or an external organization."
+      ]
     },
     {
       "id": "BP2",
-      "title": "Define release package",
-      "description": "Define the release as well as supporting tools and information.",
-      "pamCitation": "PAM §SPL.2 BP2"
+      "title": "출시 패키지를 정의한다",
+      "description": "출시 자체와 지원 도구 및 정보를 정의한다.",
+      "notes": [
+        "비고 3: 출시 패키지에는 프로그래밍 도구도 포함될 수 있다."
+      ],
+      "page": 36,
+      "pamCitation": "PAM 4.1 §4.2.1 SPL.2.BP2",
+      "titleEn": "Define the release package",
+      "descriptionEn": "Define the release as well as supporting tools and information.",
+      "notesEn": [
+        "The release package may include also programming tools."
+      ]
     },
     {
       "id": "BP3",
-      "title": "Ensure unique identification of releases",
-      "description": "Ensure a unique identification of the release based upon the intended purpose and expectations of the release. releases.",
-      "pamCitation": "PAM §SPL.2 BP3"
+      "title": "출시의 고유 식별을 보장한다",
+      "description": "출시의 의도된 목적과 기대를 기반으로 출시의 고유 식별을 보장한다.",
+      "notes": [
+        "비고 4: 고유 식별은 제품 출시를 위한 분류 및 번호 체계를 통해 구현될 수 있다."
+      ],
+      "page": 36,
+      "pamCitation": "PAM 4.1 §4.2.1 SPL.2.BP3",
+      "titleEn": "Ensure a unique identification of each release",
+      "descriptionEn": "Ensure a unique identification of the releases based upon the intended purpose and expectations of the releases.",
+      "notesEn": [
+        "Unique identification may be realized by a classification and numbering scheme for product releases."
+      ]
     },
     {
       "id": "BP4",
-      "title": "Build the release from items under configuration control",
-      "description": "Build the release from items under configuration control to ensure integrity.",
-      "pamCitation": "PAM §SPL.2 BP4"
+      "title": "형상 통제된 항목으로부터 출시를 빌드한다",
+      "description": "무결성을 보장하기 위해 형상 통제된 항목을 기반으로 출시를 빌드한다.",
+      "notes": [
+        "비고 5: 해당 사례는 SUP.8 형상 관리 프로세스에 의해 지원될 수 있다"
+      ],
+      "page": 36,
+      "pamCitation": "PAM 4.1 §4.2.1 SPL.2.BP4",
+      "titleEn": "Build the release from items under configuration control",
+      "descriptionEn": "Build the release from items under configuration control to ensure integrity.",
+      "notesEn": [
+        "This practice may be supported by the SUP.8 Configuration Management Process."
+      ]
     },
     {
       "id": "BP5",
-      "title": "Ensure release approval before delivery",
-      "description": "Criteria for the release are satisfied before delivery takes place.",
-      "pamCitation": "PAM §SPL.2 BP5"
+      "title": "납품 전에 출시 승인을 보장한다",
+      "description": "출시에 대한 기준이 납품 전에 충족된다.",
+      "notes": [],
+      "page": 36,
+      "pamCitation": "PAM 4.1 §4.2.1 SPL.2.BP5",
+      "titleEn": "Ensure the release approval before the delivery",
+      "descriptionEn": "The criteria for the release are satisfied before the delivery takes place."
     },
     {
       "id": "BP6",
-      "title": "Provide a release note",
-      "description": "A release is accompanied by information detailing key characteristics of the release. legislation that is considered etc. See also VAL.1 Validation. SPL2.BP7: Communicate the type, service level and duration of support for a release. Identify and communicate the type, service level and duration of support for a release.",
-      "pamCitation": "PAM §SPL.2 BP6"
+      "title": "출시 노트를 제공한다",
+      "description": "각 출시에는 출시의 핵심 특징을 상세히 설명하는 정보가 포함된다.",
+      "notes": [
+        "비고 6: 출시 노트에는 관련된 목표 시장, 고려된 법령 등 법적 측면에 대한 정보가 포함될 수 있다. VAL.1 밸리데이션을 참조한다."
+      ],
+      "page": 36,
+      "pamCitation": "PAM 4.1 §4.2.1 SPL.2.BP6",
+      "titleEn": "Provide a release note",
+      "descriptionEn": "Each release is accompanied by information detailing the key characteristics of the release.",
+      "notesEn": [
+        "The release note may include information about legal aspects like relevant target markets, legislation that is considered etc. See also VAL.1 Validation. SPL2.BP7: Communicate the type, service level and duration of support for each release. Identify and communicate the type, service level and duration of support for a release."
+      ]
+    },
+    {
+      "id": "BP7",
+      "title": "각 출시에 대한 지원의 형태, 서비스 수준, 기간을 의사소통한다",
+      "description": "출시에 대한 지원의 형태, 서비스 수준, 기간을 식별하고 의사소통한다.",
+      "notes": [],
+      "page": 36,
+      "pamCitation": "PAM 4.1 §4.2.1 SPL.2.BP7"
     },
     {
       "id": "BP8",
-      "title": "Deliver the release package to the intended customer",
-      "description": "Deliver the release package to the intended customer. SPL.2 Product Release 1 emoctuO 2 emoctuO 3 emoctuO 4 emoctuO 5 emoctuO",
-      "pamCitation": "PAM §SPL.2 BP8"
+      "title": "의도된 고객에게 출시 패키지를 납품한다",
+      "description": "의도된 고객에게 출시 패키지를 납품한다.",
+      "notes": [],
+      "page": 36,
+      "pamCitation": "PAM 4.1 §4.2.1 SPL.2.BP8",
+      "titleEn": "Deliver the release package to the intended customer",
+      "descriptionEn": "Deliver the release package to the intended customer as per the agreement."
     }
   ],
   "outputWorkProducts": [
     {
       "id": "11-03",
-      "name": "Release note"
+      "name": "출시 노트",
+      "nameEn": "Release note"
     },
     {
       "id": "11-04",
-      "name": "Product release package"
+      "name": "제품 출시 패키지",
+      "nameEn": "Product release package"
     },
     {
       "id": "13-06",
-      "name": "Delivery evidence"
+      "name": "납품 증거",
+      "nameEn": "Delivery evidence"
     },
     {
       "id": "13-13",
-      "name": "Product release approval"
+      "name": "제품 출시 승인",
+      "nameEn": "Product release approval"
     },
     {
       "id": "18-06",
-      "name": "Product release criteria"
+      "name": "제품 출시 기준",
+      "nameEn": "Product release criteria"
     }
   ],
   "inputWorkProducts": [
     {
       "id": "01-52",
-      "name": "Configuration item list",
+      "name": "형상 항목 목록",
+      "nameEn": "Configuration item list",
       "fromProcess": "SUP.8"
     },
     {
       "id": "11-06",
-      "name": "Integrated System",
+      "name": "통합된 시스템",
+      "nameEn": "Integrated System",
       "fromProcess": "SYS.4"
     },
     {
       "id": "13-08",
-      "name": "Baseline",
+      "name": "베이스라인",
+      "nameEn": "Baseline",
       "fromProcess": "SUP.8"
     },
     {
       "id": "15-52",
-      "name": "Verification Results",
+      "name": "검증 결과",
+      "nameEn": "Verification Results",
       "fromProcess": "SYS.5"
     }
   ],

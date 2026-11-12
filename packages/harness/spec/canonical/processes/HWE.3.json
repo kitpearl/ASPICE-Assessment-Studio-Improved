@@ -1,108 +1,175 @@
 {
   "id": "HWE.3",
-  "name": "Verification against Hardware Design",
+  "name": "하드웨어 설계 대비 검증",
+  "nameEn": "Verification against Hardware Design",
+  "pamVersion": "4.1",
   "category": "HWE",
   "pamSection": "4.7.3",
-  "purpose": "The purpose is to ensure that the production data compliant hardware is verified to provide evidence for compliance with the hardware design.",
+  "page": 83,
+  "purpose": "프로세스 목적은 생산 데이터를 준수한 하드웨어가 검증되어, 하드웨어 설계를 준수하는지에 대한 증거를 제공하도록 보장하는 것이다.",
   "outcomes": [
     {
       "id": 1,
-      "text": "Verification measures are specified for verification of the hardware against the hardware design, including the interfaces between hardware elements and the dynamic aspects."
+      "text": "검증 방안이 하드웨어 엘리먼트 간의 인터페이스 및 동적 측면을 포함하여 하드웨어 설계 대비 하드웨어의 검증을 위해 명세된다."
     },
     {
       "id": 2,
-      "text": "Verification measures are selected according to the release scope considering criteria, including criteria for regression verification."
+      "text": "검증 방안이 회귀 검증을 위한 기준을 포함한 기준을 고려하여 출시 범위에 따라 선택된다."
     },
     {
       "id": 3,
-      "text": "Verification is performed on production data compliant samples using the selected verification measures, and verification results are recorded."
+      "text": "검증이 생산 데이터 준수 샘플에 대해 선택한 검증 방안을 사용하여 수행되고, 검증 결과가 기록된다."
     },
     {
       "id": 4,
-      "text": "Consistency and bidirectional traceability are established between hardware elements and verification measures."
+      "text": "하드웨어 엘리먼트와 검증 방안 간의 일관성 및 양방향 추적성이 수립된다."
     },
     {
       "id": 5,
-      "text": "Bidirectional traceability is established between verification measures and verification results."
+      "text": "검증 방안과 검증 결과 간의 양방향 추적성이 수립된다."
     },
     {
       "id": 6,
-      "text": "Verification results are summarized and communicated to all affected parties."
+      "text": "검증 결과가 요약되고, 영향받는 모든 당사자에게 의사소통된다."
     }
   ],
   "basePractices": [
     {
       "id": "BP1",
-      "title": "Specify verification measures for the verification against hardware design",
-      "description": "Specify the verification measures suitable to provide evidence for compliance of the hardware with the hardware design and its dynamic aspects. This includes • techniques for the verification measures, • pass/fail criteria for the verification measures, • a definition of entry and exit criteria for the verification measures, • necessary sequence of the verification measures, and • the required verification infrastructure and environment setup. dependencies of the correct signal flow between interfacing hardware elements, interactions between hardware components.",
-      "pamCitation": "PAM §HWE.3 BP1"
+      "title": "하드웨어 설계 대비 검증을 위한 검증 방안을 명세한다",
+      "description": "하드웨어가 하드웨어 설계 및 동적 측면의 준수에 대한 증거를 제공하기 위해 적합한 검증 방안을 명세한다. 이는 다음을 포함한다. • 검증 방안의 기법 • 검증 방안의 통과/실패 기준 • 검증 방안의 진입 및 종료 기준 정의 • 검증 방안의 필요한 순서 • 요구되는 검증 인프라 및 환경 설정",
+      "notes": [
+        "비고 1: 검증 방안의 중점으로는 하드웨어 엘리먼트 간 인터페이스에서 올바른 신호 흐름의 적시성 및 타이밍 의존성, 하드웨어 컴포넌트 간 상호작용 등이 있을 수 있다.",
+        "비고 2: 측정 지점이 하드웨어 엘리먼트의 단계별 테스트에 사용될 수 있다."
+      ],
+      "page": 84,
+      "pamCitation": "PAM 4.1 §4.7.3 HWE.3.BP1",
+      "titleEn": "Specify verification measures for the verification against the hardware design",
+      "descriptionEn": "Specify the verification measures suitable to provide evidence for compliance of the hardware with the hardware design and its dynamic aspects. This includes • techniques for the verification measures, • pass/fail criteria for the verification measures, • a definition of entry and exit criteria for the verification measures, • necessary sequence of the verification measures, and • the required verification infrastructure and environment setup.",
+      "notesEn": [
+        "Examples on what a verification measure may focus on are the timeliness and timing dependencies of the correct signal flow between interfacing hardware elements, or interactions between hardware components.",
+        "Measuring points can be used for stepwise testing of hardware elements."
+      ]
     },
     {
       "id": "BP2",
-      "title": "Ensure use of compliant samples",
-      "description": "Ensure that the samples used for verification against hardware design are compliant with the corresponding production data, including special characteristics. Ensure that deviations are documented and that they do not alter verification results.",
-      "pamCitation": "PAM §HWE.3 BP2"
+      "title": "준수 샘플의 사용을 보장한다",
+      "description": "하드웨어 설계 대비 검증에 사용되는 샘플이 특별 특성을 포함하여 관련 생산 데이터를 준수하도록 보장한다. 편차가 문서화되고, 검증 결과를 변경하지 않도록 보장한다.",
+      "notes": [
+        "비고 3: 준수의 예로는 샘플 보고서, 육안 검사 기록, ICT 보고서가 있다."
+      ],
+      "page": 85,
+      "pamCitation": "PAM 4.1 §4.7.3 HWE.3.BP2",
+      "titleEn": "Ensure the use of compliant samples",
+      "descriptionEn": "Ensure that the samples used for the verification against the hardware design are compliant with the corresponding production data, including the special characteristics. Ensure that deviations are documented and that they do not alter the verification results.",
+      "notesEn": [
+        "Examples of compliance are sample reports, record of visual inspection, ICT report."
+      ]
     },
     {
       "id": "BP3",
-      "title": "Select verification measures",
-      "description": "Document the selection of verification measures considering selection criteria including regression criteria. The documented selection of verification measures shall have sufficient coverage according to the release scope. due to changes to the hardware design, or the intended use of the delivered hardware release (e.g., test bench, test track, public road etc.)",
-      "pamCitation": "PAM §HWE.3 BP3"
+      "title": "검증 방안을 선택한다",
+      "description": "회귀 기준을 포함한 선택 기준을 고려하여 검증 방안의 선택을 문서화한다. 문서화된 검증 방안 선택은 출시 범위에 따라 충분한 커버리지를 가져야 한다.",
+      "notes": [
+        "비고 4: 선택 기준의 예로는 요구사항의 우선순위, 하드웨어 설계 변경으로 인한 회귀의 필요성, 또는 출시된 하드웨어의 사용 목적(예: 테스트 벤치, 테스트 트랙, 공공 도로 등)이 있다"
+      ],
+      "page": 85,
+      "pamCitation": "PAM 4.1 §4.7.3 HWE.3.BP3",
+      "titleEn": "Select verification measures",
+      "descriptionEn": "Document the selection of verification measures considering the selection criteria including regression criteria. The documented selection of verification measures shall have sufficient coverage according to the release scope.",
+      "notesEn": [
+        "Examples for selection criteria can be prioritization of requirements, the need for regression due to changes to the hardware design, or the intended use of the delivered hardware release (e.g., test bench, test track, public road etc.)."
+      ]
     },
     {
       "id": "BP4",
-      "title": "Verify hardware design",
-      "description": "Verify the hardware design using the selected verification measures. Record the verification results including pass/fail status and corresponding verification measure output data. Specify the verification measures suitable to provide evidence for compliance of the hardware with the hardware design and its dynamic aspects. This includes • techniques for the verification measures, • pass/fail criteria for the verification measures, • a definition of entry and exit criteria for the verification measures, • necessary sequence of the verification measures, and • the required verification infrastructure and environment setup. dependencies of the correct signal flow between interfacing hardware elements, interactions between hardware components. against hardware design are compliant with the corresponding production data, including special characteristics. Ensure that deviations are documented and that they do not alter verification results. considering selection criteria including regression criteria. The documented selection of verification measures shall have sufficient coverage according to the release scope. due to changes to the hardware design, or the intended use of the delivered hardware release (e.g., test bench, test track, public road etc.) | | | verification measures. Record the verification results including pass/fail status and corresponding verification measure output data.",
-      "pamCitation": "PAM §HWE.3 BP4"
+      "title": "하드웨어 설계에 대해 검증한다",
+      "description": "선택한 검증 방안으로 하드웨어 설계를 검증한다. 통과/실패 상태 및 해당 검증 방안 출력 데이터를 포함하여 검증 결과를 기록한다.",
+      "notes": [
+        "비고 5: 기대된 결과와 다른 검증 결과의 처리는 SUP.9 를 참조한다."
+      ],
+      "page": 85,
+      "pamCitation": "PAM 4.1 §4.7.3 HWE.3.BP4",
+      "titleEn": "Verify against the hardware design",
+      "descriptionEn": "Verify the hardware design using the selected verification measures. Record the verification results including pass/fail status and the corresponding verification measure output data.",
+      "notesEn": [
+        "See SUP.9 for handling the verification results which deviate from expected results."
+      ]
     },
     {
       "id": "BP5",
-      "title": "Ensure consistency and establish bidirectional traceability",
-      "description": "Ensure consistency and establish bidirectional traceability between hardware elements and the verification measures. Establish bidirectional traceability between the verification measures and verification results. requests, and demonstration of verification coverage. Traceability alone, e.g., the existence of links, does not necessarily mean that the information is consistent with each other.",
-      "pamCitation": "PAM §HWE.3 BP5"
+      "title": "일관성을 보장하고 양방향 추적성을 수립한다",
+      "description": "하드웨어 엘리먼트와 검증 방안 간의 일관성을 보장하고 양방향 추적성을 수립한다. 검증 방안과 검증 결과 간의 양방향 추적성을 수립한다.",
+      "notes": [
+        "비고 6: 양방향 추적성은 일관성을 지원하고, 변경 요청의 영향 분석 및 커버리지 입증을 용이하게 한다. 예를 들어, 링크의 존재와 같은 추적성 자체만으로는 정보에 일관성이 있다는 것을 의미하지는 않는다."
+      ],
+      "page": 85,
+      "pamCitation": "PAM 4.1 §4.7.3 HWE.3.BP5",
+      "titleEn": "Ensure consistency and establish bidirectional traceability",
+      "descriptionEn": "Ensure consistency and establish bidirectional traceability between the hardware elements and the verification measures. Establish bidirectional traceability between the verification measures and the verification results.",
+      "notesEn": [
+        "Bidirectional traceability supports consistency, and facilitates impact analysis of change requests, and demonstration of coverage. Traceability alone, e.g., the existence of links, does not necessarily mean that the information is consistent."
+      ]
     },
     {
       "id": "BP6",
-      "title": "Summarize and communicate results",
-      "description": "Summarize the verification results and communicate them to all affected parties. parties to judge the consequences. HWE.3 Verification against Hardware Design 1 emoctuO 2 emoctuO 3 emoctuO 4 emoctuO 5 emoctuO 6 emoctuO",
-      "pamCitation": "PAM §HWE.3 BP6"
+      "title": "결과를 요약하고 의사소통한다",
+      "description": "검증 결과를 요약하고 영향받는 모든 당사자에게 의사소통한다.",
+      "notes": [
+        "비고 7: 요약에 테스트 케이스 실행으로부터의 모든 필요한 정보를 제공하여 다른 당사자가 결과를 판단할 수 있도록 한다."
+      ],
+      "page": 85,
+      "pamCitation": "PAM 4.1 §4.7.3 HWE.3.BP6",
+      "titleEn": "Summarize and communicate the results",
+      "descriptionEn": "Summarize the verification results and communicate them to all affected parties.",
+      "notesEn": [
+        "Providing all necessary information from the test case execution in a summary enables other parties to judge the consequences."
+      ]
     }
   ],
   "outputWorkProducts": [
     {
       "id": "08-60",
-      "name": "Verification Measure"
+      "name": "검증 방안",
+      "nameEn": "Verification Measure"
     },
     {
       "id": "03-50",
-      "name": "Verification Measure Data"
+      "name": "검증 방안 데이터",
+      "nameEn": "Verification Measure Data"
     },
     {
       "id": "08-58",
-      "name": "Verification Measure Selection Set"
+      "name": "검증 방안 선택 집합",
+      "nameEn": "Verification Measure Selection Set"
     },
     {
       "id": "15-52",
-      "name": "Verification Results"
+      "name": "검증 결과",
+      "nameEn": "Verification Results"
     },
     {
       "id": "13-51",
-      "name": "Consistency Evidence"
+      "name": "일관성 증거",
+      "nameEn": "Consistency Evidence"
     },
     {
       "id": "13-52",
-      "name": "Communication Evidence"
+      "name": "의사소통 증거",
+      "nameEn": "Communication evidence"
     }
   ],
   "inputWorkProducts": [
     {
       "id": "04-52",
-      "name": "Hardware Architecture",
+      "name": "하드웨어 아키텍처",
+      "nameEn": "Hardware Architecture",
       "fromProcess": "HWE.2"
     },
     {
       "id": "04-53",
-      "name": "Hardware Detailed Design",
+      "name": "하드웨어 상세 설계",
+      "nameEn": "Hardware Detailed Design",
       "fromProcess": "HWE.2"
     }
   ],

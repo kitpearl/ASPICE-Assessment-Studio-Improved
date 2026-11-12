@@ -1,91 +1,132 @@
 {
   "id": "ACQ.4",
-  "name": "Supplier Monitoring",
+  "name": "공급업체 모니터링",
+  "nameEn": "Supplier Monitoring",
+  "pamVersion": "4.1",
   "category": "ACQ",
   "pamSection": "4.1.1",
-  "purpose": "The purpose is to track and assess the performance of an external contract-based supplier company against agreed commitments.",
+  "page": 33,
+  "purpose": "프로세스 목적은 외부 계약 기반 공급업체의 수행을 합의된 책무에 따라 추적하고 평가하는 것이다.",
   "outcomes": [
     {
       "id": 1,
-      "text": "Joint activities, as agreed between the customer and the supplier, are performed."
+      "text": "고객과 공급업체 간 합의에 따라 공동 활동이 수행된다."
     },
     {
       "id": 2,
-      "text": "All information, agreed upon for exchange, is communicated regularly between the customer and the supplier."
+      "text": "고객과 공급업체가 교환하기로 합의한 모든 정보가 정기적으로 의사소통된다."
     },
     {
       "id": 3,
-      "text": "Performance of the supplier is monitored against the agreements."
+      "text": "공급업체의 수행이 합의사항에 따라 모니터링된다."
     },
     {
       "id": 4,
-      "text": "Changes to the agreement, if needed, are negotiated between the customer and the supplier and documented in the agreement."
+      "text": "필요에 따라 고객과 공급업체 간 합의사항의 변경 사항이 협상되고 합의사항에 문서화된다."
     }
   ],
   "basePractices": [
     {
       "id": "BP1",
-      "title": "Agree on and maintain joint activities, joint interfaces, and information to be",
-      "description": "exchanged. Establish and maintain an agreement on information to be exchanged, on joint activities, joint interfaces, responsibilities, type and frequency of joint activities, communications, meetings, status reports, and reviews.",
-      "pamCitation": "PAM §ACQ.4 BP1"
+      "title": "공동 활동, 공동 인터페이스, 교환할 정보에 대해 합의하고 유지관리한다",
+      "description": "교환할 정보에 대한 합의사항, 공동 활동, 공동 인터페이스, 책임, 공동 활동의 형태와 빈도, 의사소통, 회의, 상태 보고, 검토에 대해 합의하고 유지관리한다.",
+      "notes": [],
+      "page": 34,
+      "pamCitation": "PAM 4.1 §4.1.1 ACQ.4.BP1",
+      "titleEn": "Agree on and maintain joint activities, joint interfaces, and information to be exchanged",
+      "descriptionEn": "Establish and maintain an agreement on information to be exchanged, on joint activities, joint interfaces, responsibilities, type and frequency of joint activities, communications, meetings, status reports, and reviews."
     },
     {
       "id": "BP2",
-      "title": "Exchange all agreed information",
-      "description": "Use the defined joint interfaces between customer and supplier for the exchange of all agreed information.",
-      "pamCitation": "PAM §ACQ.4 BP2"
+      "title": "합의된 모든 정보를 교환한다",
+      "description": "고객과 공급업체는 모든 합의된 정보를 교환하기 위해 정의된 공동 인터페이스를 사용한다.",
+      "notes": [],
+      "page": 34,
+      "pamCitation": "PAM 4.1 §4.1.1 ACQ.4.BP2",
+      "titleEn": "Exchange all agreed information",
+      "descriptionEn": "Use the defined joint interfaces between customer and supplier for the exchange of all agreed information."
     },
     {
       "id": "BP3",
-      "title": "Review development work products with the supplier",
-      "description": "Review development work products with the supplier on the agreed regular basis, covering technical aspects, problems and risks. Track open measures.",
-      "pamCitation": "PAM §ACQ.4 BP3"
+      "title": "공급업체와 함께 개발 산출물을 검토한다",
+      "description": "공급업체와 합의된 대로 정기적으로 개발 산출물의 기술적 측면, 문제, 위험을 검토한다. 아직 완료되지 않은 방안을 추적한다.",
+      "notes": [
+        "비고 1: 문제 관리는 SUP.9 를 참조한다."
+      ],
+      "page": 34,
+      "pamCitation": "PAM 4.1 §4.1.1 ACQ.4.BP3",
+      "titleEn": "Review development work products with the supplier",
+      "descriptionEn": "Review development work products with the supplier on the agreed regular basis, covering technical aspects, problems and risks. Track the open measures.",
+      "notesEn": [
+        "See SUP.9 for management of problems."
+      ]
     },
     {
       "id": "BP4",
-      "title": "Review progress of the supplier",
-      "description": "Review progress of the supplier regarding schedule, quality, and cost on the agreed regular basis. Track open measures to closure and perform risk mitigation activities.",
-      "pamCitation": "PAM §ACQ.4 BP4"
+      "title": "공급업체의 진척 상황을 검토한다",
+      "description": "합의된 대로 정기적으로 일정, 품질, 비용 측면에서 공급업체의 진척을 검토한다. 아직 해결되지 않은 방안은 해결될 때까지 추적하고, 위험 완화 활동을 수행한다.",
+      "notes": [
+        "비고 2: 위험 관리는 MAN.5 를 참조한다."
+      ],
+      "page": 34,
+      "pamCitation": "PAM 4.1 §4.1.1 ACQ.4.BP4",
+      "titleEn": "Review progress of the supplier",
+      "descriptionEn": "Review progress of the supplier regarding schedule, quality, and cost on the agreed regular basis. Track the open measures to closure and perform the risk mitigation activities.",
+      "notesEn": [
+        "See MAN.5 for management of risks."
+      ]
     },
     {
       "id": "BP5",
-      "title": "Act to correct deviations",
-      "description": "Take action when agreed objectives are not achieved. Negotiate changes to objectives and document them in the agreements. company against agreed commitments. | | 2) All information, agreed upon for exchange, is communicated regularly between the customer and the supplier. 3) Performance of the supplier is monitored against the agreements. 4) Changes to the agreement, if needed, are negotiated between the customer and the supplier and documented in the agreement. | | exchanged. Establish and maintain an agreement on information to be exchanged, on joint activities, joint interfaces, responsibilities, type and frequency of joint activities, communications, meetings, status reports, and reviews. | | customer and supplier for the exchange of all agreed information. | | work products with the supplier on the agreed regular basis, covering technical aspects, problems and risks. Track open measures. schedule, quality, and cost on the agreed regular basis. Track open measures to closure and perform risk mitigation activities. Negotiate changes to objectives and document them in the agreements. | | ACQ.4 Supplier Monitoring 1 emoctuO 2 emoctuO 3 emoctuO 4 emoctuO",
-      "pamCitation": "PAM §ACQ.4 BP5"
+      "title": "편차를 수정하기 위한 조치를 취한다",
+      "description": "합의된 목표를 달성하지 못한 경우에는 조치를 취한다. 목표 변경 사항을 협상하고, 해당 합의사항에 문서화한다.",
+      "notes": [],
+      "page": 34,
+      "pamCitation": "PAM 4.1 §4.1.1 ACQ.4.BP5",
+      "titleEn": "Act to correct the deviations",
+      "descriptionEn": "Take action when agreed objectives are not achieved. Negotiate the changes to the objectives and document them in the agreements."
     }
   ],
   "outputWorkProducts": [
     {
       "id": "02-01",
-      "name": "Commitment/Agreement"
+      "name": "책무/합의사항",
+      "nameEn": "Commitment/Agreement"
     },
     {
       "id": "13-52",
-      "name": "Communication evidence"
+      "name": "의사소통 증거",
+      "nameEn": "Communication evidence"
     },
     {
       "id": "13-09",
-      "name": "Meeting support evidence"
+      "name": "회의 지원 증거",
+      "nameEn": "Meeting support evidence"
     },
     {
       "id": "13-14",
-      "name": "Progress status"
+      "name": "진척 상태",
+      "nameEn": "Progress status"
     },
     {
       "id": "13-16",
-      "name": "Change request"
+      "name": "변경 요청",
+      "nameEn": "Change request"
     },
     {
       "id": "13-19",
-      "name": "Review evidence"
+      "name": "검토 증거",
+      "nameEn": "Review evidence"
     },
     {
       "id": "14-02",
-      "name": "Corrective action"
+      "name": "시정 조치",
+      "nameEn": "Corrective action"
     },
     {
       "id": "15-51",
-      "name": "Analysis results"
+      "name": "분석 결과",
+      "nameEn": "Analysis results"
     }
   ],
   "inputWorkProducts": [],

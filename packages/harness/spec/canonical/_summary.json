@@ -1,333 +1,386 @@
 {
-  "generatedAt": "2026-04-24T08:01:41.155Z",
-  "pamBytes": 578858,
-  "guidelineBytes": 391251,
+  "generatedAt": "2026-11-12T06:55:17.850Z",
+  "sources": {
+    "pam": "Automotive SPICE PAM 4.1 (Korean) 2026-08-24",
+    "guideline": "Automotive SPICE Guidelines 3rd Edition 2026-07"
+  },
+  "pamBytes": 170547,
+  "guidelineBytes": 228126,
   "processCount": 32,
   "processesById": [
     {
       "id": "ACQ.4",
       "bps": 5,
+      "bpsWithoutEnglish": [],
       "outcomes": 4,
       "outputWPs": 8,
       "inputWPs": 0,
-      "traceBPs": []
+      "traceBPs": [],
+      "guidelineRules": 1
     },
     {
       "id": "HWE.1",
       "bps": 6,
+      "bpsWithoutEnglish": [],
       "outcomes": 7,
       "outputWPs": 5,
       "inputWPs": 6,
       "traceBPs": [
-        "BP1",
         "BP5"
-      ]
+      ],
+      "guidelineRules": 9
     },
     {
       "id": "HWE.2",
       "bps": 6,
-      "outcomes": 6,
+      "bpsWithoutEnglish": [],
+      "outcomes": 5,
       "outputWPs": 11,
       "inputWPs": 4,
       "traceBPs": [
-        "BP5",
-        "BP6"
-      ]
+        "BP5"
+      ],
+      "guidelineRules": 0
     },
     {
       "id": "HWE.3",
       "bps": 6,
+      "bpsWithoutEnglish": [],
       "outcomes": 6,
       "outputWPs": 6,
       "inputWPs": 2,
       "traceBPs": [
         "BP5"
-      ]
+      ],
+      "guidelineRules": 4
     },
     {
       "id": "HWE.4",
       "bps": 6,
+      "bpsWithoutEnglish": [],
       "outcomes": 6,
       "outputWPs": 6,
       "inputWPs": 2,
       "traceBPs": [
-        "BP4",
         "BP5"
-      ]
+      ],
+      "guidelineRules": 4
     },
     {
       "id": "MAN.3",
       "bps": 10,
+      "bpsWithoutEnglish": [],
       "outcomes": 7,
       "outputWPs": 11,
       "inputWPs": 2,
       "traceBPs": [
         "BP9"
-      ]
+      ],
+      "guidelineRules": 21
     },
     {
       "id": "MAN.5",
       "bps": 7,
+      "bpsWithoutEnglish": [],
       "outcomes": 5,
       "outputWPs": 4,
       "inputWPs": 0,
-      "traceBPs": []
+      "traceBPs": [],
+      "guidelineRules": 9
     },
     {
       "id": "MAN.6",
       "bps": 6,
+      "bpsWithoutEnglish": [],
       "outcomes": 5,
       "outputWPs": 5,
       "inputWPs": 0,
-      "traceBPs": []
+      "traceBPs": [],
+      "guidelineRules": 3
     },
     {
       "id": "MLE.1",
       "bps": 6,
+      "bpsWithoutEnglish": [],
       "outcomes": 6,
       "outputWPs": 5,
       "inputWPs": 5,
       "traceBPs": [
-        "BP3",
         "BP5"
-      ]
+      ],
+      "guidelineRules": 1
     },
     {
       "id": "MLE.2",
-      "bps": 7,
-      "outcomes": 7,
+      "bps": 6,
+      "bpsWithoutEnglish": [],
+      "outcomes": 6,
       "outputWPs": 5,
       "inputWPs": 1,
       "traceBPs": [
-        "BP5",
-        "BP6"
-      ]
+        "BP5"
+      ],
+      "guidelineRules": 1
     },
     {
       "id": "MLE.3",
       "bps": 5,
+      "bpsWithoutEnglish": [],
       "outcomes": 5,
       "outputWPs": 6,
       "inputWPs": 3,
       "traceBPs": [
         "BP4"
-      ]
+      ],
+      "guidelineRules": 1
     },
     {
       "id": "MLE.4",
-      "bps": 6,
+      "bps": 7,
+      "bpsWithoutEnglish": [
+        "BP5"
+      ],
       "outcomes": 6,
       "outputWPs": 6,
       "inputWPs": 3,
       "traceBPs": [
-        "BP1",
         "BP6"
-      ]
+      ],
+      "guidelineRules": 1
     },
     {
       "id": "PIM.3",
       "bps": 8,
+      "bpsWithoutEnglish": [],
       "outcomes": 6,
       "outputWPs": 10,
       "inputWPs": 0,
-      "traceBPs": []
+      "traceBPs": [],
+      "guidelineRules": 3
     },
     {
       "id": "REU.2",
       "bps": 6,
+      "bpsWithoutEnglish": [],
       "outcomes": 6,
       "outputWPs": 5,
       "inputWPs": 0,
-      "traceBPs": []
+      "traceBPs": [],
+      "guidelineRules": 3
     },
     {
       "id": "SPL.2",
-      "bps": 7,
+      "bps": 8,
+      "bpsWithoutEnglish": [
+        "BP7"
+      ],
       "outcomes": 5,
       "outputWPs": 5,
       "inputWPs": 4,
-      "traceBPs": []
+      "traceBPs": [],
+      "guidelineRules": 3
     },
     {
       "id": "SUP.1",
       "bps": 7,
+      "bpsWithoutEnglish": [],
       "outcomes": 6,
       "outputWPs": 7,
       "inputWPs": 0,
-      "traceBPs": []
+      "traceBPs": [],
+      "guidelineRules": 8
     },
     {
       "id": "SUP.10",
       "bps": 6,
+      "bpsWithoutEnglish": [],
       "outcomes": 6,
       "outputWPs": 3,
       "inputWPs": 1,
       "traceBPs": [
-        "BP1",
         "BP4"
-      ]
+      ],
+      "guidelineRules": 11
     },
     {
       "id": "SUP.11",
       "bps": 6,
+      "bpsWithoutEnglish": [],
       "outcomes": 5,
       "outputWPs": 4,
       "inputWPs": 0,
-      "traceBPs": [
-        "BP2"
-      ]
+      "traceBPs": [],
+      "guidelineRules": 1
     },
     {
       "id": "SUP.8",
       "bps": 8,
+      "bpsWithoutEnglish": [],
       "outcomes": 8,
       "outputWPs": 8,
       "inputWPs": 0,
       "traceBPs": [
-        "BP2",
         "BP7"
-      ]
+      ],
+      "guidelineRules": 6
     },
     {
       "id": "SUP.9",
       "bps": 7,
+      "bpsWithoutEnglish": [],
       "outcomes": 5,
       "outputWPs": 3,
       "inputWPs": 0,
       "traceBPs": [
-        "BP1",
         "BP5"
-      ]
+      ],
+      "guidelineRules": 2
     },
     {
       "id": "SWE.1",
       "bps": 6,
+      "bpsWithoutEnglish": [],
       "outcomes": 7,
       "outputWPs": 5,
       "inputWPs": 7,
       "traceBPs": [
-        "BP1",
         "BP5"
-      ]
+      ],
+      "guidelineRules": 10
     },
     {
       "id": "SWE.2",
       "bps": 5,
+      "bpsWithoutEnglish": [],
       "outcomes": 4,
       "outputWPs": 4,
       "inputWPs": 5,
       "traceBPs": [
-        "BP2",
         "BP4"
-      ]
+      ],
+      "guidelineRules": 1
     },
     {
       "id": "SWE.3",
       "bps": 5,
-      "outcomes": 4,
+      "bpsWithoutEnglish": [],
+      "outcomes": 6,
       "outputWPs": 4,
       "inputWPs": 4,
       "traceBPs": [
-        "BP1",
         "BP4"
-      ]
+      ],
+      "guidelineRules": 3
     },
     {
       "id": "SWE.4",
       "bps": 5,
-      "outcomes": 5,
+      "bpsWithoutEnglish": [],
+      "outcomes": 6,
       "outputWPs": 6,
       "inputWPs": 2,
       "traceBPs": [
-        "BP3",
         "BP4"
-      ]
+      ],
+      "guidelineRules": 4
     },
     {
       "id": "SWE.5",
       "bps": 7,
-      "outcomes": 8,
+      "bpsWithoutEnglish": [],
+      "outcomes": 9,
       "outputWPs": 9,
       "inputWPs": 4,
       "traceBPs": [
-        "BP1",
         "BP6"
-      ]
+      ],
+      "guidelineRules": 4
     },
     {
       "id": "SWE.6",
       "bps": 5,
-      "outcomes": 5,
+      "bpsWithoutEnglish": [],
+      "outcomes": 6,
       "outputWPs": 6,
       "inputWPs": 3,
       "traceBPs": [
-        "BP1",
         "BP4"
-      ]
+      ],
+      "guidelineRules": 4
     },
     {
       "id": "SYS.1",
       "bps": 4,
-      "outcomes": 4,
+      "bpsWithoutEnglish": [],
+      "outcomes": 5,
       "outputWPs": 4,
       "inputWPs": 3,
-      "traceBPs": []
+      "traceBPs": [],
+      "guidelineRules": 0
     },
     {
       "id": "SYS.2",
       "bps": 6,
+      "bpsWithoutEnglish": [],
       "outcomes": 6,
       "outputWPs": 5,
       "inputWPs": 5,
       "traceBPs": [
-        "BP3",
         "BP5"
-      ]
+      ],
+      "guidelineRules": 10
     },
     {
       "id": "SYS.3",
       "bps": 5,
+      "bpsWithoutEnglish": [],
       "outcomes": 4,
       "outputWPs": 5,
       "inputWPs": 6,
       "traceBPs": [
-        "BP2",
         "BP4"
-      ]
+      ],
+      "guidelineRules": 1
     },
     {
       "id": "SYS.4",
       "bps": 5,
+      "bpsWithoutEnglish": [],
       "outcomes": 7,
       "outputWPs": 8,
       "inputWPs": 8,
       "traceBPs": [
         "BP4"
-      ]
+      ],
+      "guidelineRules": 4
     },
     {
       "id": "SYS.5",
       "bps": 5,
+      "bpsWithoutEnglish": [],
       "outcomes": 6,
       "outputWPs": 6,
       "inputWPs": 3,
       "traceBPs": [
-        "BP2",
         "BP4"
-      ]
+      ],
+      "guidelineRules": 4
     },
     {
       "id": "VAL.1",
       "bps": 5,
+      "bpsWithoutEnglish": [],
       "outcomes": 4,
       "outputWPs": 5,
       "inputWPs": 4,
       "traceBPs": [
         "BP4"
-      ]
+      ],
+      "guidelineRules": 3
     }
   ],
-  "paCount": 5,
+  "paCount": 9,
+  "paWritten": 5,
   "pasById": {
     "PA 1.1": {
       "level": 1,
@@ -348,7 +401,26 @@
     "PA 3.2": {
       "level": 3,
       "gps": 4
+    },
+    "PA 4.1": {
+      "level": 4,
+      "gps": 6
+    },
+    "PA 4.2": {
+      "level": 4,
+      "gps": 3
+    },
+    "PA 5.1": {
+      "level": 5,
+      "gps": 3
+    },
+    "PA 5.2": {
+      "level": 5,
+      "gps": 3
     }
   },
-  "wpCount": 118
+  "wpCount": 118,
+  "wpRetired": 6,
+  "guidelineVersion": "Automotive SPICE Guidelines 3rd Edition 2026-07",
+  "guidelineRuleCount": 254
 }

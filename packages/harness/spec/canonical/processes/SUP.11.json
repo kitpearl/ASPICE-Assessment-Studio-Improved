@@ -1,89 +1,146 @@
 {
   "id": "SUP.11",
-  "name": "Machine Learning Data Management",
+  "name": "머신 러닝 데이터 관리",
+  "nameEn": "Machine Learning Data Management",
+  "pamVersion": "4.1",
   "category": "SUP",
   "pamSection": "4.8.5",
-  "purpose": "The purpose is to define and align ML data with ML data requirements, maintain the integrity and quality of the ML data, and make them available to affected parties.",
+  "page": 98,
+  "purpose": "프로세스 목적은 ML 데이터를 ML 데이터 요구사항에 맞게 정의하고 정렬하며, ML 데이터의 무결성과 품질을 유지하고, 영향받는 모든 당사자에게 이를 제공하는 것이다.",
   "outcomes": [
     {
       "id": 1,
-      "text": "A ML data management system including an ML data lifecycle is established."
+      "text": "ML 데이터 수명주기를 포함하여 ML 데이터 관리 시스템이 수립된다."
     },
     {
       "id": 2,
-      "text": "A ML data quality approach is developed including ML data quality criteria."
+      "text": "ML 데이터 품질 기준을 포함하여 ML 데이터 품질 접근법이 개발된다."
     },
     {
       "id": 3,
-      "text": "Collected ML data are processed for consistency with ML data requirements."
+      "text": "수집된 ML 데이터가 ML 데이터 요구사항과의 일관성을 위해 처리된다."
     },
     {
       "id": 4,
-      "text": "ML data are verified against defined ML data quality criteria and updated as needed."
+      "text": "ML 데이터가 정의된 ML 데이터 품질 기준에 따라 검증되고 필요 시 갱신된다."
     },
     {
       "id": 5,
-      "text": "ML data are agreed and communicated to all affected parties."
+      "text": "ML 데이터가 합의되고, 영향받는 모든 당사자에게 의사소통된다."
     }
   ],
   "basePractices": [
     {
       "id": "BP1",
-      "title": "Establish an ML data management system",
-      "description": "Establish an ML data management system which supports • ML data management activities, • relevant sources of ML data, • ML data life cycle including a status model, and • interfaces to affected parties. and structuring.",
-      "pamCitation": "PAM §SUP.11 BP1"
+      "title": "ML 데이터 관리 시스템을 수립한다",
+      "description": "다음을 지원하는 ML 데이터 관리 시스템을 수립한다. • ML 데이터 관리 활동 • ML 데이터의 관련 출처 • 상태 모델을 포함한 ML 데이터 수명주기 • 영향받는 당사자와의 인터페이스",
+      "notes": [
+        "비고 1: 지원되는 ML 데이터 관리 활동은 데이터 수집, 라벨링/주석, 구조화를 포함할 수 있다."
+      ],
+      "page": 98,
+      "pamCitation": "PAM 4.1 §4.8.5 SUP.11.BP1",
+      "titleEn": "Establish an ML data management system",
+      "descriptionEn": "Establish an ML data management system which supports • ML data management activities, • relevant sources of ML data, • ML data lifecycle including a status model, and • interfaces to affected parties.",
+      "notesEn": [
+        "Supported ML data management activities may include data collection, labeling/annotation, and structuring."
+      ]
     },
     {
       "id": "BP2",
-      "title": "Develop an ML data quality approach",
-      "description": "Develop an approach to ensure that the quality of ML data is analyzed based on defined ML data quality criteria and activities are performed to support avoidance of biases of data. labelling, completeness against ML data requirements. data quality approach. and quality of the ML data, and make them available to affected parties. | | | 2) A ML data quality approach is developed including ML data quality criteria. 3) Collected ML data are processed for consistency with ML data requirements. 4) ML data are verified against defined ML data quality criteria and updated as needed. 5) ML data are agreed and communicated to all affected parties. | | | system which supports • ML data management activities, • relevant sources of ML data, • ML data life cycle including a status model, and • interfaces to affected parties. and structuring. | | | quality of ML data is analyzed based on defined ML data quality criteria and activities are performed to support avoidance of biases of data. labelling, completeness against ML data requirements. data quality approach.",
-      "pamCitation": "PAM §SUP.11 BP2"
+      "title": "ML 데이터 품질 접근법을 개발한다",
+      "description": "정의된 ML 데이터 품질 기준을 기반으로 ML 데이터의 품질이 분석되고, 데이터 편향 회피를 지원하기 위한 활동이 수행되는 것을 보장하는 접근법을 개발한다.",
+      "notes": [
+        "비고 2: ML 데이터 품질 기준의 예로는 관련 데이터 출처, 라벨링의 신뢰성 및 일관성, ML 데이터 요구사항에 대한 완전성이 있다.",
+        "비고 3: ML 데이터 관리 시스템은 ML 데이터 품질 접근법의 품질 기준과 활동을 지원하는 것이 좋다.",
+        "비고 4: 회피해야 할 편향은 샘플링 편향(예: 성별, 연령) 및 피드백 루프 편향을 포함할 수 있다.",
+        "비고 5: ML 데이터 집합의 생성은 MLE.3.BP2 및 MLE.4.BP2 를 참조한다."
+      ],
+      "page": 99,
+      "pamCitation": "PAM 4.1 §4.8.5 SUP.11.BP2",
+      "titleEn": "Develop an ML data quality approach",
+      "descriptionEn": "Develop an approach to ensure that the quality of ML data are analyzed based on the defined ML data quality criteria and that activities are performed to support the avoidance of biases of data.",
+      "notesEn": [
+        "Examples of ML data quality criteria are relevant data sources, reliability and consistency of labelling, completeness against ML data requirements.",
+        "The ML data management system should support the quality criteria and activities of the ML data quality approach.",
+        "Biases to avoid may include sampling bias (e.g., gender, age) and feedback loop bias.",
+        "For the creation of ML data sets see MLE.3.BP2 and MLE.4.BP2."
+      ]
     },
     {
       "id": "BP3",
-      "title": "Collect ML data",
-      "description": "Relevant sources for raw data are identified and continuously monitored for changes. The raw data is collected according to the ML data requirements. requirements.",
-      "pamCitation": "PAM §SUP.11 BP3"
+      "title": "ML 데이터를 수집한다",
+      "description": "원시 데이터의 관련 출처가 식별되고 변경이 지속적으로 모니터링된다. 원시 데이터가 ML 데이터 요구사항에 따라 수집된다.",
+      "notes": [
+        "비고 6: ML 데이터의 식별 및 수집은 조직의 책임일 수 있다.",
+        "비고 7: 지속적인 모니터링은 ODD 를 포함하는 것이 좋고, 이에 따라 ML 요구사항이 변경될 수 있다."
+      ],
+      "page": 99,
+      "pamCitation": "PAM 4.1 §4.8.5 SUP.11.BP3",
+      "titleEn": "Collect the ML data",
+      "descriptionEn": "Relevant sources for the raw data are identified and continuously monitored for changes. The raw data are collected according to the ML data requirements.",
+      "notesEn": [
+        "The identification and collection of ML data might be an organizational responsibility.",
+        "Continuous monitoring should include the ODD and may lead to changes of the ML requirements."
+      ]
     },
     {
       "id": "BP4",
-      "title": "Process ML data",
-      "description": "The raw data are processed (annotated, analyzed, and structured) according to the ML data requirements.",
-      "pamCitation": "PAM §SUP.11 BP4"
+      "title": "ML 데이터를 처리한다",
+      "description": "원시 데이터가 ML 데이터 요구사항에 따라 처리된다(주석, 분석, 구조화).",
+      "notes": [],
+      "page": 99,
+      "pamCitation": "PAM 4.1 §4.8.5 SUP.11.BP4",
+      "titleEn": "Process the ML data",
+      "descriptionEn": "The raw data are processed (annotated, analyzed, and structured) according to the ML data requirements."
     },
     {
       "id": "BP5",
-      "title": "Assure quality of ML data",
-      "description": "Perform the activities according to the ML data quality approach to ensure that the ML data meets the defined ML data quality criteria.",
-      "pamCitation": "PAM §SUP.11 BP5"
+      "title": "ML 데이터의 품질을 보증한다",
+      "description": "ML 데이터가 정의된 ML 데이터 품질 기준을 충족함을 보장하기 위해, ML 데이터 품질 접근법에 따라 활동을 수행한다.",
+      "notes": [
+        "비고 8: 이러한 활동은 샘플 기반 검토 또는 통계 방법을 포함할 수 있다."
+      ],
+      "page": 99,
+      "pamCitation": "PAM 4.1 §4.8.5 SUP.11.BP5",
+      "titleEn": "Assure the quality of the ML data",
+      "descriptionEn": "Perform the activities according to the ML data quality approach to ensure that the ML data meet the defined ML data quality criteria.",
+      "notesEn": [
+        "These activities may include sample-based reviews or statistical methods."
+      ]
     },
     {
       "id": "BP6",
-      "title": "Communicate agreed processed ML data",
-      "description": "Inform all affected parties about the agreed processed ML data and provide them to the affected parties. SUP.11 Machine Learning Data Management 1 emoctuO 2 emoctuO 3 emoctuO 4 emoctuO 5 emoctuO",
-      "pamCitation": "PAM §SUP.11 BP6"
+      "title": "합의한 처리된 ML 데이터를 의사소통한다",
+      "description": "영향받는 모든 당사자에게 합의한 처리된 ML 데이터를 통지하고 영향받는 당사자에게 제공한다.",
+      "notes": [],
+      "page": 99,
+      "pamCitation": "PAM 4.1 §4.8.5 SUP.11.BP6",
+      "titleEn": "Communicate the agreed processed ML data",
+      "descriptionEn": "Inform all affected parties about the agreed processed ML data and provide them to the affected parties."
     }
   ],
   "outputWorkProducts": [
     {
       "id": "16-52",
-      "name": "ML data management system"
+      "name": "ML 데이터 관리 시스템",
+      "nameEn": "ML data management system"
     },
     {
       "id": "19-50",
-      "name": "ML data quality approach"
+      "name": "ML 데이터 품질 접근법",
+      "nameEn": "ML data quality approach"
     },
     {
       "id": "03-53",
-      "name": "ML data"
+      "name": "ML 데이터",
+      "nameEn": "ML data"
     },
     {
       "id": "13-52",
-      "name": "Communication evidence"
+      "name": "의사소통 증거",
+      "nameEn": "Communication evidence"
     }
   ],
   "inputWorkProducts": [],
-  "traceBPs": [
-    "BP2"
-  ]
+  "traceBPs": []
 }

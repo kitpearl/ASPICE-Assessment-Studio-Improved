@@ -1,114 +1,155 @@
 {
   "id": "MLE.2",
-  "name": "Machine Learning Architecture",
+  "name": "머신 러닝 아키텍처",
+  "nameEn": "Machine Learning Architecture",
+  "pamVersion": "4.1",
   "category": "MLE",
   "pamSection": "4.6.2",
-  "purpose": "The purpose is to establish an ML architecture supporting training and deployment, consistent with the ML requirements, and to evaluate the ML architecture against defined criteria.",
+  "page": 69,
+  "purpose": "프로세스 목적은 ML 요구사항과 일관된, 훈련 및 전개를 지원하는 ML 아키텍처를 수립하고, 정의된 기준에 따라 ML 아키텍처를 평가하는 것이다.",
   "outcomes": [
     {
       "id": 1,
-      "text": "A ML architecture is developed."
+      "text": "ML 아키텍처가 개발된다."
     },
     {
       "id": 2,
-      "text": "Hyperparameter ranges and initial values are determined as a basis for the training."
+      "text": "하이퍼파라미터 범위 및 초기 값이 훈련의 기반으로 결정된다."
     },
     {
       "id": 3,
-      "text": "Evaluation of ML architectural elements is conducted."
+      "text": "정의된 기준에 따라 ML 아키텍처 엘리먼트에 대한 분석이 수행된다."
     },
     {
       "id": 4,
-      "text": "Interfaces of the ML architectural elements are defined."
+      "text": "ML 아키텍처 엘리먼트의 인터페이스가 정의된다."
     },
     {
       "id": 5,
-      "text": "Resource consumption objectives for the ML architectural elements are defined."
+      "text": "ML 아키텍처 엘리먼트와 ML 요구사항 간의 일관성 및 양방향 추적성이 수립된다."
     },
     {
       "id": 6,
-      "text": "Consistency and bidirectional traceability are established between the ML architectural elements and the ML requirements."
-    },
-    {
-      "id": 7,
-      "text": "The ML architecture is agreed and communicated to all affected parties."
+      "text": "ML 아키텍처가 합의되고, 영향받는 모든 당사자에게 의사소통된다."
     }
   ],
   "basePractices": [
     {
       "id": "BP1",
-      "title": "Develop ML architecture",
-      "description": "Develop and document the ML architecture that specifies ML architectural elements including details of the ML model, pre- and postprocessing, and hyperparameters which are required to create, train, test, and deploy the ML model. backpropagation. The level of detail of the ML model may not need to cover aspects like single neurons. deployed ML model.",
-      "pamCitation": "PAM §MLE.2 BP1"
+      "title": "ML 아키텍처를 개발한다",
+      "description": "ML 모델을 생성, 훈련, 테스트, 전개에 필요한 ML 모델의 세부사항, 전처리 및 후처리, 그리고 하이퍼파라미터를 포함하는 ML 아키텍처 엘리먼트를 명세하는 ML 아키텍처를 개발하고 문서화한다.",
+      "notes": [
+        "비고 1: ML 모델에 필요한 세부 정보는 계층, 활성화 함수, 역전파를 포함할 수 있다. ML 모델의 상세 수준은 단일 뉴런과 같은 측면을 다룰 필요가 없을 수 있다.",
+        "비고 2: 훈련 시 사용된 ML 모델과 전개된 ML 모델 간의 ML 모델의 세부 정보는 다를 수 있다."
+      ],
+      "page": 70,
+      "pamCitation": "PAM 4.1 §4.6.2 MLE.2.BP1",
+      "titleEn": "Develop the ML architecture",
+      "descriptionEn": "Develop and document the ML architecture that specifies the ML architectural elements including the details of the ML model, pre- and postprocessing, and hyperparameters which are required to create, train, test, and deploy the ML model.",
+      "notesEn": [
+        "Necessary details of the ML model may include layers, activation functions, and backpropagation. The level of detail of the ML model may not need to cover aspects like single neurons.",
+        "The details of the ML model may differ between the ML model used during training and the deployed ML model."
+      ]
     },
     {
       "id": "BP2",
-      "title": "Determine hyperparameter ranges and initial values",
-      "description": "Determine and document the hyperparameter ranges and the initial values as a basis for the training.",
-      "pamCitation": "PAM §MLE.2 BP2"
+      "title": "하이퍼파라미터 범위 및 초기 값을 결정한다",
+      "description": "하이퍼파라미터 범위 및 초기 값을 훈련의 기반으로 결정하고 문서화한다.",
+      "notes": [],
+      "page": 70,
+      "pamCitation": "PAM 4.1 §4.6.2 MLE.2.BP2",
+      "titleEn": "Determine the hyperparameter ranges and the initial values",
+      "descriptionEn": "Determine and document the hyperparameter ranges and the initial values as a basis for the training."
     },
     {
       "id": "BP3",
-      "title": "Analyze ML architectural elements",
-      "description": "Define criteria for analysis of the ML architectural elements. Analyze ML architectural elements according to the defined criteria. elements.",
-      "pamCitation": "PAM §MLE.2 BP3"
+      "title": "ML 아키텍처 엘리먼트를 분석한다",
+      "description": "ML 아키텍처를 관련 기술 설계 측면에서 분석하고, 프로젝트 추정치에 관하여 프로젝트 관리를 지원하기 위해 분석한다. ML 아키텍처 설계 결정에 대한 근거를 문서화한다.",
+      "notes": [
+        "비고 3: 기술적 설계 측면의 예로는 기능성, 신뢰성, 설명가능성, 그리고 학습 및 전개 시 자원 소비 등이 있다."
+      ],
+      "page": 70,
+      "pamCitation": "PAM 4.1 §4.6.2 MLE.2.BP3",
+      "titleEn": "Analyze the ML architectural elements",
+      "descriptionEn": "Analyze the ML architecture regarding relevant technical design aspects, and to support the project management regarding project estimates. Document the rationales for the ML architectural design decisions.",
+      "notesEn": [
+        "Examples of technical design aspects are functionality, trustworthiness, explainability and resource consumption during training and deployment."
+      ]
     },
     {
       "id": "BP4",
-      "title": "Define interfaces of the ML architectural elements",
-      "description": "Determine and document the internal and external interfaces of each ML architectural element including its interfaces to related software components.",
-      "pamCitation": "PAM §MLE.2 BP4"
+      "title": "ML 아키텍처 엘리먼트의 인터페이스를 정의한다",
+      "description": "관련 소프트웨어 컴포넌트와의 인터페이스를 포함하여, 각 ML 아키텍처 엘리먼트의 내부 및 외부 인터페이스를 결정하고 문서화한다.",
+      "notes": [],
+      "page": 70,
+      "pamCitation": "PAM 4.1 §4.6.2 MLE.2.BP4",
+      "titleEn": "Define the interfaces of the ML architectural elements",
+      "descriptionEn": "Determine and document the internal and external interfaces of each ML architectural element including its interfaces to the related software components."
     },
     {
       "id": "BP5",
-      "title": "Define resource consumption objectives for the ML architectural elements",
-      "description": "Determine and document the resource consumption objectives for all relevant ML architectural elements during training and deployment. with the ML requirements, and to evaluate the ML architecture against defined criteria. | 2) Hyperparameter ranges and initial values are determined as a basis for the training. 3) Evaluation of ML architectural elements is conducted. 4) Interfaces of the ML architectural elements are defined. 5) Resource consumption objectives for the ML architectural elements are defined. 6) Consistency and bidirectional traceability are established between the ML architectural elements and the ML requirements. 7) The ML architecture is agreed and communicated to all affected parties. | specifies ML architectural elements including details of the ML model, pre- and postprocessing, and hyperparameters which are required to create, train, test, and deploy the ML model. backpropagation. The level of detail of the ML model may not need to cover aspects like single neurons. deployed ML model. | | | the hyperparameter ranges and the initial values as a basis for the training. | | | architectural elements. Analyze ML architectural elements according to the defined criteria. elements. | | | the internal and external interfaces of each ML architectural element including its interfaces to related software components. | | | Determine and document the resource consumption objectives for all relevant ML architectural elements during training and deployment. | | |",
-      "pamCitation": "PAM §MLE.2 BP5"
+      "title": "일관성을 보장하고 양방향 추적성을 수립한다",
+      "description": "ML 아키텍처 엘리먼트와 ML 요구사항 간의 일관성을 보장하고 양방향 추적성을 수립한다.",
+      "notes": [
+        "비고 4: 양방향 추적성은 일관성을 지원하고, 변경 요청의 영향 분석 및 검증 커버리지 입증을 용이하게 한다. 예를 들어, 링크의 존재와 같은 추적성 자체만으로는 정보에 일관성이 있다는 것을 의미하지는 않는다.",
+        "비고 5: 양방향 추적성은 ML 아키텍처 엘리먼트에 대해 합리적인 추상화 수준으로 수립되는 것이 좋다."
+      ],
+      "page": 70,
+      "pamCitation": "PAM 4.1 §4.6.2 MLE.2.BP5",
+      "titleEn": "Ensure consistency and establish bidirectional traceability",
+      "descriptionEn": "Ensure consistency and establish bidirectional traceability between the ML architectural elements and the ML requirements.",
+      "notesEn": [
+        "Bidirectional traceability supports consistency, and facilitates impact analyses of change requests, and verification coverage demonstration. Traceability alone, e.g., the existence of links, does not necessarily mean that the information is consistent.",
+        "The bidirectional traceability should be established on a reasonable level of abstraction to the ML architectural elements."
+      ]
     },
     {
       "id": "BP6",
-      "title": "Ensure consistency and establish bidirectional traceability",
-      "description": "Ensure consistency and establish bidirectional traceability between the ML architectural elements and the ML requirements. requests, and verification coverage demonstration. Traceability alone, e.g., the existence of links, does not necessarily mean that the information is consistent with each other. the ML architectural elements.",
-      "pamCitation": "PAM §MLE.2 BP6"
-    },
-    {
-      "id": "BP7",
-      "title": "Communicate agreed ML architecture",
-      "description": "Inform all affected parties about the agreed ML architecture including the details of the ML model and the initial hyperparameter values. MLE.2 Machine Learning Architecture 1 emoctuO 2 emoctuO 3 emoctuO 4 emoctuO 5 emoctuO 6 emoctuO 7 emoctuO",
-      "pamCitation": "PAM §MLE.2 BP7"
+      "title": "합의된 ML 아키텍처를 의사소통한다",
+      "description": "ML 모델의 세부 정보 및 초기 하이퍼파라미터 값을 포함하여, 합의된 ML 아키텍처를 영향받는 모든 당사자에게 통지한다.",
+      "notes": [],
+      "page": 71,
+      "pamCitation": "PAM 4.1 §4.6.2 MLE.2.BP6",
+      "titleEn": "Communicate the agreed ML architecture",
+      "descriptionEn": "Inform all affected parties about the agreed ML architecture including the details of the ML model and the initial hyperparameter values."
     }
   ],
   "outputWorkProducts": [
     {
       "id": "04-51",
-      "name": "ML architecture"
+      "name": "ML 아키텍처",
+      "nameEn": "ML architecture"
     },
     {
       "id": "13-52",
-      "name": "Communication evidence"
+      "name": "의사소통 증거",
+      "nameEn": "Communication evidence"
     },
     {
       "id": "13-51",
-      "name": "Consistency evidence"
+      "name": "일관성 증거",
+      "nameEn": "Consistency Evidence"
     },
     {
       "id": "01-54",
-      "name": "Hyperparameter"
+      "name": "하이퍼파라미터",
+      "nameEn": "Hyperparameter"
     },
     {
       "id": "15-51",
-      "name": "Analysis results"
+      "name": "분석 결과",
+      "nameEn": "Analysis results"
     }
   ],
   "inputWorkProducts": [
     {
       "id": "17-00",
-      "name": "Requirement",
+      "name": "요구사항",
+      "nameEn": "Requirement",
       "fromProcess": "MLE.1"
     }
   ],
   "traceBPs": [
-    "BP5",
-    "BP6"
+    "BP5"
   ]
 }

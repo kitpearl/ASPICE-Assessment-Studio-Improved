@@ -60,3 +60,16 @@ export function loadProcessGraph() {
   }
   return _graph;
 }
+
+const EMPTY_GUIDELINE = { version: "", rules: [], notes: { process: {}, pa: {}, topic: {} } };
+
+let _guideline;
+export function loadGuideline() {
+  if (_guideline) return _guideline;
+  try {
+    _guideline = readJson("guideline.json");
+  } catch {
+    _guideline = EMPTY_GUIDELINE;
+  }
+  return _guideline;
+}

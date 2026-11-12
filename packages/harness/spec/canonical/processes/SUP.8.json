@@ -1,130 +1,190 @@
 {
   "id": "SUP.8",
-  "name": "Configuration Management",
+  "name": "형상 관리",
+  "nameEn": "Configuration Management",
+  "pamVersion": "4.1",
   "category": "SUP",
   "pamSection": "4.8.2",
-  "purpose": "The purpose of the Configuration Management Process is to establish and maintain the integrity of relevant configuration items and baselines, and make them available to affected parties.",
+  "page": 91,
+  "purpose": "프로세스 목적은 관련 형상 항목 및 베이스라인의 무결성을 수립하고 유지하며, 영향받는 모든 당사자에게 이용가능하게 하는 것이다.",
   "outcomes": [
     {
       "id": 1,
-      "text": "Selection criteria for configuration items are defined and applied."
+      "text": "형상 항목의 선택 기준이 정의되고 적용된다."
     },
     {
       "id": 2,
-      "text": "Configuration item properties are defined."
+      "text": "형상 항목 특성이 정의된다."
     },
     {
       "id": 3,
-      "text": "Configuration management is established."
+      "text": "형상 관리가 수립된다."
     },
     {
       "id": 4,
-      "text": "Modifications are controlled."
+      "text": "수정이 통제된다."
     },
     {
       "id": 5,
-      "text": "Baselining is applied."
+      "text": "베이스라인이 적용된다."
     },
     {
       "id": 6,
-      "text": "The status of the configuration items is recorded and reported."
+      "text": "형상 항목의 상태가 기록되고 보고된다."
     },
     {
       "id": 7,
-      "text": "The completeness and consistency of the baselines is ensured."
+      "text": "베이스라인의 완전성 및 일관성이 보장된다."
     },
     {
       "id": 8,
-      "text": "The availability of backup and recovery mechanisms is verified."
+      "text": "백업 및 복구 체계의 가용성이 검증된다."
     }
   ],
   "basePractices": [
     {
       "id": "BP1",
-      "title": "Identify configuration items",
-      "description": "Define selection criteria for identifying relevant work products to be subject to configuration management. Identify and document configuration items according to the defined selection criteria. NOTE 1: Configuration items are representing work products or group of work products which are subject to configuration management as a single entity. NOTE 2: Configuration items may vary in complexity, size, and type, ranging from an entire system including all system, hardware, and software documentation down to a single element or document. NOTE 3: The selection criteria may be applied to single work products or a group of work products.",
-      "pamCitation": "PAM §SUP.8 BP1"
+      "title": "형상 항목을 식별한다",
+      "description": "형상 관리 대상 작업 산출물을 식별하는 선택 기준을 정의한다. 정의된 선택 기준에 따라 형상 항목을 식별하고 기록한다.",
+      "notes": [
+        "비고 1: 형상 항목은 단일 엔터티로 형상 관리 대상인 작업 산출물 또는 작업 산출물 그룹을 나타낸다.",
+        "비고 2: 형상 항목은 시스템, 하드웨어, 소프트웨어 문서를 포함한 전체 시스템부터 단일 엘리먼트 또는 문서까지 복잡도, 크기, 형태에 따라 다양할 수 있다.",
+        "비고 3: 선택 기준은 단일 작업 산출물 또는 작업 산출물 그룹에 적용될 수 있다."
+      ],
+      "page": 92,
+      "pamCitation": "PAM 4.1 §4.8.2 SUP.8.BP1",
+      "titleEn": "Identify the configuration items",
+      "descriptionEn": "Define selection criteria for identifying relevant work products to be subject to configuration management. Identify and document the configuration items according to the defined selection criteria. NOTE 1: Configuration items represent work products or group of work products which are subject to configuration management as a single entity. NOTE 2: Configuration items may vary in complexity, size, and type, ranging from an entire system including all system, hardware, and software documentation down to a single element or document. NOTE 3: The selection criteria may be applied to single work products or a group of work products."
     },
     {
       "id": "BP2",
-      "title": "Define configuration item properties",
-      "description": "Define the necessary properties needed for the modification and control of configuration items. NOTE 4: The configuration item properties may be defined for single configuration items or a group of items. NOTE 5: Configuration item properties may include a status model (e.g., Under Work, Tested, Released, etc.), storage location, access rights, etc. NOTE 6: The application of properties may be implemented by attributes of configuration items. and results. | | | X | X | X | | of relevant configuration items and baselines, and make them available to affected parties. | | | 2) Configuration item properties are defined. 3) Configuration management is established. 4) Modifications are controlled. 5) Baselining is applied. 6) The status of the configuration items is recorded and reported. 7) The completeness and consistency of the baselines is ensured. 8) The availability of backup and recovery mechanisms is verified. | | | products to be subject to configuration management. Identify and document configuration items according to the defined selection criteria. NOTE 1: Configuration items are representing work products or group of work products which are subject to configuration management as a single entity. NOTE 2: Configuration items may vary in complexity, size, and type, ranging from an entire system including all system, hardware, and software documentation down to a single element or document. NOTE 3: The selection criteria may be applied to single work products or a group of work products. | | | the modification and control of configuration items. NOTE 4: The configuration item properties may be defined for single configuration items or a group of items. NOTE 5: Configuration item properties may include a status model (e.g., Under Work, Tested, Released, etc.), storage location, access rights, etc. NOTE 6: The application of properties may be implemented by attributes of configuration items. | | |",
-      "pamCitation": "PAM §SUP.8 BP2"
+      "title": "형상 항목 특성을 정의한다",
+      "description": "형상 항목의 수정 및 통제에 필요한 특성을 정의한다.",
+      "notes": [
+        "비고 4: 형상 항목 특성은 단일 형상 항목이나 항목 그룹에 대해서도 정의될 수 있다.",
+        "비고 5: 형상 항목 특성은 상태 모델(예: 작업 중, 테스트됨, 출시됨 등), 저장 위치, 접근 권한 등을 포함할 수 있다.",
+        "비고 6: 특성의 적용은 형상 항목의 속성에 의해 구현될 수 있다."
+      ],
+      "page": 92,
+      "pamCitation": "PAM 4.1 §4.8.2 SUP.8.BP2",
+      "titleEn": "Define the configuration item properties",
+      "descriptionEn": "Define the necessary properties needed for the modification and control of configuration items. NOTE 4: The configuration item properties may be defined for single configuration items or a group of items. NOTE 5: Configuration item properties may include a status model (e.g., Under Work, Tested, Released, etc.), storage location, access rights, etc. NOTE 6: The application of properties may be implemented by attributes of configuration items."
     },
     {
       "id": "BP3",
-      "title": "Establish configuration management",
-      "description": "Establish configuration management mechanisms for control of identified configuration items including the configuration item properties, including mechanisms for controlling parallel modifications of configuration items. NOTE 7: This may include specific mechanisms for different configuration item types, such as branch and merge management, or checkout control.",
-      "pamCitation": "PAM §SUP.8 BP3"
+      "title": "형상 관리를 수립한다",
+      "description": "형상 항목의 병렬 수정을 통제하는 체계를 포함하여, 형상 항목 특성 등 식별된 형상 항목을 통제하기 위한 형상 관리 체계를 수립한다.",
+      "notes": [
+        "비고 7: 이는 브랜치 및 병합 관리, 체크아웃 통제 등 다양한 형상 항목 형태에 대한 고유한 체계를 포함할 수 있다."
+      ],
+      "page": 92,
+      "pamCitation": "PAM 4.1 §4.8.2 SUP.8.BP3",
+      "titleEn": "Establish the configuration management",
+      "descriptionEn": "Establish configuration management mechanisms for the control of identified configuration items including the configuration item properties, including mechanisms for controlling parallel modifications of configuration items. NOTE 7: This may include specific mechanisms for different configuration item types, such as branch and merge management, or checkout control."
     },
     {
       "id": "BP4",
-      "title": "Control modifications",
-      "description": "Control modifications using the configuration management mechanisms. NOTE 8: This may include the application of a defined status model for configuration items.",
-      "pamCitation": "PAM §SUP.8 BP4"
+      "title": "수정을 통제한다",
+      "description": "형상 관리 체계를 사용하여 수정을 통제한다.",
+      "notes": [
+        "비고 8: 이는 형상 항목의 정의된 상태 모델의 적용을 포함할 수 있다."
+      ],
+      "page": 92,
+      "pamCitation": "PAM 4.1 §4.8.2 SUP.8.BP4",
+      "titleEn": "Control the modifications",
+      "descriptionEn": "Control the modifications using the configuration management mechanisms. NOTE 8: This may include the application of a defined status model for configuration items."
     },
     {
       "id": "BP5",
-      "title": "Establish baselines",
-      "description": "Define and establish baselines for internal purposes, and for external product delivery, for all relevant configuration items.",
-      "pamCitation": "PAM §SUP.8 BP5"
+      "title": "베이스라인을 수립한다",
+      "description": "모든 관련 형상 항목의 내부 목적과 외부 제품 납품을 위한 베이스라인을 정의하고 수립한다.",
+      "notes": [],
+      "page": 92,
+      "pamCitation": "PAM 4.1 §4.8.2 SUP.8.BP5",
+      "titleEn": "Establish baselines",
+      "descriptionEn": "Define and establish baselines for internal purposes, and for external product delivery, for all relevant configuration items."
     },
     {
       "id": "BP6",
-      "title": "Summarize and communicate configuration status",
-      "description": "Record, summarize, and communicate the status of configuration items and established baselines to affected parties in order to support the monitoring of progress and status. NOTE 9: Regular communication of the configuration status, e.g., based on a defined status model supports project management, quality activities, and dedicated project phases such as software integration.",
-      "pamCitation": "PAM §SUP.8 BP6"
+      "title": "형상 상태를 요약하고 의사소통한다",
+      "description": "진척 상황 및 상태의 모니터링을 지원하기 위해 형상 항목 및 수립된 베이스라인의 상태를 기록 및 요약하여 영향받는 모든 당사자에게 의사소통한다.",
+      "notes": [
+        "비고 9: 정의된 상태 모델에 기반한 형상 상태에 대한 정기적 의사소통은 프로젝트 관리, 품질 활동, 소프트웨어 통합과 같은 특정 프로젝트 단계를 지원한다."
+      ],
+      "page": 92,
+      "pamCitation": "PAM 4.1 §4.8.2 SUP.8.BP6",
+      "titleEn": "Summarize and communicate the configuration status",
+      "descriptionEn": "Record, summarize, and communicate the status of the configuration items and established baselines to all affected parties in order to support the monitoring of progress and status. NOTE 9: Regular communication of the configuration status, e.g., based on a defined status model supports project management, quality activities, and dedicated project phases such as software integration."
     },
     {
       "id": "BP7",
-      "title": "Ensure completeness and consistency",
-      "description": "Ensure that the information about configuration items is correct and complete including configuration item properties. Ensure the completeness and consistency of baselines. NOTE 10: Completeness and consistency of a baseline means that all required configuration items are included and consistent, and have the required status. This can be used to support e.g., project gate approval.",
-      "pamCitation": "PAM §SUP.8 BP7"
+      "title": "완전성 및 일관성을 보장한다",
+      "description": "형상 항목의 정보가 형상 항목 특성을 포함하여 정확하고 완전하도록 보장한다. 베이스라인의 완전성 및 일관성을 보장한다.",
+      "notes": [
+        "비고 10: 베이스라인의 완전성 및 일관성은 모든 요구되는 형상 항목이 포함되어 있으며 서로 일관되고 요구되는 상태에 있음을 의미한다. 이는 예를 들어 프로젝트 게이트 승인을 지원하는 데 사용될 수 있다."
+      ],
+      "page": 92,
+      "pamCitation": "PAM 4.1 §4.8.2 SUP.8.BP7",
+      "titleEn": "Ensure completeness and consistency",
+      "descriptionEn": "Ensure that the information about configuration items is correct and complete including the configuration item properties. Ensure the completeness and consistency of the baselines. NOTE 10: Completeness and consistency of a baseline means that all required configuration items are included and consistent, and have the required status. This can be used to support, e.g., project gate approval."
     },
     {
       "id": "BP8",
-      "title": "Verify backup and recovery mechanisms availability",
-      "description": "Verify the availability of appropriate backup and recovery mechanisms for the configuration management including the controlled configuration items. Initiate measures in case of insufficient backup and recovery mechanisms. NOTE 11: Backup and recovery mechanisms may be defined and implemented by organizational units outside the project team. This may include references to corresponding procedures or regulations. SUP.8 Configuration Management 1 emoctuO 2 emoctuO 3 emoctuO 4 emoctuO 5 emoctuO 6 emoctuO 7 emoctuO 8 emoctuO",
-      "pamCitation": "PAM §SUP.8 BP8"
+      "title": "백업 및 복구 체계의 가용성을 검증한다",
+      "description": "통제되는 작업 산출물을 포함하여 형상 관리에 적절한 백업 및 복구 체계의 가용성을 검증한다. 백업 및 복구 체계가 불충분할 경우, 방안을 시작한다.",
+      "notes": [
+        "비고 11: 백업 및 복구 체계는 프로젝트 팀 외부의 조직 단위가 정의 및 이행할 수 있다. 이는 해당 절차 또는 규정에 대한 참조를 포함할 수 있다."
+      ],
+      "page": 93,
+      "pamCitation": "PAM 4.1 §4.8.2 SUP.8.BP8",
+      "titleEn": "Verify the availability of backup and recovery mechanisms",
+      "descriptionEn": "Verify the availability of appropriate backup and recovery mechanisms for the configuration management including the controlled configuration items. Initiate measures in case of insufficient backup and recovery mechanisms. NOTE 11: Backup and recovery mechanisms may be defined and implemented by organizational units outside the project team. This may include references to corresponding procedures or regulations."
     }
   ],
   "outputWorkProducts": [
     {
       "id": "18-53",
-      "name": "Configuration item selection criteria"
+      "name": "형상 항목 선택 기준",
+      "nameEn": "Configuration item selection criteria"
     },
     {
       "id": "01-52",
-      "name": "Configuration item list"
+      "name": "형상 항목 목록",
+      "nameEn": "Configuration item list"
     },
     {
       "id": "16-03",
-      "name": "Configuration management system"
+      "name": "형상 관리 시스템",
+      "nameEn": "Configuration management system"
     },
     {
       "id": "13-08",
-      "name": "Baseline"
+      "name": "베이스라인",
+      "nameEn": "Baseline"
     },
     {
       "id": "14-01",
-      "name": "Change history"
+      "name": "변경 이력",
+      "nameEn": "Change history"
     },
     {
       "id": "15-56",
-      "name": "Configuration status"
+      "name": "형상 상태",
+      "nameEn": "Configuration status"
     },
     {
       "id": "13-51",
-      "name": "Consistency Evidence"
+      "name": "일관성 증거",
+      "nameEn": "Consistency Evidence"
     },
     {
       "id": "06-52",
-      "name": "Backup and recovery mechanism information"
+      "name": "백업 및 복구 체계 정보",
+      "nameEn": "Backup and recovery mechanism information"
     }
   ],
   "inputWorkProducts": [],
   "traceBPs": [
-    "BP2",
     "BP7"
   ]
 }
