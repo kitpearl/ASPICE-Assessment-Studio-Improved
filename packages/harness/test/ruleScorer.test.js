@@ -192,6 +192,20 @@ test("ruleScorer attaches references and hints on low score", async () => {
   assert.ok(r.gaps.some((g) => /^확인 포인트 \[SWE\.1\.RL\.\d+\]/.test(g)));
 });
 
+test("ruleScorer adds no hints on high score and knowledge never changes the score", async () => {
+  const swe1 = loadProcess("SWE.1");
+  const bp = swe1.basePractices[2];
+  const text = [bp.title, bp.titleEn, bp.description, ...(bp.notes ?? [])].filter(Boolean).join("\n");
+  const artifacts = [{ name: "swe1_bp3.md", text }];
+  const withKb = await ruleScorer.scoreBP({ process: swe1, bp, artifacts });
+  const withoutKb = await ruleScorer.scoreBP({ process: { ...swe1, id: "ZZZ.9" }, bp, artifacts });
+  assert.ok(withKb.scorePercent >= 51, `expected high score, got ${withKb.scorePercent}`);
+  assert.ok(withKb.references, "knowledge references attached");
+  assert.equal("references" in withoutKb, false);
+  assert.equal(withKb.scorePercent, withoutKb.scorePercent);
+  assert.ok(!withKb.gaps.some((g) => g.startsWith("확인 포인트")));
+});
+
 test("ruleScorer omits references for ad-hoc process objects", async () => {
   const r = await ruleScorer.scoreBP({
     process: { id: "ZZZ.9", basePractices: [] },

@@ -25,9 +25,15 @@ export function capForEffect(effect, sourcePercent) {
   }
 }
 
-function capLabel(effect) {
-  if (effect.kind === "must-downrate") return "L";
-  return effect.maxRating;
+/**
+ * 상한 표시 문구. cap-source 는 출처 지표 ID 가 있으면 "<ID> 점수".
+ * @param {{kind: string, maxRating?: string}|undefined} effect
+ * @param {string} [sourceId]
+ */
+export function capLabel(effect, sourceId) {
+  if (effect?.kind === "must-downrate") return "L";
+  if (effect?.kind === "cap-source") return sourceId ? `${sourceId} 점수` : "출처 점수";
+  return effect?.maxRating ?? "";
 }
 
 /**

@@ -38,6 +38,38 @@ test("cross-process rule never changes scores", () => {
   assert.ok(!applied.some((a) => a.ruleId === "MAN.3.RL.17"));
 });
 
+test("crossProcess flag skips a rule even when source and target resolve", () => {
+  const rule = {
+    id: "TEST.RL.1",
+    targets: [{ kind: "bp", process: "SUP.10", id: "BP3" }],
+    effect: { kind: "cap-source" },
+    condition: { kind: "rating", source: { kind: "bp", process: "SUP.10", id: "BP2" }, when: ["N", "P"], crossProcess: true },
+    text: "x",
+  };
+  const bps = [{ id: "BP2", scorePercent: 10, rating: "N", gaps: [] }, { id: "BP3", scorePercent: 90, rating: "F", gaps: [] }];
+  const { applied } = applyRatingConditionRules({ processId: "SUP.10", bps, pas: [], rules: [rule] });
+  assert.equal(bps[1].scorePercent, 90);
+  assert.deepEqual(applied, []);
+  // 같은 규칙에서 crossProcess 만 빼면 적용된다(위 단언이 실패할 수 있음을 보장)
+  const live = { ...rule, condition: { ...rule.condition, crossProcess: undefined } };
+  applyRatingConditionRules({ processId: "SUP.10", bps, pas: [], rules: [live] });
+  assert.equal(bps[1].scorePercent, 10);
+});
+
+test("scorer-written entry with the same ruleId does not block the engine", () => {
+  const bps = [
+    { id: "BP2", scorePercent: 10, rating: "N", gaps: [] },
+    { id: "BP3", scorePercent: 90, rating: "F", gaps: [], appliedRules: [{ ruleId: "SUP.10.RL.5", applied: false, note: "" }] },
+  ];
+  const { applied } = applyRatingConditionRules({ processId: "SUP.10", bps, pas: [], rules });
+  assert.equal(bps[1].scorePercent, 10);
+  assert.ok(applied.some((a) => a.ruleId === "SUP.10.RL.5"));
+  const entries = bps[1].appliedRules.filter((e) => e.ruleId === "SUP.10.RL.5");
+  assert.equal(entries.length, 2);
+  assert.ok(entries.some((e) => e.source === "rule-engine" && e.capped === true));
+  assert.ok(entries.some((e) => e.applied === false && e.source === undefined));
+});
+
 test("GP-sourced rule caps the target GP and refreshes PA rating", () => {
   const pas = [
     {
@@ -59,11 +91,14 @@ test("GP-sourced rule caps the target GP and refreshes PA rating", () => {
 
 test("idempotent: second run applies nothing new", () => {
   const bps = [{ id: "BP2", scorePercent: 40, rating: "P+", gaps: [] }, { id: "BP3", scorePercent: 90, rating: "F", gaps: [] }];
-  applyRatingConditionRules({ processId: "SUP.10", bps, pas: [], rules });
+  const first = applyRatingConditionRules({ processId: "SUP.10", bps, pas: [], rules });
+  assert.ok(first.applied.length > 0);
   const gapsBefore = bps[1].gaps.length;
+  const appliedRulesBefore = bps[1].appliedRules.length;
   const { applied } = applyRatingConditionRules({ processId: "SUP.10", bps, pas: [], rules });
   assert.deepEqual(applied, []);
   assert.equal(bps[1].gaps.length, gapsBefore);
+  assert.equal(bps[1].appliedRules.length, appliedRulesBefore);
 });
 
 test("never raises a score already below the cap", () => {

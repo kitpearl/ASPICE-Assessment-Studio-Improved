@@ -1,7 +1,7 @@
 // 가이드라인 2026 등급 조건 규칙(condition.kind === "rating")의 결정론적 후처리 (순수 함수).
 // 출처 지표의 등급이 when(N/P)에 들면 대상 지표의 점수를 상한까지만 낮춘다. 올리지 않는다.
 // crossProcess 규칙과 이 프로세스 결과로 출처·대상을 찾을 수 없는 규칙은 건너뛴다.
-import { capForEffect } from "./guidelineEffects.js";
+import { capForEffect, capLabel } from "./guidelineEffects.js";
 import { percentToRating, collapse } from "../model/rating.js";
 
 /**
@@ -46,13 +46,6 @@ function safeCollapse(rating) {
   } catch {
     return null;
   }
-}
-
-function capLabel(effect, sourceId) {
-  if (effect?.kind === "cap") return effect.maxRating;
-  if (effect?.kind === "must-downrate") return "L";
-  if (effect?.kind === "cap-source") return `${sourceId} 점수`;
-  return "";
 }
 
 function bpInScope(ref, processId) {
@@ -109,9 +102,10 @@ function resolveTarget(t, processId, bps, pas) {
   return null;
 }
 
+// 이 후처리기가 직접 남긴 항목만 본다. 스코어러(LLM)가 남긴 같은 ruleId 항목은 무시한다.
 function alreadyApplied(target, ruleId) {
   const list = target.item.appliedRules;
-  return Array.isArray(list) && list.some((e) => e?.ruleId === ruleId);
+  return Array.isArray(list) && list.some((e) => e?.ruleId === ruleId && e?.source === "rule-engine");
 }
 
 function clampItem(item, cap) {

@@ -203,3 +203,21 @@ test("project: markdown rendering produces sections we expect", async () => {
   assert.match(md, /### Traceability Matrix/);
   assert.match(md, /### Change Propagation/);
 });
+
+test("project: SUP.10 rating-condition rule SUP.10.RL.5 fires before CL", async () => {
+  const artifacts = await loadProjectFixture();
+  const harness = new Harness({ scorer: ruleScorer, targetLevel: 1 });
+  const verdict = await harness.evaluateProject({ artifacts, processIds: ["SUP.10"] });
+  const sup10 = verdict.processes.find((p) => p.processId === "SUP.10");
+  assert.ok(
+    sup10.meta.ratingConditionRules.some((a) => a.ruleId === "SUP.10.RL.5" && a.target === "BP3"),
+    JSON.stringify(sup10.meta.ratingConditionRules)
+  );
+  const bp2 = sup10.bps.find((b) => b.id === "BP2");
+  const bp3 = sup10.bps.find((b) => b.id === "BP3");
+  assert.ok(bp3.scorePercent <= bp2.scorePercent);
+  assert.ok(bp3.appliedRules.some((e) => e.ruleId === "SUP.10.RL.5" && e.source === "rule-engine"));
+  // PA 1.1 (BP 평균) 은 깎인 BP3 를 반영해야 한다
+  const avg = Math.round(sup10.bps.reduce((s, b) => s + b.scorePercent, 0) / sup10.bps.length);
+  assert.equal(sup10.pas[0].gps[0].scorePercent, avg);
+});
