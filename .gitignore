@@ -25,3 +25,7 @@ dist-ssr
 .env
 .env.local
 *.env
+
+packages/harness/spec/sources/*
+!packages/harness/spec/sources/README.md
+!packages/harness/spec/sources/.gitkeep

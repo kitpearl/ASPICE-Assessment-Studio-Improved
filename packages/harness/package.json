@@ -22,6 +22,7 @@
   "scripts": {
     "start": "node src/cli.js",
     "extract": "node spec/extractor.js",
+    "pdf2txt": "node spec/tools/pdf2txt.mjs",
     "test": "node --test test/*.test.js"
   },
   "dependencies": {
