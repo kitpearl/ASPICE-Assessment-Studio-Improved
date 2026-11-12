@@ -11,3 +11,9 @@ export {
   loadGuideline,
   ratingScale,
 } from "../spec/canonical/index.js";
+export {
+  getBpKnowledge,
+  getGpKnowledge,
+  getWpKnowledge,
+  getProcessKnowledge,
+} from "./knowledge/index.js";
