@@ -136,3 +136,15 @@ test("ruleScorer.scoreBP: no fingerprint preserves legacy scoring", async () => 
   assert.ok(r.scorePercent >= 51, `legacy path should still pass Largely+, got ${r.scorePercent}%`);
   assert.equal(r.contextConsistency.status, "unknown");
 });
+
+const bilingualBp = { id: "BP5", title: "일관성을 보장하고 양방향 추적성을 수립한다", description: "소프트웨어 요구사항과 시스템 요구사항 간의 일관성을 보장하고 양방향 추적성을 수립한다.", titleEn: "Ensure consistency and establish bidirectional traceability", descriptionEn: "Ensure consistency and establish bidirectional traceability between software requirements and system requirements." };
+
+test("ruleScorer.scoreBP bilingual: korean-only artifact scores by korean keywords", async () => {
+  const r = await ruleScorer.scoreBP({ process: { id: "SWE.1" }, bp: bilingualBp, artifacts: [{ name: "trace-ko.xlsx", text: "본 문서는 소프트웨어 요구사항과 시스템 요구사항 간 양방향 추적성과 일관성을 보장하기 위한 추적성 매트릭스이다." }] });
+  assert.ok(r.scorePercent >= 51, `got ${r.scorePercent}`);
+});
+
+test("ruleScorer.scoreBP bilingual: english artifact unaffected by korean keywords", async () => {
+  const r = await ruleScorer.scoreBP({ process: { id: "SWE.1" }, bp: bilingualBp, artifacts: [{ name: "Traceability_Matrix.xlsx", text: "This traceability matrix ensures consistency and bidirectional traceability between software requirements and system requirements." }] });
+  assert.ok(r.scorePercent >= 51, `got ${r.scorePercent}`);
+});

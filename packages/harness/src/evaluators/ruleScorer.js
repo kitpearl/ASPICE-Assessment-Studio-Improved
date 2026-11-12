@@ -1,4 +1,4 @@
-import { extractKeywords } from "../io/excerpt.js";
+import { extractBilingualKeywords, bpKeywordSources, gpKeywordSources } from "../io/keywords.js";
 import { classifyContextMatch } from "../io/projectContext.js";
 
 /**
@@ -22,11 +22,11 @@ import { classifyContextMatch } from "../io/projectContext.js";
  */
 export const ruleScorer = {
   async scoreBP({ bp, artifacts, projectFingerprint }) {
-    const kws = extractKeywords(`${bp.title} ${bp.description ?? ""}`, 10);
-    if (!kws.length) return empty("no keywords derivable from BP spec");
+    const kwSets = extractBilingualKeywords(bpKeywordSources(bp), 10);
+    if (!kwSets.ko.length && !kwSets.en.length) return empty("no keywords derivable from BP spec");
     const matchIndex = buildMatchIndex(artifacts, projectFingerprint);
-    const { weighted, total, evidence, missing, perArtifactHits } = matchKeywords(kws, artifacts, matchIndex);
-    const scorePercent = scoreFromWeighted(weighted, total);
+    const { ratio, evidence, missing, perArtifactHits } = matchBilingual(kwSets, artifacts, matchIndex);
+    const scorePercent = scoreFromWeighted(ratio, 1);
     const gaps = missing.length
       ? [`No evidence found for keywords: ${missing.slice(0, 6).join(", ")}`]
       : [];
@@ -63,10 +63,18 @@ export const ruleScorer = {
       };
     }
     // Fallback: name/alias match in filename or body
-    const needle = wp.name.toLowerCase();
-    const nameHit = artifacts.find((a) =>
-      (a.name + " " + (a.text ?? "")).toLowerCase().includes(needle)
-    );
+    const primary = wp.nameEn ?? wp.name;
+    const needles = [
+      ...(wp.aliases ?? []),
+      primary,
+      wp.name && wp.name !== primary && wp.name.length >= 5 ? wp.name : null,
+    ].filter(Boolean).map((n) => n.toLowerCase());
+    let needle = needles[0];
+    let nameHit;
+    for (const n of needles) {
+      nameHit = artifacts.find((a) => (a.name + " " + (a.text ?? "")).toLowerCase().includes(n));
+      if (nameHit) { needle = n; break; }
+    }
     if (nameHit) {
       const ctx = artifactContext(matchIndex, nameHit);
       const base = 60;
@@ -112,10 +120,10 @@ export const ruleScorer = {
       };
     }
     // CL2/CL3 GPs — heuristic keyword overlap
-    const kws = extractKeywords(`${gp.title} ${gp.description ?? ""} ${paSpec.scope ?? ""}`, 8);
+    const kwSets = extractBilingualKeywords(gpKeywordSources(gp, paSpec), 8);
     const matchIndex = buildMatchIndex(artifacts, projectFingerprint);
-    const { weighted, total, evidence, missing, perArtifactHits } = matchKeywords(kws, artifacts, matchIndex);
-    const scorePercent = scoreFromWeighted(weighted, total || 1);
+    const { ratio, evidence, missing, perArtifactHits } = matchBilingual(kwSets, artifacts, matchIndex);
+    const scorePercent = scoreFromWeighted(ratio, 1);
     const gaps = missing.length ? [`GP evidence missing: ${missing.slice(0, 5).join(", ")}`] : [];
     const contextConsistency = aggregateContext(matchIndex, perArtifactHits);
     if (contextConsistency.status === "off-context") gaps.push("프로젝트 컨텍스트 불일치: 매칭 산출물이 다른 제품/프로젝트로 보임");
@@ -228,6 +236,23 @@ function matchKeywords(keywords, artifacts, matchIndex) {
     if (!matched) missing.push(kw);
   }
   return { weighted, total: keywords.length, evidence, missing, perArtifactHits };
+}
+
+// Match each language's keyword set separately and keep the one with the
+// larger weighted hit ratio. An empty set is ignored; both empty => ratio 0.
+function matchBilingual(kwSets, artifacts, matchIndex) {
+  let best = { ratio: 0, evidence: [], missing: [], perArtifactHits: new Map() };
+  let first = true;
+  for (const kws of [kwSets.en, kwSets.ko]) {
+    if (!kws.length) continue;
+    const m = matchKeywords(kws, artifacts, matchIndex);
+    const ratio = m.total ? m.weighted / m.total : 0;
+    if (first || ratio > best.ratio) {
+      best = { ratio, evidence: m.evidence, missing: m.missing, perArtifactHits: m.perArtifactHits };
+      first = false;
+    }
+  }
+  return best;
 }
 
 function snippet(text, needle, radius = 400) {
