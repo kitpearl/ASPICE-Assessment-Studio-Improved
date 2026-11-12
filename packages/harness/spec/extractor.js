@@ -68,6 +68,24 @@ function readJson(path, fallback) {
   }
 }
 
+/** Reads JSON that must parse; exits 1 on a parse error, or when missing unless `optional`. */
+function readJsonStrict(path, { optional = false, missingWarning } = {}) {
+  if (!existsSync(path)) {
+    if (optional) {
+      if (missingWarning) console.warn(`WARNING: ${path} not found — ${missingWarning}`);
+      return null;
+    }
+    console.error(`Required file missing: ${path}`);
+    process.exit(1);
+  }
+  try {
+    return JSON.parse(readFileSync(path, "utf8"));
+  } catch (e) {
+    console.error(`Cannot parse ${path}: ${e.message}`);
+    process.exit(1);
+  }
+}
+
 function writeJson(path, data, pretty = true) {
   writeFileSync(path, pretty ? JSON.stringify(data, null, 2) + "\n" : JSON.stringify(data));
 }
@@ -119,6 +137,7 @@ function shapeProcess(p, enNames) {
 
 function main() {
   checkSources();
+  const ratingScale = readJsonStrict(resolve(OUT_DIR, "ratingScale.json"));
 
   console.log("Parsing PAM 4.1 (Korean)...");
   const pamText = readFileSync(src(PAM_FILE), "utf8");
@@ -131,7 +150,11 @@ function main() {
   mergeEnglish(pam, src(PAM_EN_DIR));
 
   console.log("Merging work product catalog...");
-  const prevWps = readJson(resolve(OUT_DIR, "workProducts.json"), {});
+  const prevWps =
+    readJsonStrict(resolve(OUT_DIR, "workProducts.json"), {
+      optional: true,
+      missingWarning: "work product aliases and nameEn will be empty",
+    }) ?? {};
   const enNames = Object.fromEntries(Object.entries(prevWps).map(([id, w]) => [id, w.nameEn ?? w.name]));
   const items = {};
   for (const [id, item] of Object.entries(pam.informationItems)) {
@@ -202,7 +225,6 @@ function main() {
 
   // Single-file bundle for the browser (ESM JSON import, e.g. from Vite).
   // Guideline text stays server-side; only per-process rule counts go here.
-  const ratingScale = readJson(resolve(OUT_DIR, "ratingScale.json"), null);
   const bundle = {
     version: "aspice-v4.1",
     generatedAt,

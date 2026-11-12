@@ -95,6 +95,18 @@ test("canonical: SPL.2 has BP7 without english", () => {
   assert.ok(bp7 && !bp7.titleEn);
 });
 
+test("canonical: only MLE.4.BP5 and SPL.2.BP7 lack english (no invented text)", () => {
+  const missing = loadProcesses()
+    .flatMap((p) => p.basePractices.filter((b) => !b.titleEn).map((b) => `${p.id}.${b.id}`))
+    .sort();
+  assert.deepEqual(missing, ["MLE.4.BP5", "SPL.2.BP7"]);
+  const summary = JSON.parse(readFileSync(resolve(__dirname, "../spec/canonical/_summary.json"), "utf8"));
+  const fromSummary = summary.processesById
+    .flatMap((p) => p.bpsWithoutEnglish.map((id) => `${p.id}.${id}`))
+    .sort();
+  assert.deepEqual(fromSummary, ["MLE.4.BP5", "SPL.2.BP7"]);
+});
+
 test("canonical: PA 1.1 ~ 3.2 only in loader, GP english present", () => {
   const pas = loadProcessAttributes();
   assert.deepEqual(Object.keys(pas).sort(), ["PA 1.1", "PA 2.1", "PA 2.2", "PA 3.1", "PA 3.2"]);
