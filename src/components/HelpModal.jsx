@@ -198,7 +198,7 @@ export const HelpModal = ({ onClose, mode }) => {
         <div style={{ padding: "16px 0 6px" }}>
           <SectionTitle>개요</SectionTitle>
           <div style={{ fontSize: 13, color: T.textMd, lineHeight: 1.75 }}>
-            본 스튜디오는 <strong style={{ color: T.textHi }}>VDA Automotive SPICE® 4.0</strong> 기준에 따라 산출물을 자동 진단합니다.
+            본 스튜디오는 <strong style={{ color: T.textHi }}>VDA Automotive SPICE® 4.1</strong> 기준에 따라 산출물을 자동 진단합니다.
             두 가지 평가 모드를 제공합니다 — <strong style={{ color: T.textHi }}>프로세스 모드</strong>(단일 프로세스 · 단일 문서)와
             <strong style={{ color: T.textHi }}> 프로젝트 모드</strong>(다중 프로세스 · 다중 산출물 · Cross-process 검증).
           </div>

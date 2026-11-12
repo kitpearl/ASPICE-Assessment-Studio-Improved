@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import { T, FONTS } from "../../theme";
-import { confirmRate } from "./ChecklistImportPanel";
+import { confirmRate } from "./checklistConstants";
 
 const th = { textAlign: "left", padding: "6px 8px", fontSize: 12, color: T.textLo, borderBottom: `1px solid ${T.borderL}` };
 const td = { padding: "6px 8px", fontSize: 12, borderBottom: `1px solid ${T.borderL}`, verticalAlign: "top" };

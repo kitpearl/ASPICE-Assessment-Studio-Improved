@@ -1,6 +1,7 @@
 import { X, FileDown, Loader2 } from "lucide-react";
 import { T, FONTS, SECTION_CONTAINER_STYLE } from "../theme";
 import { SectionBadge } from "./SectionBadge";
+import { ReferenceChips } from "./ReferenceChips";
 import { RATING_META } from "../data/ratingMeta";
 import { condenseGap as condenseGapShared } from "../utils/gapText";
 
@@ -322,7 +323,7 @@ function Pa11Rationale({ processes }) {
                     <td style={TD}>{b.title}</td>
                     <td style={{ ...TD, textAlign: "center" }}><RatingPill code={b.rating} /></td>
                     <td style={{ ...TD, textAlign: "center", fontFamily: FONTS.mono }}>{Math.round(b.scorePercent || 0)}%</td>
-                    <td style={{ ...TD, color: T.textMd, fontSize: 11 }}>{summarizeBp(b)}</td>
+                    <td style={{ ...TD, color: T.textMd, fontSize: 11 }}>{summarizeBp(b)}<ReferenceChips compact references={b.references} appliedRules={b.appliedRules} /></td>
                   </tr>
                 ))}
               </tbody>
@@ -426,7 +427,7 @@ function PaGpRationale({ processes, paId }) {
                     <td style={TD}>{g.title}</td>
                     <td style={{ ...TD, textAlign: "center" }}><RatingPill code={g.rating} /></td>
                     <td style={{ ...TD, textAlign: "center", fontFamily: FONTS.mono }}>{Math.round(g.scorePercent || 0)}%</td>
-                    <td style={{ ...TD, color: T.textMd, fontSize: 11 }}>{summarizeGp(g)}</td>
+                    <td style={{ ...TD, color: T.textMd, fontSize: 11 }}>{summarizeGp(g)}<ReferenceChips compact references={g.references} appliedRules={g.appliedRules} /></td>
                   </tr>
                 ))}
               </tbody>

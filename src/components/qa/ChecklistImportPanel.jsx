@@ -1,12 +1,7 @@
 import { useState } from "react";
 import { Upload, Loader2 } from "lucide-react";
-import { processes } from "aspice-harness/spec/all";
 import { T, FONTS } from "../../theme";
-
-export const PROCESS_OPTIONS = [...processes.map((p) => ({ id: p.id, name: p.name })), { id: "VWAY.PR", name: "산출물 동료 검토" }];
-
-const STATUSES = ["pending", "drafted", "confirmed", "stale"];
-export const STATUS_LABEL = { pending: "대기", drafted: "초안", confirmed: "확정", stale: "재확정 필요" };
+import { PROCESS_OPTIONS, STATUSES, STATUS_LABEL, confirmRate } from "./checklistConstants";
 
 const card = {
   background: T.surface,
@@ -18,12 +13,6 @@ const card = {
 const h = { fontSize: 14, fontWeight: 700, color: T.textHi, margin: "0 0 12px" };
 const th = { textAlign: "left", padding: "6px 8px", fontSize: 12, color: T.textLo, borderBottom: `1px solid ${T.borderL}` };
 const td = { padding: "6px 8px", fontSize: 12, borderBottom: `1px solid ${T.borderL}`, verticalAlign: "top" };
-
-export const confirmRate = (v) => {
-  const all = [...v.wpItems, ...v.processItems];
-  if (!all.length) return 0;
-  return Math.round((all.filter((i) => i.status === "confirmed").length / all.length) * 100);
-};
 
 function FileSlot({ label, file, onChange, disabled }) {
   return (

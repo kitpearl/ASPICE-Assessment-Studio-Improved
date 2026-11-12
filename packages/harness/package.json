@@ -1,7 +1,7 @@
 {
   "name": "aspice-harness",
   "version": "0.2.0",
-  "description": "Spec-driven ASPICE v4.0 harness (CL1-CL3) with cross-process consistency and traceability verification.",
+  "description": "Spec-driven ASPICE PAM 4.1 harness (CL1-CL3) with cross-process consistency and traceability verification.",
   "type": "module",
   "main": "src/index.js",
   "bin": {

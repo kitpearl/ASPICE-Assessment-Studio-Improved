@@ -6,6 +6,7 @@ const QUOTE_COLLAPSED_MAX_HEIGHT = 60;
 import { T, FONTS } from "../theme";
 import { RATING_META, RATING_ORDER, countRatings, isCl1Pass } from "../data/ratingMeta";
 import { normalizeEvidence } from "../utils/evidence";
+import { ReferenceChips } from "./ReferenceChips";
 
 const VerdictHeader = ({ proc, results, fileName, date, cl1Pass, counts, totalBps, viewingHistory, exporting, onExportPdf, onExportTxt }) => (
   <div style={{
@@ -376,6 +377,7 @@ const BpRatingRow = ({ proc, bp, rating }) => {
         <div style={{ fontSize: 12.5, color: T.textMd, lineHeight: 1.6, marginBottom: 10, wordBreak: "break-word", overflowWrap: "anywhere", minWidth: 0 }}>
           <strong style={{ color: T.err, fontWeight: 600 }}>약점 · </strong>{rating.rationale}
         </div>
+        <ReferenceChips references={rating.references} appliedRules={rating.appliedRules} />
         <div style={{
           fontFamily: FONTS.mono,
           fontSize: 9,

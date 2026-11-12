@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { processes } from "aspice-harness/spec/all";
 import { canConfirmWp, canConfirmProcess } from "aspice-harness/qa";
 import { T, FONTS } from "../../theme";
-import { STATUS_LABEL } from "./ChecklistImportPanel";
+import { STATUS_LABEL } from "./checklistConstants";
 import { ChecklistItemEditor } from "./ChecklistItemEditor";
 import { useQaDraft } from "../../hooks/useQaDraft";
 

@@ -1,15 +1,19 @@
 // Single source of truth: harness canonical bundle (spec/canonical/all.json).
 // Shapes each process to the UI-expected interface so existing components
-// (ProcessCard, VerdictCard, analysisPrompt for fallback) keep working.
+// (ProcessCard, VerdictCard) keep working.
 //
 // UI shape per process:
-//   { id, name, category, purpose, outcomes: [string], bps: [{id,title,description}], guideline }
+//   { id, name(한국어), nameEn, category, purpose, outcomes: [string],
+//     bps: [{id,title,titleEn,description,notes,pamCitation}], guidelineRuleCount }
 
-import { processes as HARNESS_PROCS } from "aspice-harness/spec/all";
+import HARNESS_BUNDLE from "aspice-harness/spec/all";
+
+const HARNESS_PROCS = HARNESS_BUNDLE.processes || [];
 
 const shape = (p) => ({
   id: p.id,
   name: p.name,
+  nameEn: p.nameEn ?? "",
   category: p.category,
   purpose: p.purpose,
   pamSection: p.pamSection,
@@ -17,15 +21,15 @@ const shape = (p) => ({
   bps: (p.basePractices || []).map((b) => ({
     id: b.id,
     title: b.title,
+    titleEn: b.titleEn ?? "",
     description: b.description ?? "",
+    notes: b.notes || [],
     pamCitation: b.pamCitation,
   })),
   outputWorkProducts: p.outputWorkProducts || [],
   inputWorkProducts: p.inputWorkProducts || [],
   traceBPs: p.traceBPs || [],
-  // Guideline text is authored per-process in the harness prompt pipeline;
-  // kept here as an empty string for legacy prompt-builder compatibility.
-  guideline: "",
+  guidelineRuleCount: HARNESS_BUNDLE.guidelineRuleCounts?.[p.id] ?? 0,
 });
 
 export const ASPICE_DATA = Object.fromEntries(

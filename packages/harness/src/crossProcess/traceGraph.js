@@ -4,7 +4,7 @@
  * Two sources of truth, in preference order:
  *   1. Canonical seed (`spec/canonical/processGraph.json`) — hand-curated
  *      V-model edges with the specific WP IDs that flow across. This is
- *      authoritative because PAM v4.0 does not publish input WP tables.
+ *      authoritative because PAM v4.1 does not publish input WP tables.
  *   2. Inferred edges — computed from input/output WP overlap. Produces
  *      the same result when the seed was used to populate per-process
  *      inputWorkProducts; kept as a fallback / sanity check.

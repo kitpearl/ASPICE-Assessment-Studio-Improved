@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { processes } from "aspice-harness/spec/all";
 import { canConfirmWp, canConfirmProcess, missingLinks, bpCatalog, VWAY_PR } from "aspice-harness/qa";
 import { T, FONTS } from "../../theme";
-import { PROCESS_OPTIONS, STATUS_LABEL } from "./ChecklistImportPanel";
+import { PROCESS_OPTIONS, STATUS_LABEL } from "./checklistConstants";
 
 const label = { fontSize: 12, fontWeight: 700, color: T.textHi, margin: "12px 0 4px" };
 const input = {

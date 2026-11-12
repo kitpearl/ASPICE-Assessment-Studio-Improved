@@ -13,6 +13,7 @@ import jsPDF from "jspdf";
 import { RATING_META } from "../data/ratingMeta";
 import { captureToPngCanvas, sliceCanvasToPdfPage } from "./pdfPaginator";
 import { condenseGap as condenseGapShared } from "./gapText";
+import { referencesToText } from "./references";
 
 // A4 가로
 const PAGE_W_MM = 297;
@@ -79,10 +80,10 @@ function coverHtml({ entry, verdict }) {
   return `
     <div style="${baseSectionPad}padding-top:80px;padding-bottom:80px;height:${CAPTURE_W_PX * (PAGE_H_MM / PAGE_W_MM)}px;display:flex;flex-direction:column;justify-content:space-between">
       <div>
-        <div style="font-family:${FONT_MONO};font-size:11px;letter-spacing:0.2em;color:#64748B;margin-bottom:18px">ASPICE 4.0 · 프로젝트 평가 보고서</div>
+        <div style="font-family:${FONT_MONO};font-size:11px;letter-spacing:0.2em;color:#64748B;margin-bottom:18px">ASPICE PAM 4.1 · 프로젝트 평가 보고서</div>
         <div style="font-size:42px;font-weight:800;letter-spacing:-0.025em;color:#0F172A;line-height:1.1;margin-bottom:14px">프로젝트 평가 결과</div>
         <div style="font-size:16px;color:#475569;line-height:1.55;max-width:760px">
-          본 보고서는 업로드된 산출물에 대해 ASPICE PAM v4.0 기준으로 수행된 자동 평가의 요약입니다. 능력 수준, 추적성, 일관성, 커버리지, 변경 전파를 포함합니다.
+          본 보고서는 업로드된 산출물에 대해 PAM v4.1(2026-08-24)과 VDA 가이드라인 3판(2026-07) 기준으로 수행된 자동 평가의 요약입니다. 능력 수준, 추적성, 일관성, 커버리지, 변경 전파를 포함합니다.
         </div>
       </div>
       <div style="display:grid;grid-template-columns:repeat(2, 1fr);gap:18px 32px;font-size:13px">
@@ -213,15 +214,16 @@ function reportContentHtml(verdict, entry) {
             </span>
           </div>
           ${tableHtml(
-            ["BP", "제목", "등급", "점수", "약점 (개선 필요)"],
+            ["BP", "제목", "등급", "점수", "약점 (개선 필요)", "근거 (PAM·가이드라인)"],
             bps.map((b) => [
               `<span style="font-family:${FONT_MONO};white-space:nowrap">${esc(b.id)}</span>`,
               esc(b.title || ""),
               ratingPillHtml(b.rating),
               `<span style="font-family:${FONT_MONO}">${Math.round(b.scorePercent || 0)}%</span>`,
               `<span style="color:#475569;font-size:11px">${esc(summarizeBp(b))}</span>`,
+              `<span style="color:#64748B;font-size:10px;font-family:${FONT_MONO}">${esc(referencesToText(b.references, b.appliedRules))}</span>`,
             ]),
-            [null, null, "center", "center", null],
+            [null, null, "center", "center", null, null],
           )}
         </div>
       `;
@@ -260,15 +262,16 @@ function reportContentHtml(verdict, entry) {
               </span>
             </div>
             ${tableHtml(
-              ["GP", "제목", "등급", "점수", "약점 (개선 필요)"],
+              ["GP", "제목", "등급", "점수", "약점 (개선 필요)", "근거 (PAM·가이드라인)"],
               gps.map((g) => [
                 `<span style="font-family:${FONT_MONO};white-space:nowrap">${esc(g.id)}</span>`,
                 esc(g.title || ""),
                 ratingPillHtml(g.rating),
                 `<span style="font-family:${FONT_MONO}">${Math.round(g.scorePercent || 0)}%</span>`,
                 `<span style="color:#475569;font-size:11px">${esc(summarizeGp(g))}</span>`,
+              `<span style="color:#64748B;font-size:10px;font-family:${FONT_MONO}">${esc(referencesToText(g.references, g.appliedRules))}</span>`,
               ]),
-              [null, null, "center", "center", null],
+              [null, null, "center", "center", null, null],
             )}
           </div>
         `;
@@ -469,7 +472,7 @@ function drawHeaderFooter(pdf, { sectionKey, pageIndex, pageCount }) {
   pdf.line(0, HEADER_H_MM, pw, HEADER_H_MM);
   pdf.setTextColor(10, 10, 12);
   pdf.setFontSize(9);
-  pdf.text(`ASPICE 4.0 PROJECT REPORT  ·  ${SECTION_LABEL_ASCII[sectionKey] || ""}`, SIDE_MM, 8);
+  pdf.text(`ASPICE PAM 4.1 PROJECT REPORT  ·  ${SECTION_LABEL_ASCII[sectionKey] || ""}`, SIDE_MM, 8);
   pdf.setFontSize(7.5);
   pdf.setTextColor(100, 100, 110);
   pdf.text(formatDateAscii(), pw - SIDE_MM, 8, { align: "right" });
