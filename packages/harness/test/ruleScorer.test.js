@@ -184,3 +184,19 @@ test("ruleScorer.scoreBP english-only BP: half of english keywords matched score
   assert.equal(r.scorePercent, 50);
   assert.deepEqual(r.gaps[0], "No evidence found for keywords: charlie, delta");
 });
+
+test("ruleScorer attaches references and hints on low score", async () => {
+  const swe1 = loadProcess("SWE.1");
+  const r = await ruleScorer.scoreBP({ process: swe1, bp: swe1.basePractices[2], artifacts: [{ name: "x.md", text: "hello" }] });
+  assert.equal(r.references.pam.citation, "PAM 4.1 §4.4.1 SWE.1.BP3");
+  assert.ok(r.gaps.some((g) => /^확인 포인트 \[SWE\.1\.RL\.\d+\]/.test(g)));
+});
+
+test("ruleScorer omits references for ad-hoc process objects", async () => {
+  const r = await ruleScorer.scoreBP({
+    process: { id: "ZZZ.9", basePractices: [] },
+    bp: { id: "BP1", title: "requirements analysis", description: "analyze requirements" },
+    artifacts: [{ name: "x.md", text: "hello" }],
+  });
+  assert.equal("references" in r, false);
+});

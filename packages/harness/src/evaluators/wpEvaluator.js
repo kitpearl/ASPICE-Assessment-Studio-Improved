@@ -13,7 +13,7 @@ export async function evaluateWPs(processSpec, artifacts, scorer, options = {}) 
   const { projectFingerprint } = options;
   const results = [];
   for (const wp of processSpec.outputWorkProducts) {
-    const { scorePercent, evidence, gaps, contextConsistency } = await scorer.scoreWP({
+    const { scorePercent, evidence, gaps, contextConsistency, references, appliedRules } = await scorer.scoreWP({
       process: processSpec,
       wp,
       artifacts,
@@ -27,6 +27,9 @@ export async function evaluateWPs(processSpec, artifacts, scorer, options = {}) 
       evidence,
       gaps,
       contextConsistency: contextConsistency ?? { status: "unknown", note: "" },
+      appliedRules: appliedRules ?? [],
+      ...(references?.pam?.citation ? { pamCitation: references.pam.citation } : {}),
+      ...(references !== undefined ? { references } : {}),
     });
   }
   return results;

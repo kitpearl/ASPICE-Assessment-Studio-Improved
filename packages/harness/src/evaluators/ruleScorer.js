@@ -1,5 +1,6 @@
 import { extractBilingualKeywords, bpKeywordSources, gpKeywordSources } from "../io/keywords.js";
 import { classifyContextMatch } from "../io/projectContext.js";
+import { getBpKnowledge, getGpKnowledge, getWpKnowledge } from "../knowledge/index.js";
 
 /**
  * RuleScorer — offline, deterministic scorer.
@@ -21,7 +22,23 @@ import { classifyContextMatch } from "../io/projectContext.js";
  * @type {import("./scorer.js").Scorer}
  */
 export const ruleScorer = {
-  async scoreBP({ bp, artifacts, projectFingerprint }) {
+  async scoreBP(args) {
+    const r = await scoreBPCore(args);
+    return withKnowledge(r, safeKnowledge(() => getBpKnowledge(args.process?.id, args.bp?.id)));
+  },
+
+  async scoreWP(args) {
+    const r = await scoreWPCore(args);
+    return withKnowledge(r, safeKnowledge(() => getWpKnowledge(args.process?.id, args.wp?.id)));
+  },
+
+  async scoreGP(args) {
+    const r = await scoreGPCore(args);
+    return withKnowledge(r, safeKnowledge(() => getGpKnowledge(args.paSpec?.id, args.gp?.id)));
+  },
+};
+
+async function scoreBPCore({ bp, artifacts, projectFingerprint }) {
     const kwSets = extractBilingualKeywords(bpKeywordSources(bp), 10);
     if (!kwSets.ko.length && !kwSets.en.length) return empty("no keywords derivable from BP spec");
     const matchIndex = buildMatchIndex(artifacts, projectFingerprint);
@@ -37,9 +54,9 @@ export const ruleScorer = {
       gaps.push("프로젝트 컨텍스트 부분 일치: 일부 매칭 산출물이 다른 컨텍스트로 보임");
     }
     return { scorePercent, evidence, gaps, contextConsistency };
-  },
+}
 
-  async scoreWP({ wp, artifacts, projectFingerprint }) {
+async function scoreWPCore({ wp, artifacts, projectFingerprint }) {
     const matchIndex = buildMatchIndex(artifacts, projectFingerprint);
     const wpidHit = artifacts.find((a) => a.wpidCandidates?.includes(wp.id));
     if (wpidHit) {
@@ -100,9 +117,9 @@ export const ruleScorer = {
       gaps: [`No artifact satisfies WP ${wp.id} ${wp.name}`],
       contextConsistency: { status: "unknown", note: "" },
     };
-  },
+}
 
-  async scoreGP({ paSpec, gp, bpResults, artifacts, projectFingerprint }) {
+async function scoreGPCore({ paSpec, gp, bpResults, artifacts, projectFingerprint }) {
     // PA 1.1: GP 1.1.1 depends entirely on BP achievement.
     if (paSpec.id === "PA 1.1") {
       const bpAvg =
@@ -129,8 +146,42 @@ export const ruleScorer = {
     if (contextConsistency.status === "off-context") gaps.push("프로젝트 컨텍스트 불일치: 매칭 산출물이 다른 제품/프로젝트로 보임");
     else if (contextConsistency.status === "partial") gaps.push("프로젝트 컨텍스트 부분 일치: 일부 매칭 산출물이 다른 컨텍스트로 보임");
     return { scorePercent, evidence, gaps, contextConsistency };
-  },
-};
+}
+
+// ── knowledge (references + hints) ───────────────────────────────────────
+
+const HINT_SCORE_THRESHOLD = 51;
+const MAX_HINTS = 2;
+const HINT_CHARS = 80;
+
+function safeKnowledge(fn) {
+  try {
+    return fn() ?? null;
+  } catch {
+    return null;
+  }
+}
+
+// references 를 싣고, 낮은 점수면 must-not-downrate 규칙을 확인 포인트로 gaps 에 덧붙인다.
+// 점수는 바꾸지 않는다. 규칙 순서는 knowledge 선택 순서(프로세스/PA scope 먼저)를 따른다.
+function withKnowledge(result, knowledge) {
+  if (!knowledge) return result;
+  const out = { ...result };
+  if (knowledge.references) out.references = knowledge.references;
+  if (out.scorePercent < HINT_SCORE_THRESHOLD) {
+    const hints = (knowledge.guideline?.rules ?? [])
+      .filter((r) => r.effect?.kind === "must-not-downrate")
+      .slice(0, MAX_HINTS)
+      .map((r) => `확인 포인트 [${r.id}]: ${clip(r.text, HINT_CHARS)}`);
+    if (hints.length) out.gaps = [...(out.gaps ?? []), ...hints];
+  }
+  return out;
+}
+
+function clip(text, max) {
+  const s = String(text ?? "");
+  return s.length > max ? s.slice(0, max) + "…" : s;
+}
 
 // ── project-context helpers ──────────────────────────────────────────────
 

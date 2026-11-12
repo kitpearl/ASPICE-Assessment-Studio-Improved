@@ -4,6 +4,7 @@ import {
   loadProcessAttributes,
   loadWorkProducts,
   loadProcessGraph,
+  loadGuideline,
 } from "../spec/canonical/index.js";
 import { indexArtifacts } from "./io/artifactIndex.js";
 import { computeProjectFingerprint } from "./io/projectContext.js";
@@ -11,11 +12,18 @@ import { evaluateBPs } from "./evaluators/bpEvaluator.js";
 import { evaluateWPs } from "./evaluators/wpEvaluator.js";
 import { evaluatePAs } from "./evaluators/paEvaluator.js";
 import { computeCapabilityLevel } from "./evaluators/capabilityLevel.js";
+import { applyRatingConditionRules } from "./evaluators/ratingConditions.js";
 import { buildProcessGraph } from "./crossProcess/traceGraph.js";
 import { checkTraceability } from "./crossProcess/traceability.js";
 import { checkConsistency } from "./crossProcess/consistency.js";
 import { computeCoverage } from "./crossProcess/coverage.js";
 import { analyzeChangePropagation } from "./crossProcess/changePropagation.js";
+
+let _guidelineRules;
+function guidelineRules() {
+  if (!_guidelineRules) _guidelineRules = loadGuideline().rules ?? [];
+  return _guidelineRules;
+}
 
 /**
  * Harness runtime. Data-driven: reads canonical specs from spec/canonical/,
@@ -49,6 +57,9 @@ export class Harness {
       : processSpec;
 
     const bps = await evaluateBPs(effectiveSpec, indexed, this.scorer, { projectFingerprint: fingerprint });
+    const rules = guidelineRules();
+    // Guideline rating-condition rules between BPs run before PA 1.1 averages them.
+    const bpPass = applyRatingConditionRules({ processId, bps, pas: [], rules });
     const wps = await evaluateWPs(effectiveSpec, indexed, this.scorer, { projectFingerprint: fingerprint });
     const pas = await evaluatePAs(
       effectiveSpec,
@@ -59,6 +70,8 @@ export class Harness {
       this.scorer,
       { level: this.targetLevel, projectFingerprint: fingerprint }
     );
+    // Second pass: GP-sourced rules and BP-sourced rules that target a PA.
+    const paPass = applyRatingConditionRules({ processId, bps, pas, rules });
     const cl = computeCapabilityLevel(pas);
 
     return {
@@ -70,7 +83,11 @@ export class Harness {
       capabilityLevel: cl.level,
       capabilityLevelReason: cl.reason,
       projectFingerprint: fingerprint,
-      meta: { targetLevel: this.targetLevel, pamSection: processSpec.pamSection },
+      meta: {
+        targetLevel: this.targetLevel,
+        pamSection: processSpec.pamSection,
+        ratingConditionRules: [...bpPass.applied, ...paPass.applied],
+      },
     };
   }
 

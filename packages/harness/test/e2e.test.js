@@ -66,3 +66,14 @@ test("e2e: capability level reported as 0-3 integer", async () => {
   assert.ok(Number.isInteger(verdict.capabilityLevel));
   assert.ok(verdict.capabilityLevel >= 0 && verdict.capabilityLevel <= 3);
 });
+
+test("evaluateProcess result carries references and meta.ratingConditionRules", async () => {
+  const fixtureArtifacts = [
+    await loadFixture("sys2_srs.md"),
+    await loadFixture("sys2_trace_matrix.csv"),
+  ];
+  const v = await new Harness({ scorer: ruleScorer }).evaluateProcess({ processId: "SYS.2", artifacts: fixtureArtifacts });
+  assert.ok(v.bps[0].references.pam.citation.startsWith("PAM 4.1 §4.3.2 SYS.2.BP1"));
+  assert.ok(Array.isArray(v.meta.ratingConditionRules));
+  assert.ok(Array.isArray(v.bps[0].appliedRules));
+});

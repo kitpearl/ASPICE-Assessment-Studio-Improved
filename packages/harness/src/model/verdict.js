@@ -15,6 +15,8 @@
  * @property {Evidence[]} evidence
  * @property {string[]} gaps
  * @property {string} pamCitation   PAM section ref
+ * @property {KnowledgeReferences} [references]  PAM 4.1 / Guideline 2026 sources
+ * @property {AppliedRule[]} appliedRules  guideline rules applied (scorer or rule-engine)
  *
  * @typedef {Object} GPResult
  * @property {string} id            e.g. "GP 2.1.1"
@@ -23,6 +25,31 @@
  * @property {number} scorePercent
  * @property {Evidence[]} evidence
  * @property {string[]} gaps
+ * @property {string} [pamCitation]
+ * @property {KnowledgeReferences} [references]
+ * @property {AppliedRule[]} appliedRules
+ *
+ * @typedef {Object} WPResult
+ * @property {string} wpId
+ * @property {string} name
+ * @property {Rating} rating
+ * @property {number} scorePercent
+ * @property {Evidence[]} evidence
+ * @property {string[]} gaps
+ * @property {string} [pamCitation]
+ * @property {KnowledgeReferences} [references]
+ * @property {AppliedRule[]} appliedRules
+ *
+ * @typedef {Object} AppliedRule
+ * @property {string} ruleId
+ * @property {boolean} applied
+ * @property {string} note
+ * @property {string} [source]     "rule-engine" when applied by the post-processor
+ * @property {boolean} [capped]    true when the score was lowered
+ *
+ * @typedef {Object} KnowledgeReferences
+ * @property {{citation: string, page?: number, title?: string}} pam
+ * @property {Array<{id: string, effect: string, section?: string, page?: number, summary: string, conditional?: string, displayOnly?: boolean}>} guideline
  *
  * @typedef {Object} PAResult
  * @property {string} paId          e.g. "PA 1.1"
