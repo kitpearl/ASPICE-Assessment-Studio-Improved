@@ -9,7 +9,8 @@ const TOC_RE = /\.{5,}/;
 const PROCESS_HEAD_RE = /^(\d\.\d+\.\d+)\.\s+([A-Z]{3}\.\d+)\s+(.+)$/;
 const CHAPTER5_RE = /^5\.\s+프로세스 능력 수준/;
 const BP_HEAD_RE = /^([A-Z]{3})\.?(\d+)\.BP(\d+):?\s+(.*)$/;
-const NOTE_RE = /^비고\s*\d+\s*:/;
+// "참고 8:" is a source typo for "비고 8:" (REU.2.BP6).
+const NOTE_RE = /^(비고|참고)\s*\d+\s*:/;
 const ITEM_RE = /^(\d+)\)\s+(.*)$/;
 const WP_ROW_RE = /^(\d{2}-\d{2})\s+(\S.*?)(\s+X)*\s*$/;
 const PA_HEAD_RE = /^(\d\.\d\.\d)\.\s+(PA \d\.\d)\s+(.+?)\s*프로세스 속성\s*$/;
@@ -273,6 +274,8 @@ const SECTION_HEADS = [
   ["examples", /^예시 및 참조\s*:\s*(.*)$/],
 ];
 
+const NAME_CONT_MAX = 20;
+
 function parseInformationItems(lines, start, end) {
   const items = [];
   let cur = null;
@@ -290,9 +293,19 @@ function parseInformationItems(lines, start, end) {
       continue;
     }
     if (!cur) continue;
-    if (cur.name === null) { cur.name = l; continue; }
+    if (cur.name === null) { cur.name = l; cur.nameOpen = true; continue; }
 
     const head = SECTION_HEADS.find(([, re]) => re.test(l));
+    // Names wrap in the narrow table column ("밸리데이션 방안 선택" + "집합").
+    // A short line that is not a sentence end, bullet or section head still
+    // belongs to the name; the summary column is wide, so its lines are long.
+    if (cur.nameOpen) {
+      if (!head && !BULLET_RE.test(l) && !/(\.|다)$/.test(l) && l.length <= NAME_CONT_MAX) {
+        cur.name = `${cur.name} ${l}`;
+        continue;
+      }
+      cur.nameOpen = false;
+    }
     if (head) {
       cur.section = head[0];
       const rest = head[1].exec(l)[1];

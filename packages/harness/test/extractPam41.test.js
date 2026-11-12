@@ -74,3 +74,43 @@ test("pam41: annex B information items", { skip: !text }, () => {
   assert.deepEqual(it.characteristics.examples, ["스터빙이 포함된 시뮬레이터", "객체 코드"]);
   assert.equal(informationItems["17-00"].name, "요구사항");
 });
+
+test("pam41: REU.2 BP6 note written as '참고 8:' is a note, not description", { skip: !text }, () => {
+  const bp6 = parsePam41(text).processes.find((x) => x.id === "REU.2").basePractices.find((b) => b.id === "BP6");
+  assert.equal(bp6.notes.length, 1);
+  assert.doesNotMatch(bp6.description, /참고|비고/);
+});
+
+test("pam41: annex B names that wrap onto a second line", { skip: !text }, () => {
+  const { informationItems } = parsePam41(text);
+  assert.equal(informationItems["08-57"].name, "밸리데이션 방안 선택 집합");
+  assert.match(informationItems["08-57"].characteristics.summary, /^특정 목적을 위해/);
+  assert.equal(informationItems["17-05"].name, "작업 산출물에 대한 요구사항");
+  assert.match(informationItems["17-05"].characteristics.summary, /^작업 산출물에 필요한/);
+});
+
+test("pam41: annex B names equal the process scoreboard names", { skip: !text }, () => {
+  const { processes, informationItems } = parsePam41(text);
+  // Source discrepancies between annex B and the scoreboards (not parser bugs):
+  // 03-03 annex line 6588 "벤차마킹 데이터" vs scoreboard line 5140 "벤치마킹 데이터";
+  // 15-13 annex line 7852 "심사/감사 보고" vs scoreboard line 5271 "심사/감사 결과".
+  const KNOWN = new Set(["03-03", "15-13"]);
+  const norm = (s) => s.replace(/\s+/g, " ").trim();
+  const diffs = [];
+  for (const p of processes) {
+    for (const w of p.outputWorkProducts) {
+      const item = informationItems[w.id];
+      assert.ok(item, `${p.id} output ${w.id} missing from annex B`);
+      if (norm(item.name) !== norm(w.name) && !KNOWN.has(w.id)) diffs.push(`${w.id}: ${item.name} != ${w.name}`);
+    }
+  }
+  assert.deepEqual(diffs, []);
+});
+
+test("pam41: GP notes interleaved with indicator lines", { skip: !text }, () => {
+  const { processAttributes: pas } = parsePam41(text);
+  const gp = pas["PA 2.1"].genericPractices.find((g) => g.id === "GP 2.1.3");
+  assert.equal(gp.notes.length, 2);
+  assert.match(gp.description, /책임 및 권한이 결정된다/);
+  assert.equal(pas["PA 5.2"].genericPractices.length, 3); // "GP 5.2.2." 점 오타
+});
