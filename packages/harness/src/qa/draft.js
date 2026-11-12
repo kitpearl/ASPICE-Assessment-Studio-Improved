@@ -6,8 +6,19 @@ const SEVERITIES = ["상", "중", "하"];
 
 const bpLines = (bps) =>
   bps.length
-    ? bps.map((bp) => `- ${bp.id} ${bp.title}: ${bp.description ?? ""}`).join("\n")
+    ? bps.map((bp) => `- ${bp.id} ${bp.title}${bp.titleEn ? ` (${bp.titleEn})` : ""}: ${bp.description ?? ""}`).join("\n")
     : "(이 프로세스에는 관련 BP가 없습니다. relatedBPs는 빈 배열로 둡니다.)";
+
+const SYSTEM_ROLE = "당신은 Automotive SPICE PAM 4.1 품질보증(QA) 심사 전문가입니다.";
+const RULE_CITE_LINE = "- rationale에 참고한 규칙 ID를 괄호로 적습니다. 예: (가이드라인 SWE.1.RL.4)";
+
+const hasRules = (rules) => Array.isArray(rules) && rules.length > 0;
+
+// VDA guideline rules block appended to the prompt context (empty when no rules).
+const rulesBlock = (rules) =>
+  hasRules(rules)
+    ? "\n\n참고 규칙(VDA 가이드라인 2026):\n" + rules.map((r) => `- [${r.id}] ${r.text}`).join("\n")
+    : "";
 
 // Spec 7.3: same processId items + confirmed items of other processes that carry a BP of this process
 export function wpCandidatesFor(version, processId, processes) {
@@ -21,9 +32,9 @@ export function wpCandidatesFor(version, processId, processes) {
     .map((it) => ({ checkId: it.checkId, workProduct: it.workProduct, question: it.question }));
 }
 
-export function buildWpDraftPrompt({ workProduct, processId, bps, items }) {
+export function buildWpDraftPrompt({ workProduct, processId, bps, items, guidelineRules = [] }) {
   const system = [
-    "당신은 ASPICE 4.0 품질보증(QA) 심사 전문가입니다.",
+    SYSTEM_ROLE,
     "산출물 체크리스트의 각 질문에 대해, 심사자가 산출물에서 검증할 수 있는 판정 기준을 작성합니다.",
     "- criteria: 검증 가능한 문장 1~5개.",
     "- 질문이 부정형이라 '예'가 위반을 뜻하면 polarity=negative, 그 외에는 positive. (예: '오타가 존재하는가?'는 negative)",
@@ -32,10 +43,11 @@ export function buildWpDraftPrompt({ workProduct, processId, bps, items }) {
     "- 항목에 근거(엑셀의 BP/OII 표기)가 있으면 relatedBPs를 고르는 힌트로만 쓰고, 목록 밖 ID는 쓰지 않습니다.",
     "- severity: 상, 중, 하 중 하나.",
     "- rationale: 한 문장.",
+    ...(hasRules(guidelineRules) ? [RULE_CITE_LINE] : []),
     "입력의 모든 id에 대해 하나씩 답하고, JSON만 출력합니다.",
     '형식: {"items":[{"id":"...","criteria":["..."],"polarity":"positive|negative","targetLocations":["..."],"relatedBPs":["MAN.3.BP5"],"severity":"상|중|하","rationale":"..."}]}',
   ].join("\n");
-  const context = `산출물: ${workProduct}\n프로세스: ${processId}\n\nBP 목록:\n${bpLines(bps)}`;
+  const context = `산출물: ${workProduct}\n프로세스: ${processId}\n\nBP 목록:\n${bpLines(bps)}${rulesBlock(guidelineRules)}`;
   const task =
     "다음 항목의 판정 기준 초안을 작성하세요.\n" +
     items.map((it) =>
@@ -44,21 +56,22 @@ export function buildWpDraftPrompt({ workProduct, processId, bps, items }) {
   return { system, context, task };
 }
 
-export function buildProcessDraftPrompt({ processId, bps, items, candidates }) {
+export function buildProcessDraftPrompt({ processId, bps, items, candidates, guidelineRules = [] }) {
   const system = [
-    "당신은 ASPICE 4.0 품질보증(QA) 심사 전문가입니다.",
+    SYSTEM_ROLE,
     "프로세스 심사 항목마다, 그 항목을 판정할 때 근거가 되는 산출물 체크 항목을 후보 중에서 고릅니다.",
     "- linkedWpCheckIds: 반드시 후보 목록의 checkId만 사용.",
     "- relatedBPs: 반드시 제공된 BP 목록의 ID만 사용. 관련 없으면 빈 배열.",
     "- 항목에 참고(엑셀의 BP 표기)가 있으면 relatedBPs를 고르는 힌트로만 쓰고, 목록 밖 ID는 쓰지 않습니다.",
     "- rationale: 한 문장.",
+    ...(hasRules(guidelineRules) ? [RULE_CITE_LINE] : []),
     "입력의 모든 id에 대해 하나씩 답하고, JSON만 출력합니다.",
     '형식: {"items":[{"id":"...","linkedWpCheckIds":["..."],"relatedBPs":["MAN.3.BP5"],"rationale":"..."}]}',
   ].join("\n");
   const cand = candidates.length
     ? candidates.map((c) => `- ${c.checkId} [${c.workProduct}] ${c.question}`).join("\n")
     : "(후보 없음)";
-  const context = `프로세스: ${processId}\n\nBP 목록:\n${bpLines(bps)}\n\n산출물 항목 후보:\n${cand}`;
+  const context = `프로세스: ${processId}\n\nBP 목록:\n${bpLines(bps)}\n\n산출물 항목 후보:\n${cand}${rulesBlock(guidelineRules)}`;
   const task =
     "다음 프로세스 심사 항목의 초안을 작성하세요.\n" +
     items.map((it) => `- id: ${it.id}${it.basis ? ` / 참고: ${it.basis}` : ""} / question: ${it.question}`).join("\n");
@@ -118,7 +131,7 @@ function makeBatches(groups, kind, batchSize) {
 
 const msg = (e) => String(e?.message ?? e);
 
-export async function generateDrafts({ client, kind, groups, processes, batchSize = 20 }) {
+export async function generateDrafts({ client, kind, groups, processes, batchSize = 20, knowledgeForProcess }) {
   const results = {};
   const failures = {};
   const batches = makeBatches(groups, kind, batchSize);
@@ -133,9 +146,11 @@ export async function generateDrafts({ client, kind, groups, processes, batchSiz
       for (const g of batch) for (const c of g.candidates ?? []) seen.set(c.checkId, c);
       candidates = [...seen.values()];
     }
+    const knowledge = typeof knowledgeForProcess === "function" ? knowledgeForProcess(first.processId) : null;
+    const guidelineRules = knowledge?.rules ?? [];
     const prompt = kind === "wp"
-      ? buildWpDraftPrompt({ workProduct: first.workProduct, processId: first.processId, bps, items })
-      : buildProcessDraftPrompt({ processId: first.processId, bps, items, candidates });
+      ? buildWpDraftPrompt({ workProduct: first.workProduct, processId: first.processId, bps, items, guidelineRules })
+      : buildProcessDraftPrompt({ processId: first.processId, bps, items, candidates, guidelineRules });
 
     let parsed;
     try {

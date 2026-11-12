@@ -78,6 +78,7 @@ export function bpCatalog(processes, processId) {
     id: `${processId}.${bp.id}`,
     title: bp.title,
     description: bp.description,
+    ...(bp.titleEn ? { titleEn: bp.titleEn } : {}),
   }));
 }
 

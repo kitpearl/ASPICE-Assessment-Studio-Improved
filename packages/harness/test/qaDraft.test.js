@@ -150,3 +150,36 @@ test("basis: wp/process prompts carry it as a hint; generateDrafts passes it thr
   assert.ok(tasks[0].includes("근거: SYS.2.BP1"));
   assert.deepEqual(r.results["CH-0"].relatedBPs, ["MAN.3.BP1"]);
 });
+
+test("wp draft prompt includes guideline rules block", () => {
+  const p = buildWpDraftPrompt({ workProduct: "소프트웨어 요구사항 명세서", processId: "SWE.1", bps: [], items: [{ id: "a", question: "q" }], guidelineRules: [{ id: "SWE.1.RL.4", text: "규칙 본문" }] });
+  assert.match(p.system, /PAM 4\.1/);
+  assert.match(p.system, /\(가이드라인 SWE\.1\.RL\.4\)/);
+  assert.match(p.context, /참고 규칙\(VDA 가이드라인 2026\)/);
+  assert.match(p.context, /\[SWE\.1\.RL\.4\] 규칙 본문/);
+});
+
+test("process draft prompt without rules has no block", () => {
+  const p = buildProcessDraftPrompt({ processId: "SWE.1", bps: [], items: [{ id: "QA-1", question: "q" }], candidates: [] });
+  assert.match(p.system, /^당신은 Automotive SPICE PAM 4\.1 품질보증\(QA\) 심사 전문가입니다\./);
+  assert.doesNotMatch(p.context, /참고 규칙/);
+  assert.doesNotMatch(p.system, /규칙 ID를 괄호로/);
+});
+
+test("bpCatalog passes titleEn and bpLines renders it", () => {
+  const bps = bpCatalog(P, "ACQ.4");
+  assert.ok(bps[0].titleEn);
+  const p = buildWpDraftPrompt({ workProduct: "w", processId: "ACQ.4", bps, items: [{ id: "a", question: "q" }] });
+  assert.ok(p.context.includes(`(${bps[0].titleEn})`));
+});
+
+test("generateDrafts passes knowledgeForProcess rules into the prompt", async () => {
+  const contexts = [];
+  const asked = [];
+  const client = { async generateJson({ context }) { contexts.push(context); return { parsed: { items: [okItem("CH-0")] } }; } };
+  await generateDrafts({ client, kind: "wp", processes: P,
+    groups: [{ key: "CH-0", workProduct: "w", processId: "MAN.3", question: "q" }],
+    knowledgeForProcess: (id) => { asked.push(id); return { rules: [{ id: "MAN.3.RL.1", text: "본문" }] }; } });
+  assert.deepEqual(asked, ["MAN.3"]);
+  assert.ok(contexts[0].includes("[MAN.3.RL.1] 본문"));
+});

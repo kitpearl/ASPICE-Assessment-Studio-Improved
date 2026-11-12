@@ -25,11 +25,12 @@ import {
 import { buildArtifacts } from "./_artifactBuilder.js";
 import { annotateEvidenceWithPages } from "./_evidencePages.js";
 import { toLegacyShape } from "./_legacyAdapter.js";
+import { resolveLlmConfig, limitConcurrency } from "./_llmConfig.js";
 
 // Recognised scorer engines. Anything unknown normalises to "hybrid" so the
 // two modes (per-process / project) cannot diverge on scorer choice.
 //   rule   — offline auto-keyword/WPID matching
-//   llm    — OpenAI BP/WP/GP scoring
+//   llm    — LLM BP/WP/GP scoring (provider/model from _llmConfig.js)
 //   hybrid — 0.4 rule + 0.6 llm (default)
 //   custom — offline, user-authored rule book (see customScorer.js)
 const KNOWN_ENGINES = new Set(["rule", "llm", "hybrid", "custom"]);
@@ -80,17 +81,19 @@ function memoizeLlmClient(client) {
 }
 
 /** Build a single scorer for one engine id. */
-function buildSingleScorer(engine, apiKey, customRules) {
+function buildSingleScorer(engine, env, customRules) {
   if (engine === "rule") return ruleScorer;
   // Custom is offline: it scores against the user's rule book and falls back
   // to the auto-keyword rule scorer for practices no rule covers.
   if (engine === "custom") {
     return createCustomScorer({ ruleBook: customRules, fallback: ruleScorer });
   }
-  if (!apiKey) {
-    throw new Error(`engine=${engine} requires OPENAI_API_KEY in server env.`);
+  const cfg = resolveLlmConfig(env);
+  if (!cfg) {
+    throw new Error(`engine=${engine} requires OPENAI_API_KEY or ANTHROPIC_API_KEY in server env.`);
   }
-  const rawClient = createLlmClient({ provider: "openai", apiKey, model: "gpt-4o" });
+  const { provider, apiKey, model, concurrency } = cfg;
+  const rawClient = limitConcurrency(createLlmClient({ provider, apiKey, model }), concurrency);
   const client = memoizeLlmClient(rawClient);
   const llm = createLlmScorer({ client });
   if (engine === "llm") return llm;
@@ -180,9 +183,9 @@ function buildAveragingScorer(scorers) {
   return { scoreBP: merge("scoreBP"), scoreWP: merge("scoreWP"), scoreGP: merge("scoreGP") };
 }
 
-function buildScorer(engines, apiKey, customRules) {
-  if (engines.length === 1) return buildSingleScorer(engines[0], apiKey, customRules);
-  const built = engines.map((id) => ({ id, scorer: buildSingleScorer(id, apiKey, customRules) }));
+function buildScorer(engines, env, customRules) {
+  if (engines.length === 1) return buildSingleScorer(engines[0], env, customRules);
+  const built = engines.map((id) => ({ id, scorer: buildSingleScorer(id, env, customRules) }));
   return buildAveragingScorer(built);
 }
 
@@ -282,7 +285,7 @@ export async function handleEvaluate({ processId, artifact, artifacts, targetLev
   if (!processSpec) throw new Error(`Unknown process: ${processId}`);
 
   const resolved = resolveEngines(engines, engine);
-  const scorer = buildScorer(resolved, env.OPENAI_API_KEY, customRules);
+  const scorer = buildScorer(resolved, env, customRules);
   const harness = new Harness({ scorer, targetLevel: Number(targetLevel) });
 
   // Index once up-front so the per-process filter sees wpidCandidates.
@@ -308,7 +311,7 @@ export async function handleProject({ processIds, artifacts, targetLevel = 1, en
   rejectIfNoArtifacts(arts, skipped);
 
   const resolved = resolveEngines(engines, engine);
-  const scorer = buildScorer(resolved, env.OPENAI_API_KEY, customRules);
+  const scorer = buildScorer(resolved, env, customRules);
   const harness = new Harness({ scorer, targetLevel: Number(targetLevel) });
 
   const all = loadProcesses();

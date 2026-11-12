@@ -75,7 +75,7 @@ test("normalizeName strips leading number and whitespace", () => {
 
 test("bpCatalog prefixes ids and handles VWAY.PR", () => {
   assert.equal(bpCatalog(P, "MAN.3")[0].id, "MAN.3.BP1");
-  assert.deepEqual(Object.keys(bpCatalog(P, "MAN.3")[0]), ["id", "title", "description"]);
+  assert.deepEqual(Object.keys(bpCatalog(P, "MAN.3")[0]), ["id", "title", "description", "titleEn"]);
   assert.deepEqual(bpCatalog(P, "VWAY.PR"), []);
   assert.deepEqual(bpCatalog(P, "NOPE.1"), []);
   assert.equal(isValidBpId(P, "MAN.3.BP5"), true);
