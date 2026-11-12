@@ -3,6 +3,7 @@
  * 등급 상한 퍼센트는 spec/canonical/ratingScale.json 의 N max 15, P+ max 50,
  * L+ max 85 와 일치해야 한다.
  */
+import { truncate, SUMMARY_CHARS } from "../knowledge/select.js";
 
 export const RATING_CAP_PERCENT = { N: 15, P: 50, L: 85 };
 
@@ -48,10 +49,13 @@ export function applyAppliedRules(result, rulesById) {
     if (!entry || entry.applied === false) continue;
     const rule = rulesById.get(entry.ruleId);
     if (!rule) continue;
+    // 타 프로세스 조건 규칙은 표시 전용, 사유 한정이 아닌 등급 조건 규칙은 결정론적 후처리기 담당
+    if (rule.condition?.crossProcess) continue;
+    if (rule.condition?.kind === "rating" && !rule.condition.reasonQualified) continue;
     const cap = capForEffect(rule.effect);
     if (cap === null || !(result.scorePercent > cap)) continue;
     result.scorePercent = cap;
-    const summary = String(rule.text ?? "").slice(0, 60);
+    const summary = truncate(rule.text, SUMMARY_CHARS);
     if (!Array.isArray(result.gaps)) result.gaps = [];
     result.gaps.push(`가이드라인 [${rule.id ?? entry.ruleId}] 적용: 상한 ${capLabel(rule.effect)} (${summary})`);
     entry.capped = true;

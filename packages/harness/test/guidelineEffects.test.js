@@ -48,10 +48,49 @@ test("applyAppliedRules must-downrate labels L and does not raise low scores", (
   const r = applyAppliedRules({ scorePercent: 95, gaps: [], appliedRules: [{ ruleId: "M", applied: true, note: "" }] }, rules);
   assert.equal(r.scorePercent, 85);
   assert.match(r.gaps[0], /상한 L/);
-  assert.ok(r.gaps[0].endsWith("(" + "x".repeat(60) + ")"));
+  assert.ok(r.gaps[0].endsWith("(" + "x".repeat(80) + "…)"));
   const low = applyAppliedRules({ scorePercent: 10, gaps: [], appliedRules: [{ ruleId: "M", applied: true, note: "" }] }, rules);
   assert.equal(low.scorePercent, 10);
   assert.equal(low.appliedRules[0].capped, undefined);
+});
+
+test("applyAppliedRules: crossProcess rule applied by LLM never caps", () => {
+  const rules = new Map([["MAN.3.RL.17", {
+    id: "MAN.3.RL.17",
+    effect: { kind: "cap", maxRating: "P" },
+    condition: { kind: "rating", source: { kind: "bp", process: "SUP.10", id: "BP2" }, when: ["N", "P"], crossProcess: true },
+    text: "x",
+  }]]);
+  const r = applyAppliedRules({ scorePercent: 90, gaps: [], appliedRules: [{ ruleId: "MAN.3.RL.17", applied: true, note: "" }] }, rules);
+  assert.equal(r.scorePercent, 90);
+  assert.deepEqual(r.gaps, []);
+  assert.equal(r.appliedRules.length, 1);
+  assert.equal(r.appliedRules[0].capped, undefined);
+});
+
+test("applyAppliedRules: rating-condition rule without reasonQualified is left to the rule engine", () => {
+  const rules = new Map([["R", {
+    id: "R",
+    effect: { kind: "cap", maxRating: "N" },
+    condition: { kind: "rating", source: { kind: "bp", id: "BP2" }, when: ["N"] },
+    text: "x",
+  }]]);
+  const r = applyAppliedRules({ scorePercent: 90, gaps: [], appliedRules: [{ ruleId: "R", applied: true, note: "" }] }, rules);
+  assert.equal(r.scorePercent, 90);
+  assert.deepEqual(r.gaps, []);
+  assert.equal(r.appliedRules[0].capped, undefined);
+});
+
+test("applyAppliedRules: reason-qualified rating-condition rule may still be applied by the LLM", () => {
+  const rules = new Map([["Q", {
+    id: "Q",
+    effect: { kind: "must-downrate" },
+    condition: { kind: "rating", source: { kind: "bp", id: "BP2" }, when: ["N", "P"], reasonQualified: true },
+    text: "x",
+  }]]);
+  const r = applyAppliedRules({ scorePercent: 95, gaps: [], appliedRules: [{ ruleId: "Q", applied: true, note: "" }] }, rules);
+  assert.equal(r.scorePercent, 85);
+  assert.equal(r.appliedRules[0].capped, true);
 });
 
 test("normalizeGuidelineCitations drops unknown ids and dedupes", () => {

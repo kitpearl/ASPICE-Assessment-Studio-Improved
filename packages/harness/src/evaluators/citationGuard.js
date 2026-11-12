@@ -11,6 +11,13 @@
  *   PAM §5.3.1 GP 2.1.1
  *   PAM §3.2.2
  *   PAM §5 GP 1.1.1     ← top-level GP section, no subsection dots
+ *   PAM §4.4.1 SWE.1.BP2 ← process-qualified BP
+ * PAM 4.1 forms (version prefix, same section shapes):
+ *   PAM 4.1 §4.3.2 BP5
+ *   PAM 4.1 §5.3.1 GP 2.1.1
+ * Annex B work-product forms:
+ *   PAM Annex B 17-00
+ *   PAM 4.1 Annex B 17-00
  */
 
 import { normalizeGuidelineCitations } from "./guidelineEffects.js";

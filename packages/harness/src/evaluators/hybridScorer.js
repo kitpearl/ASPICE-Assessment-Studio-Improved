@@ -76,19 +76,39 @@ function merge(method, rule, llm, weights) {
     };
     // 가이드라인 상한은 LLM 이 적용 판단한 규칙 기준. 융합 후 재적용해 rule 점수가
     // 상한을 끌어올리지 못하게 한다 (상한 gap 은 이미 [llm] 쪽에 있으므로 복사본에 적용).
-    const appliedRules = Array.isArray(llmRes.appliedRules) ? llmRes.appliedRules.map((e) => ({ ...e })) : [];
-    if (appliedRules.length) {
-      const capped = applyAppliedRules({ scorePercent, gaps: [], appliedRules }, getGuidelineRulesById());
-      if (capped.scorePercent < result.scorePercent) {
-        result.scorePercent = capped.scorePercent;
-        if (!result.gaps.some((g) => g.includes("가이드라인 ["))) result.gaps.push(...capped.gaps);
-      }
-    }
-    result.appliedRules = Array.isArray(llmRes.appliedRules) ? llmRes.appliedRules : [];
+    // 반환하는 appliedRules 는 capped 표시를 합친 복사본 (LLM 단계 또는 융합 단계에서 상한 적용).
+    result.appliedRules = recapAppliedRules(result, llmRes.appliedRules);
     const references = llmRes.references ?? ruleRes.references;
     if (references) result.references = references;
     return result;
   };
+}
+
+/**
+ * 융합 점수에 가이드라인 상한을 재적용하고, capped 플래그를 합친 appliedRules 복사본을 돌려준다.
+ * result.scorePercent / result.gaps 는 상한이 걸리면 갱신된다.
+ * @param {{scorePercent: number, gaps: string[]}} result
+ * @param {any[]|undefined} llmApplied
+ * @returns {any[]}
+ */
+export function recapAppliedRules(result, llmApplied) {
+  if (!Array.isArray(llmApplied) || !llmApplied.length) return [];
+  const appliedRules = llmApplied.map((e) => ({ ...e }));
+  // 복사본은 capped 를 지운 상태로 재평가해 융합 단계의 상한 여부만 기록되게 한다
+  for (const e of appliedRules) if (e) delete e.capped;
+  const capped = applyAppliedRules({ scorePercent: result.scorePercent, gaps: [], appliedRules }, getGuidelineRulesById());
+  if (capped.scorePercent < result.scorePercent) {
+    result.scorePercent = capped.scorePercent;
+    if (!result.gaps.some((g) => g.includes("가이드라인 ["))) result.gaps.push(...capped.gaps);
+  }
+  return appliedRules.map((e, i) => {
+    if (!e) return e;
+    const llmCapped = llmApplied[i]?.capped === true;
+    const fusedCapped = e.capped === true;
+    const out = { ...e };
+    if (llmCapped || fusedCapped) out.capped = true;
+    return out;
+  });
 }
 
 function isAbstention(r) {

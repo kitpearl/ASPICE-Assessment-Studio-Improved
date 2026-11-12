@@ -146,5 +146,10 @@ function recordOn(target, entry, gap) {
   if (gapHolder) {
     if (!Array.isArray(gapHolder.gaps)) gapHolder.gaps = [];
     gapHolder.gaps.push(gap);
+    // PA 대상이면 근거 문구를 가진 GP 에도 적용 항목을 남겨 칩 표시를 맞춘다
+    if (gapHolder !== item) {
+      if (!Array.isArray(gapHolder.appliedRules)) gapHolder.appliedRules = [];
+      gapHolder.appliedRules.push({ ...entry });
+    }
   }
 }

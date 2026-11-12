@@ -114,7 +114,7 @@ export function getBpKnowledge(processId, bpId) {
   };
 }
 
-export function getGpKnowledge(paId, gpId) {
+export function getGpKnowledge(paId, gpId, processId = null) {
   const pa = loadProcessAttributes()[paId];
   if (!pa) return null;
   const gp = (pa.genericPractices ?? []).find((g) => g.id === gpId);
@@ -126,7 +126,7 @@ export function getGpKnowledge(paId, gpId) {
     byScope.get(`pa:${paId}`),
     paId === "PA 1.1" ? byScope.get("topic:GEN") : [],
   );
-  const rules = selectRulesForGp(pool, paId, gpId);
+  const rules = selectRulesForGp(pool, paId, gpId, processId);
   const { notes = {} } = loadGuideline();
   return {
     pa: { id: pa.id, name: pa.name, scope: pa.scope, achievements: pa.achievements ?? [] },

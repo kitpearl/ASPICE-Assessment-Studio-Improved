@@ -34,8 +34,10 @@ export function selectRulesForBp(rules, process, bp) {
   return orderAndCut(picked);
 }
 
-export function selectRulesForGp(rules, paId, gpId) {
+export function selectRulesForGp(rules, paId, gpId, processId = null) {
   const picked = rules.filter((r) => {
+    // 프로세스 scope 규칙은 해당 프로세스의 GP 에만 포함한다
+    if (r.scope?.kind === "process" && !(processId && r.scope.id === processId)) return false;
     const targets = r.targets ?? [];
     if (targets.some((t) => t.kind === "gp" && t.id === gpId)) return true;
     if (targets.some((t) => t.kind === "pa" && t.id === paId)) return true;

@@ -29,6 +29,8 @@ test("SUP.1: PA 1.1 capped at L when BP3 is N", () => {
   applyRatingConditionRules({ processId: "SUP.1", bps: [{ id: "BP3", scorePercent: 5, rating: "N", gaps: [] }], pas, rules });
   assert.equal(pas[0].collapsed, "L");
   assert.equal(pas[0].gps[0].scorePercent, 85);
+  // the GP holding the gap also carries the rule-engine entry so its chip shows "applied"
+  assert.ok(pas[0].gps[0].appliedRules.some((e) => /^SUP\.1\.RL\./.test(e.ruleId) && e.source === "rule-engine" && e.capped === true));
 });
 
 test("cross-process rule never changes scores", () => {

@@ -34,7 +34,7 @@ export const ruleScorer = {
 
   async scoreGP(args) {
     const r = await scoreGPCore(args);
-    return withKnowledge(r, safeKnowledge(() => getGpKnowledge(args.paSpec?.id, args.gp?.id)));
+    return withKnowledge(r, safeKnowledge(() => getGpKnowledge(args.paSpec?.id, args.gp?.id, args.process?.id)));
   },
 };
 

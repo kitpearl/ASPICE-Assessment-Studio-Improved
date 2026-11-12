@@ -104,7 +104,7 @@ vercel.json              서버리스 함수 타임아웃 설정
 
 - **PDF 텍스트가 깨짐 (예: `ÆŞÈ`)**: PDF가 ToUnicode CMap 없는 CID 폰트. `_textExtractor.js#cleanText`의 Latin Extended 클러스터 → `□` 치환이 적용되어 채점은 영향 안 받지만 evidence 인용이 사라진다. 원문 PDF를 다시 export하는 게 정공법.
 - **BP 점수가 프로세스 모드 vs 프로젝트 모드에서 다름**: `_harnessService.js#filterArtifactsForProcess` 스코핑이 다르게 적용되었을 가능성. 두 모드 모두 같은 함수를 거친다 — 그래도 다르면 인덱싱 시점(`indexArtifacts`)을 확인.
-- **`engine=hybrid` 호출이 401`engine=hybrid requires OPENAI_API_KEY`**: 서버 환경변수에 사용 가능한 LLM 키(`OPENAI_API_KEY` 또는 `ANTHROPIC_API_KEY`)가 없음. `ASPICE_LLM_PROVIDER`로 고정한 공급자의 키가 비어 있어도 같다. `engine=rule`은 키 없이도 동작.
+- **`engine=hybrid` 호출이 401 `engine=hybrid requires OPENAI_API_KEY or ANTHROPIC_API_KEY in server env.`**: 서버 환경변수에 사용 가능한 LLM 키(`OPENAI_API_KEY` 또는 `ANTHROPIC_API_KEY`)가 없음. `ASPICE_LLM_PROVIDER`로 고정한 공급자의 키가 비어 있어도 같다. `engine=rule`은 키 없이도 동작.
 - **`npm run extract`가 exit 1**: `spec/sources/`에 원문이 없음. `packages/harness/spec/sources/README.md` 참고.
 - **`Unauthorized. Sign in required.`**: `SUPABASE_JWT_SECRET`이 설정되어 있는데 클라이언트가 Bearer 토큰을 보내지 않거나 만료. 로컬 검증만 할 거면 `.env`에서 변수 제거 → 인증 스킵 모드.
 - **이력이 사라짐**: `useHistory`/`useProjectHistory`는 `localStorage` 기반. 도메인이 바뀌면 분리됨.

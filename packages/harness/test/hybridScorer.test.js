@@ -79,3 +79,16 @@ test("hybrid passes LLM appliedRules and falls back to rule references", async (
   assert.deepEqual(r.appliedRules, [{ ruleId: "SWE.1.RL.5", applied: false, note: "" }]);
   assert.equal(r.references, refs);
 });
+
+test("hybrid marks appliedRules capped when the fused score is capped", async () => {
+  const rule = { scoreBP: async () => ({ scorePercent: 90, evidence: [], gaps: [] }) };
+  // LLM score 10 is already below the N cap (15), so the LLM result itself is not capped.
+  const llmApplied = [{ ruleId: "SWE.1.RL.4", applied: true, note: "" }];
+  const llm = { scoreBP: async () => ({ scorePercent: 10, evidence: [], gaps: [], pamCitation: "PAM 4.1 §4.4.1 SWE.1.BP2", appliedRules: llmApplied }) };
+  const r = await createHybridScorer({ rule, llm }).scoreBP({});
+  // fused 90*0.4 + 10*0.6 = 42 → capped to 15
+  assert.equal(r.scorePercent, 15);
+  assert.equal(r.appliedRules[0].capped, true);
+  assert.equal(r.appliedRules[0].ruleId, "SWE.1.RL.4");
+  assert.equal(llmApplied[0].capped, undefined);
+});

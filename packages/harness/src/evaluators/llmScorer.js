@@ -31,7 +31,7 @@ function lookupKnowledge(knowledge, ctx) {
   const processId = ctx.process?.id;
   try {
     if (ctx.bp) return knowledge.getBpKnowledge?.(processId, ctx.bp.id) ?? null;
-    if (ctx.gp) return knowledge.getGpKnowledge?.(ctx.paSpec?.id, ctx.gp.id) ?? null;
+    if (ctx.gp) return knowledge.getGpKnowledge?.(ctx.paSpec?.id, ctx.gp.id, processId) ?? null;
     if (ctx.wp) return knowledge.getWpKnowledge?.(processId, ctx.wp.id) ?? null;
   } catch (err) {
     console.warn("[aspice/llm] knowledge lookup failed:", err.message);

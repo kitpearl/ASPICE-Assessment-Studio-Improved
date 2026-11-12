@@ -35,7 +35,7 @@ export function jsonSchemaLines({ withLocation = false, withGuideline = false } 
     `  "scorePercent": <0-100>,`,
     evidence,
     `  "gaps": ["..."],`,
-    `  "pamCitation": "PAM §...",`,
+    withGuideline ? `  "pamCitation": "PAM 4.1 §...",` : `  "pamCitation": "PAM §...",`,
   ];
   if (withGuideline) {
     lines.push(`  "contextConsistency": { "status": "consistent|partial|off-context|unknown", "note": "..." },`);

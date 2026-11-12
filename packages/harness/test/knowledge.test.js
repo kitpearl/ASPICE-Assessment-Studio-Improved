@@ -40,6 +40,18 @@ test("knowledge: GP 2.1.1 rules and GEN on PA 1.1", () => {
   assert.ok(getGpKnowledge("PA 2.1", "GP 2.1.1").guideline.rules.some((r) => r.id === "PA2.1.RL.1"));
   assert.ok(getGpKnowledge("PA 1.1", "GP 1.1.1").guideline.rules.some((r) => r.id === "GEN.RL.1"));
   assert.equal(getGpKnowledge("PA 2.1", "GP 2.1.1").references.pam.citation, "PAM 4.1 §5.3.1 GP 2.1.1");
+  assert.ok(getGpKnowledge("PA 2.1", "GP 2.1.1", "SWE.1").guideline.rules.some((r) => r.id === "PA2.1.RL.1"));
+  assert.ok(getGpKnowledge("PA 1.1", "GP 1.1.1", "SWE.1").guideline.rules.some((r) => r.id === "GEN.RL.1"));
+});
+test("knowledge: process-scope PA rules only reach their own process's GP", () => {
+  const swe1 = getGpKnowledge("PA 1.1", "GP 1.1.1", "SWE.1").guideline.rules.map((r) => r.id);
+  assert.ok(!swe1.includes("SPL.2.RL.3"));
+  assert.ok(!swe1.some((id) => id.startsWith("SUP.1.RL.")));
+  const noProc = getGpKnowledge("PA 1.1", "GP 1.1.1").guideline.rules.map((r) => r.id);
+  assert.ok(!noProc.includes("SPL.2.RL.3"));
+  assert.ok(!noProc.some((id) => id.startsWith("SUP.1.RL.")));
+  const sup1 = getGpKnowledge("PA 1.1", "GP 1.1.1", "SUP.1").guideline.rules.map((r) => r.id);
+  assert.ok(sup1.includes("SUP.1.RL.3"));
 });
 test("knowledge: WP characteristics and budget", () => {
   const w = getWpKnowledge("SWE.5", "01-50");
