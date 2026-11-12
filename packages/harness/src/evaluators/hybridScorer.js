@@ -1,3 +1,6 @@
+import { applyAppliedRules } from "./guidelineEffects.js";
+import { getGuidelineRulesById } from "./guidelineRules.js";
+
 /**
  * HybridScorer — weighted fusion of rule and llm scores (default 40/60).
  *
@@ -58,7 +61,7 @@ function merge(method, rule, llm, weights) {
     else if (llmOk) scorePercent = llmRes.scorePercent;
     else scorePercent = 0;
 
-    return {
+    const result = {
       scorePercent,
       // LLM evidence first: it produces full-sentence quotes with location/citation.
       // Rule evidence (keyword snippets) is supplementary and gets clipped by the
@@ -71,6 +74,20 @@ function merge(method, rule, llm, weights) {
       pamCitation: llmRes.pamCitation,
       contextConsistency: reconcileContext(ruleRes.contextConsistency, llmRes.contextConsistency),
     };
+    // 가이드라인 상한은 LLM 이 적용 판단한 규칙 기준. 융합 후 재적용해 rule 점수가
+    // 상한을 끌어올리지 못하게 한다 (상한 gap 은 이미 [llm] 쪽에 있으므로 복사본에 적용).
+    const appliedRules = Array.isArray(llmRes.appliedRules) ? llmRes.appliedRules.map((e) => ({ ...e })) : [];
+    if (appliedRules.length) {
+      const capped = applyAppliedRules({ scorePercent, gaps: [], appliedRules }, getGuidelineRulesById());
+      if (capped.scorePercent < result.scorePercent) {
+        result.scorePercent = capped.scorePercent;
+        if (!result.gaps.some((g) => g.includes("가이드라인 ["))) result.gaps.push(...capped.gaps);
+      }
+    }
+    result.appliedRules = Array.isArray(llmRes.appliedRules) ? llmRes.appliedRules : [];
+    const references = llmRes.references ?? ruleRes.references;
+    if (references) result.references = references;
+    return result;
   };
 }
 

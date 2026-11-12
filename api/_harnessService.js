@@ -9,8 +9,8 @@
 //   _evidencePages.js   — annotate BP evidence with source-page numbers
 //   _legacyAdapter.js   — ProcessVerdict → legacy UI shape + Koreanization
 
-import { Harness, loadProcess, loadProcesses, loadWorkProducts } from "aspice-harness";
-import { ruleScorer, createLlmScorer, createHybridScorer, createCustomScorer } from "aspice-harness/evaluators";
+import { Harness, loadProcess, loadProcesses, loadWorkProducts, loadGuideline } from "aspice-harness";
+import { ruleScorer, createLlmScorer, createHybridScorer, createCustomScorer, applyAppliedRules } from "aspice-harness/evaluators";
 import { createLlmClient } from "aspice-harness/llm";
 import { indexArtifacts } from "aspice-harness/io";
 import { loadProcessGraph } from "aspice-harness/spec";
@@ -122,6 +122,25 @@ function mergeContextConsistency(results) {
  * report still shows what each engine saw. Used when the user picks more than
  * one engine in the UI.
  */
+let _guidelineRulesById;
+function guidelineRulesById() {
+  if (!_guidelineRulesById) _guidelineRulesById = new Map((loadGuideline().rules ?? []).map((r) => [r.id, r]));
+  return _guidelineRulesById;
+}
+
+// Union of every engine's appliedRules, deduped by ruleId (an applied=true entry wins).
+function unionAppliedRules(results) {
+  const byId = new Map();
+  for (const r of results) {
+    for (const e of r.appliedRules ?? []) {
+      if (!e?.ruleId) continue;
+      const prev = byId.get(e.ruleId);
+      if (!prev || (prev.applied === false && e.applied !== false)) byId.set(e.ruleId, { ...e });
+    }
+  }
+  return [...byId.values()];
+}
+
 function buildAveragingScorer(scorers) {
   const merge = (method) => async (ctx) => {
     const settled = await Promise.allSettled(scorers.map(({ scorer }) => scorer[method](ctx)));
@@ -144,13 +163,19 @@ function buildAveragingScorer(scorers) {
     const scorePercent = oks.length
       ? Math.round(oks.reduce((a, b) => a + (b.scorePercent || 0), 0) / oks.length)
       : 0;
-    return {
+    const result = {
       scorePercent,
       evidence,
       gaps,
       pamCitation: oks.find((r) => r.pamCitation)?.pamCitation,
       contextConsistency: mergeContextConsistency(oks),
+      appliedRules: unionAppliedRules(oks),
     };
+    // Re-apply guideline caps so averaging cannot lift a score above an applied cap.
+    applyAppliedRules(result, guidelineRulesById());
+    const references = oks.find((r) => r.references)?.references;
+    if (references) result.references = references;
+    return result;
   };
   return { scoreBP: merge("scoreBP"), scoreWP: merge("scoreWP"), scoreGP: merge("scoreGP") };
 }

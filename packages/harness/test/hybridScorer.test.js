@@ -62,3 +62,20 @@ test("hybrid: reconciles contextConsistency to the more decisive verdict", async
   assert.equal(r.contextConsistency.status, "off-context");
   assert.match(r.contextConsistency.note, /다른 프로젝트/);
 });
+
+test("hybrid keeps applied cap after fusion", async () => {
+  const rule = { scoreBP: async () => ({ scorePercent: 90, evidence: [], gaps: [] }) };
+  const llm = { scoreBP: async () => ({ scorePercent: 15, evidence: [], gaps: [], pamCitation: "PAM 4.1 §4.4.1 SWE.1.BP2", appliedRules: [{ ruleId: "SWE.1.RL.4", applied: true, note: "", capped: true }] }) };
+  const r = await createHybridScorer({ rule, llm }).scoreBP({ process: { id: "SWE.1" }, bp: { id: "BP2" }, artifacts: [] });
+  assert.equal(r.scorePercent, 15);
+});
+
+test("hybrid passes LLM appliedRules and falls back to rule references", async () => {
+  const refs = { pam: { citation: "PAM 4.1 §4.4.1 SWE.1.BP2" }, guideline: [] };
+  const rule = { scoreBP: async () => ({ scorePercent: 50, evidence: [], gaps: [], references: refs }) };
+  const llm = { scoreBP: async () => ({ scorePercent: 50, evidence: [], gaps: [], appliedRules: [{ ruleId: "SWE.1.RL.5", applied: false, note: "" }] }) };
+  const r = await createHybridScorer({ rule, llm }).scoreBP({});
+  assert.equal(r.scorePercent, 50);
+  assert.deepEqual(r.appliedRules, [{ ruleId: "SWE.1.RL.5", applied: false, note: "" }]);
+  assert.equal(r.references, refs);
+});
