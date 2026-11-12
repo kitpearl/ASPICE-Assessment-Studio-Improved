@@ -76,7 +76,7 @@
 - **등급 조건 규칙** 33건: 조건이 산출물 내용이 아니라 다른 지표의 등급이다. 두 형태가 있다.
   - 명시 등급: "BP3이 N 또는 P로 등급 평가된다면 PA 1.1을 L보다 높게…"(SUP.1.RL.3 등).
   - 사유 한정 하향: "GP 2.1.1이 …에 적합하지 않아 하향 평가된다면 GP 2.1.2를 하향…"(PA2.1.RL.9 등). 사유는 기계로 확인할 수 없다.
-  - 이 중 7건(MAN.3.RL.17~21, REU.2.RL.3, PIM.3.RL.3)은 **다른 프로세스**의 BP 등급에 의존한다.
+  - 이 중 6건(MAN.3.RL.17~21, REU.2.RL.3)은 **다른 프로세스**의 BP 등급에 의존한다(PIM.3.RL.3은 산출물 내용 조건으로 판명).
 - 해설 문단: 3.x 프로세스 절의 "일반 정보"와 각 규칙 소절의 설명, 4.x/5.x PA 절, 2.3.4(추적성)·2.3.5(의사소통)·2.5.x(특정 환경) 등이 RAG 문맥 후보다.
 
 ## 4. 데이터 설계
@@ -258,7 +258,7 @@ getProcessKnowledge(processId)   // 프로세스 전체(QA 모드, 프롬프트 
 - 대상: `condition.kind === "rating"`이고 `crossProcess`가 아닌 규칙. 출처 지표(같은 프로세스의 BP, 같은 PA 또는 하위 PA의 GP)의 현재 등급이 `when`에 들면 성립.
 - 성립 시 효과 적용: `cap`은 상한 백분율로 절단, `cap-source`는 출처 지표의 `scorePercent`를 상한으로, `must-downrate`는 85로 절단. 깎인 결과에는 `appliedRules`에 `{id, effect, source: "rule-engine"}`을 추가하고 `gaps`에 "가이드라인 [ID] 적용: BP1이 P이므로 상한 …" 한 줄을 넣는다.
 - 출처가 PA 1.1 자체인 규칙(SUP.1.RL.3 등)은 PA 1.1 점수에 적용한다.
-- `crossProcess` 7건은 `references.guideline`에 `displayOnly: true`로 실어 화면에서 "타 프로세스 등급 조건"으로 표시만 한다. 프로세스 모드·프로젝트 모드의 점수 일치 원칙을 지키기 위해서다(사용자 결정).
+- `crossProcess` 6건은 `references.guideline`에 `displayOnly: true`로 실어 화면에서 "타 프로세스 등급 조건"으로 표시만 한다. 프로세스 모드·프로젝트 모드의 점수 일치 원칙을 지키기 위해서다(사용자 결정).
 - 이 단계는 스코어러 종류와 무관하게 돈다(rule/llm/hybrid/custom 모두).
 
 ### 6.6 LLM 공급자
@@ -319,7 +319,7 @@ AppHeader·AppFooter·LandingPage·HelpModal·exportHelpGuide·exportReport·exp
 
 - 대상은 `aspice-app`이다. 추출 JSON은 독립 파일로 만들어 운영 저장소(`assessment-studio`)에도 복사해 쓸 수 있게 한다. 운영 이식 자체는 이 작업 범위 밖이다.
 - 영문 BP 본문은 운영 저장소의 영문 PAM 4.1 canonical을 재사용한다.
-- 등급 조건 규칙은 프로세스 안의 것만 결정론적 후처리로 강제하고, 타 프로세스 의존 7건은 표시만 한다.
+- 등급 조건 규칙은 프로세스 안의 것만 결정론적 후처리로 강제하고, 타 프로세스 의존 규칙(구현 시 6건으로 확인)은 표시만 한다.
 - VDA 원문은 gitignore하고 추출 JSON만 커밋한다.
 
 **내가 정한 것**
