@@ -63,6 +63,54 @@ export function applyAppliedRules(result, rulesById) {
   return result;
 }
 
+/** LLM 이 cap:N 규칙을 적용하려면 자신의 원점수가 이 값 이하(P 이하)여야 한다. */
+export const LLM_CAP_N_MAX = 50;
+/** LLM 이 cap:P 규칙을 적용하려면 자신의 원점수가 이 값 이하(L- 이하)여야 한다. */
+export const LLM_CAP_P_MAX = 67;
+
+/**
+ * LLM 이 보고한 guidelineCitations 를 LLM 자신의 원점수(컨텍스트 배수 적용 전)와 대조해
+ * 보수적으로 수용한다.
+ *  - cap:N 규칙: llmRawScore > LLM_CAP_N_MAX 이면 보류
+ *  - cap:P 규칙: llmRawScore > LLM_CAP_P_MAX 이면 보류
+ *  - applied=true 인데 note 가 비어 있으면(공백 제외 길이 0) 보류
+ * 보류 = 새 항목(applied=false, capped 없음, note="[보류: <사유>] " + 원래 note, source 유지).
+ * 그 외(must-downrate, cap:L, cap-source 등)는 그대로 통과. applied=false, 미지 ID,
+ * source="rule-engine" 항목은 건드리지 않는다. 입력 배열은 바꾸지 않고 새 배열을 반환한다.
+ * 점수와 gap 은 바꾸지 않는다(보류는 기록만 남긴다).
+ * @param {number} llmRawScore
+ * @param {Array<{ruleId: string, applied: boolean, note: string, source?: string}>} rules
+ * @param {Map<string, any>} rulesById
+ */
+export function guardLlmCitations(llmRawScore, rules, rulesById) {
+  if (!Array.isArray(rules)) return [];
+  return rules.map((entry) => {
+    const reason = holdReason(llmRawScore, entry, rulesById);
+    return reason === null ? entry : hold(entry, reason);
+  });
+}
+
+function holdReason(llmRawScore, entry, rulesById) {
+  if (!entry || entry.applied !== true || entry.source === "rule-engine") return null;
+  const rule = rulesById?.get(entry.ruleId);
+  if (!rule) return null;
+  const effect = rule.effect;
+  if (effect?.kind === "cap") {
+    const max = effect.maxRating === "N" ? LLM_CAP_N_MAX : effect.maxRating === "P" ? LLM_CAP_P_MAX : null;
+    if (max !== null && llmRawScore > max) return `LLM 점수 ${llmRawScore}% 와 불일치`;
+  }
+  if (typeof entry.note !== "string" || entry.note.trim() === "") return "근거 없음";
+  return null;
+}
+
+function hold(entry, reason) {
+  const prefix = `[보류: ${reason}]`;
+  const note = typeof entry.note === "string" && entry.note.trim() !== "" ? `${prefix} ${entry.note}` : prefix;
+  const held = { ...entry, applied: false, note };
+  delete held.capped;
+  return held;
+}
+
 /**
  * @param {unknown} raw
  * @param {Set<string>} knownIds

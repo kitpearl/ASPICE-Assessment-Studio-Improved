@@ -5,6 +5,9 @@ import {
   capForEffect,
   applyAppliedRules,
   normalizeGuidelineCitations,
+  guardLlmCitations,
+  LLM_CAP_N_MAX,
+  LLM_CAP_P_MAX,
 } from "../src/evaluators/guidelineEffects.js";
 
 test("capForEffect", () => {
@@ -101,4 +104,68 @@ test("normalizeGuidelineCitations drops unknown ids and dedupes", () => {
   assert.deepEqual(out, [{ ruleId: "SWE.1.RL.4", applied: true, note: "" }]);
   assert.deepEqual(normalizeGuidelineCitations("x", new Set(["a"])), []);
   assert.deepEqual(normalizeGuidelineCitations([{ ruleId: "a", applied: "true", note: 5 }], new Set(["a"])), [{ ruleId: "a", applied: false, note: "" }]);
+});
+
+// ── guardLlmCitations (v0.43 보수화 가드) ─────────────────────────────────
+
+const GUARD_RULES = new Map([
+  ["N.1", { id: "N.1", effect: { kind: "cap", maxRating: "N" } }],
+  ["P.1", { id: "P.1", effect: { kind: "cap", maxRating: "P" } }],
+  ["L.1", { id: "L.1", effect: { kind: "cap", maxRating: "L" } }],
+  ["D.1", { id: "D.1", effect: { kind: "must-downrate" } }],
+  ["S.1", { id: "S.1", effect: { kind: "cap-source" } }],
+]);
+const entry = (ruleId, applied = true, note = "증적 있음", extra = {}) => ({ ruleId, applied, note, ...extra });
+
+test("guardLlmCitations: thresholds are 50 / 67", () => {
+  assert.equal(LLM_CAP_N_MAX, 50);
+  assert.equal(LLM_CAP_P_MAX, 67);
+});
+
+test("guardLlmCitations: cap:N is held above 50, kept at 50", () => {
+  const [held] = guardLlmCitations(51, [entry("N.1")], GUARD_RULES);
+  assert.equal(held.applied, false);
+  assert.equal(held.capped, undefined);
+  assert.equal(held.note, "[보류: LLM 점수 51% 와 불일치] 증적 있음");
+  const [kept] = guardLlmCitations(50, [entry("N.1")], GUARD_RULES);
+  assert.equal(kept.applied, true);
+});
+
+test("guardLlmCitations: cap:P is held above 67, kept at 67", () => {
+  assert.equal(guardLlmCitations(68, [entry("P.1")], GUARD_RULES)[0].applied, false);
+  assert.equal(guardLlmCitations(67, [entry("P.1")], GUARD_RULES)[0].applied, true);
+});
+
+test("guardLlmCitations: empty or blank note holds any applied rule (note 가 비면 접두만)", () => {
+  const [a] = guardLlmCitations(10, [entry("L.1", true, "")], GUARD_RULES);
+  assert.equal(a.applied, false);
+  assert.equal(a.note, "[보류: 근거 없음]");
+  assert.equal(guardLlmCitations(10, [entry("D.1", true, "   ")], GUARD_RULES)[0].applied, false);
+});
+
+test("guardLlmCitations: must-downrate / cap:L / cap-source pass through with a note at any score", () => {
+  for (const id of ["D.1", "L.1", "S.1"]) {
+    const [e] = guardLlmCitations(99, [entry(id)], GUARD_RULES);
+    assert.equal(e.applied, true, id);
+  }
+});
+
+test("guardLlmCitations: applied=false, unknown ids and rule-engine entries are untouched; input is not mutated", () => {
+  const input = [
+    entry("N.1", false, ""),
+    entry("X.9", true, ""),
+    entry("N.1", true, "", { source: "rule-engine" }),
+  ];
+  const snapshot = JSON.stringify(input);
+  const out = guardLlmCitations(99, input, GUARD_RULES);
+  assert.equal(JSON.stringify(input), snapshot);
+  assert.deepEqual(out, input);
+  assert.deepEqual(guardLlmCitations(99, undefined, GUARD_RULES), []);
+});
+
+test("guardLlmCitations: a held entry no longer caps in applyAppliedRules", () => {
+  const out = guardLlmCitations(80, [entry("N.1")], GUARD_RULES);
+  const result = applyAppliedRules({ scorePercent: 80, gaps: [], appliedRules: out }, GUARD_RULES);
+  assert.equal(result.scorePercent, 80);
+  assert.deepEqual(result.gaps, []);
 });

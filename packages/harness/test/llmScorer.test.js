@@ -6,7 +6,7 @@ import { loadProcess } from "../spec/canonical/index.js";
 const stubClient = (parsed) => ({ generateJson: async () => ({ parsed }) });
 
 test("llmScorer applies cap from applied rule and returns references", async () => {
-  const client = { generateJson: async () => ({ parsed: { scorePercent: 80, evidence: [], gaps: [], pamCitation: "PAM 4.1 §4.4.1 SWE.1.BP2", contextConsistency: { status: "consistent", note: "" }, guidelineCitations: [{ ruleId: "SWE.1.RL.4", applied: true, note: "기능/비기능만 분류" }] } }) };
+  const client = { generateJson: async () => ({ parsed: { scorePercent: 40, evidence: [], gaps: [], pamCitation: "PAM 4.1 §4.4.1 SWE.1.BP2", contextConsistency: { status: "consistent", note: "" }, guidelineCitations: [{ ruleId: "SWE.1.RL.4", applied: true, note: "기능/비기능만 분류" }] } }) };
   const scorer = createLlmScorer({ client });
   const r = await scorer.scoreBP({ process: loadProcess("SWE.1"), bp: loadProcess("SWE.1").basePractices[1], artifacts: [{ name: "a.md", text: "요구사항" }] });
   assert.equal(r.scorePercent, 15);
@@ -54,4 +54,22 @@ test("llmScorer without knowledge omits references", async () => {
   const r = await createLlmScorer({ client, knowledge }).scoreBP({ process: loadProcess("SWE.1"), bp: loadProcess("SWE.1").basePractices[1], artifacts: [] });
   assert.equal(r.scorePercent, 60);
   assert.equal(r.references, undefined);
+});
+
+test("llmScorer holds an N-cap rule when the LLM's own score contradicts it (80% + cap:N)", async () => {
+  const client = stubClient({ scorePercent: 80, evidence: [], gaps: [], pamCitation: "PAM 4.1 §4.4.1 SWE.1.BP2", contextConsistency: { status: "consistent", note: "" }, guidelineCitations: [{ ruleId: "SWE.1.RL.4", applied: true, note: "분류 기준 일부 부족" }] });
+  const r = await createLlmScorer({ client }).scoreBP({ process: loadProcess("SWE.1"), bp: loadProcess("SWE.1").basePractices[1], artifacts: [] });
+  assert.equal(r.scorePercent, 80);
+  assert.equal(r.appliedRules[0].applied, false);
+  assert.equal(r.appliedRules[0].capped, undefined);
+  assert.match(r.appliedRules[0].note, /^\[보류: LLM 점수 80% 와 불일치\]/);
+  assert.ok(!r.gaps.some((g) => /가이드라인 \[/.test(g)));
+});
+
+test("llmScorer holds an applied rule without a note", async () => {
+  const client = stubClient({ scorePercent: 40, evidence: [], gaps: [], pamCitation: "PAM 4.1 §4.4.1 SWE.1.BP2", contextConsistency: { status: "consistent", note: "" }, guidelineCitations: [{ ruleId: "SWE.1.RL.4", applied: true, note: "  " }] });
+  const r = await createLlmScorer({ client }).scoreBP({ process: loadProcess("SWE.1"), bp: loadProcess("SWE.1").basePractices[1], artifacts: [] });
+  assert.equal(r.scorePercent, 40);
+  assert.equal(r.appliedRules[0].applied, false);
+  assert.match(r.appliedRules[0].note, /^\[보류: 근거 없음\]/);
 });

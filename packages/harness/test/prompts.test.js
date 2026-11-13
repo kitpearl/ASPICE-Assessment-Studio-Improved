@@ -5,6 +5,7 @@ import { buildGpPrompt } from "../src/llm/prompts/gpPrompt.js";
 import { buildWpPrompt } from "../src/llm/prompts/wpPrompt.js";
 import { ASSESSOR_PERSONA } from "../src/llm/prompts/assessorPersona.js";
 import { hasPamCitation } from "../src/evaluators/citationGuard.js";
+import { LLM_CAP_N_MAX, LLM_CAP_P_MAX } from "../src/evaluators/guidelineEffects.js";
 import { getBpKnowledge, getGpKnowledge, getWpKnowledge } from "../src/knowledge/index.js";
 import { loadProcess, loadProcessAttributes } from "../spec/canonical/index.js";
 
@@ -195,7 +196,11 @@ test("bpPrompt context blocks appear in the specified order", () => {
   ].map((h) => p.context.indexOf(h));
   assert.ok(order.every((i) => i >= 0), `missing block: ${order}`);
   assert.deepEqual([...order].sort((a, b) => a - b), order);
-  assert.match(p.task, /규칙은 조건이 증적에서 성립할 때만 applied=true/);
+  assert.match(p.task, /보수적으로 판단한다/);
+  assert.match(p.task, /\(5\) 확신이 없으면 applied=false/);
+  // (4) 의 50·67 은 서버 가드 상수와 같아야 한다.
+  assert.match(p.task, new RegExp(`${LLM_CAP_N_MAX} 이하`));
+  assert.match(p.task, new RegExp(`${LLM_CAP_P_MAX} 이하`));
 });
 
 test("bpPrompt without knowledge still builds", () => {

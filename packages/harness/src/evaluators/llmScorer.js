@@ -4,7 +4,7 @@ import { buildGpPrompt } from "../llm/prompts/gpPrompt.js";
 import { buildExcerpt, extractKeywords } from "../io/excerpt.js";
 import { fingerprintForPrompt } from "../io/projectContext.js";
 import { validateLlmResult } from "./citationGuard.js";
-import { applyAppliedRules } from "./guidelineEffects.js";
+import { applyAppliedRules, guardLlmCitations } from "./guidelineEffects.js";
 import { getGuidelineRulesById } from "./guidelineRules.js";
 import * as defaultKnowledge from "../knowledge/index.js";
 
@@ -90,6 +90,10 @@ export function createLlmScorer({ client, knowledge = defaultKnowledge }) {
     if (droppedFindings.length > 0) {
       console.warn("[aspice/llm] dropped malformed findings:", droppedFindings.join(", "));
     }
+    // LLM 원점수(컨텍스트 배수 적용 전)와 모순되거나 근거가 없는 적용 판단은 보류(applied=false)한다.
+    // 점수·gap 은 바뀌지 않고 note 에 "[보류: 사유]" 접두만 남긴다.
+    const rulesById = getGuidelineRulesById();
+    const citations = guardLlmCitations(v.result.scorePercent, v.result.appliedRules, rulesById);
     const multiplier = CONTEXT_MULTIPLIERS[contextConsistency.status] ?? 1.0;
     const adjustedScore = Math.round(v.result.scorePercent * multiplier);
     const gaps = [...v.result.gaps];
@@ -106,9 +110,9 @@ export function createLlmScorer({ client, knowledge = defaultKnowledge }) {
       contextConsistency,
       standardReferences,
       findings,
-      appliedRules: v.result.appliedRules,
+      appliedRules: citations,
     };
-    applyAppliedRules(result, getGuidelineRulesById());
+    applyAppliedRules(result, rulesById);
     if (references) result.references = references;
     return result;
   }
