@@ -10,9 +10,10 @@ import Anthropic from "@anthropic-ai/sdk";
  * `cache_control: ephemeral` so that repeated per-BP / per-GP calls for the
  * same process reuse the prefix. The `task` block is dynamic and not cached.
  */
-export function createAnthropicClient({ apiKey, model = "claude-sonnet-4-6", maxTokens = 16384, temperature = 0 } = {}) {
+export function createAnthropicClient({ apiKey, model = "claude-sonnet-4-6", maxTokens = 16384, fetch } = {}) {
   if (!apiKey) throw new Error("Anthropic apiKey required");
-  const client = new Anthropic({ apiKey });
+  // `fetch` is injectable for tests (request-body assertions); undefined → SDK default.
+  const client = new Anthropic({ apiKey, ...(fetch ? { fetch } : {}) });
 
   return {
     provider: "anthropic",
@@ -26,12 +27,13 @@ export function createAnthropicClient({ apiKey, model = "claude-sonnet-4-6", max
       if (context) userContent.push({ type: "text", text: context, cache_control: { type: "ephemeral" } });
       userContent.push({ type: "text", text: task || "" });
 
-      // temperature=0 minimises sampling variance so the same artifact yields
-      // a stable verdict on repeated evaluations.
+      // 샘플링 파라미터(temperature/top_p/top_k)는 보내지 않는다. Claude Opus 4.7 이후
+      // 모델은 이 필드를 받으면 400 Bad Request 를 돌려주고, temperature=0 은 이전
+      // 모델에서도 동일 출력을 보장하지 않았다. 결정성은 프롬프트와 JSON 엄격 파싱,
+      // 그리고 서버 쪽 llmResponseCache(_harnessService.js) 로 확보한다.
       const res = await client.messages.create({
         model,
         max_tokens: maxTokens,
-        temperature,
         system: systemParts.length ? systemParts : undefined,
         messages: [{ role: "user", content: userContent }],
       });

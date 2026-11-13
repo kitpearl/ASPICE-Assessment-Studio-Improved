@@ -58,7 +58,7 @@ function resolveEngines(engines, engineLegacy) {
 }
 
 // In-process cache of generateJson results, keyed by the full prompt content.
-// Even at `temperature=0`, sampling is best-effort, so the same prompt can
+// Sampling is best-effort (no temperature is sent to Anthropic), so the same prompt can
 // produce slightly different scores across calls — which surfaces as the same
 // document earning different BP grades in process mode vs project mode. The
 // cache pins one verdict per prompt so the two modes converge on identical

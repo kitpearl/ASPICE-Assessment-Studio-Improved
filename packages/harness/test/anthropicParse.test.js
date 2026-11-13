@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { parseJsonStrict } from "../src/llm/anthropic.js";
+import { parseJsonStrict, createAnthropicClient } from "../src/llm/anthropic.js";
 
 test("parseJsonStrict: parses raw JSON object", () => {
   assert.deepEqual(parseJsonStrict('{"scorePercent": 80}'), { scorePercent: 80 });
@@ -28,4 +28,20 @@ test("parseJsonStrict: truncated JSON reports length + tail instead of cryptic n
     () => parseJsonStrict(truncated),
     (err) => /failed to parse model JSON/.test(err.message) && /length=/.test(err.message),
   );
+});
+
+test("createAnthropicClient: request body carries no sampling parameters (Opus 4.7+ rejects temperature)", async () => {
+  let body;
+  const fetch = async (_url, init) => {
+    body = JSON.parse(init.body);
+    return new Response(
+      JSON.stringify({ id: "msg_1", type: "message", role: "assistant", model: "m", content: [{ type: "text", text: '{"ok":true}' }], stop_reason: "end_turn", usage: { input_tokens: 1, output_tokens: 1 } }),
+      { status: 200, headers: { "content-type": "application/json" } },
+    );
+  };
+  const client = createAnthropicClient({ apiKey: "k", model: "claude-opus-4-8", fetch });
+  const out = await client.generateJson({ system: "s", context: "c", task: "t" });
+  assert.deepEqual(out.parsed, { ok: true });
+  for (const k of ["temperature", "top_p", "top_k"]) assert.ok(!(k in body), `${k} must not be sent`);
+  assert.equal(body.model, "claude-opus-4-8");
 });
