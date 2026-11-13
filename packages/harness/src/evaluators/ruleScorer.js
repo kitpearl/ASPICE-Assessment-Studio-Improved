@@ -1,7 +1,8 @@
-import { extractKeywords } from "../io/excerpt.js";
+import { extractBilingualKeywords, bpKeywordSources, gpKeywordSources } from "../io/keywords.js";
 import { classifyContextMatch } from "../io/projectContext.js";
 import { displayArtifactName } from "../io/artifactRouting.js";
 import { buildRuleObservationFinding } from "./findingBuilders.js";
+import { getBpKnowledge, getGpKnowledge, getWpKnowledge } from "../knowledge/index.js";
 
 const EMPTY_REFS = { pam: [], pamNote: [], bgbRL: [], iso: [] };
 const RULE_ID_BP = "RULE-KEYWORD-OVERLAP";
@@ -32,12 +33,12 @@ function refsFromPamCitation(pamCitation) {
  * This scorer never fabricates evidence and always produces JSON-safe output.
  * @type {import("./scorer.js").Scorer}
  */
-export const ruleScorer = {
-  async scoreBP({ process, bp, artifacts, projectFingerprint }) {
+const ruleScorerCore = {
+  async scoreBP({ process = {}, bp, artifacts, projectFingerprint }) {
     const bpFullId = `${process.id}.${bp.id}`;
     const pamCitation = bp.pamCitation ?? process.pamSection;
-    const kws = extractKeywords(`${bp.title} ${bp.description ?? ""}`, 10);
-    if (!kws.length) {
+    const kwSets = extractBilingualKeywords(bpKeywordSources(bp), 10);
+    if (!kwSets.ko.length && !kwSets.en.length) {
       return emptyBp({
         bpFullId,
         pamCitation,
@@ -45,8 +46,8 @@ export const ruleScorer = {
       });
     }
     const matchIndex = buildMatchIndex(artifacts, projectFingerprint);
-    const { weighted, total, evidence, missing, perArtifactHits } = matchKeywords(kws, artifacts, matchIndex);
-    const scorePercent = scoreFromWeighted(weighted, total);
+    const { kws, total, ratio, evidence, missing, perArtifactHits } = matchBilingual(kwSets, artifacts, matchIndex);
+    const scorePercent = scoreFromWeighted(ratio, 1);
     const gaps = missing.length
       ? [`No evidence found for keywords: ${missing.slice(0, 6).join(", ")}`]
       : [];
@@ -96,7 +97,7 @@ export const ruleScorer = {
     };
   },
 
-  async scoreWP({ process, wp, artifacts, projectFingerprint }) {
+  async scoreWP({ process = {}, wp, artifacts, projectFingerprint }) {
     const bpFullId = `${process.id}.${wp.id}`;
     const pamCitation = process.pamSection ? `PAM §${process.pamSection}` : undefined;
     const refs = refsFromPamCitation(pamCitation);
@@ -135,10 +136,18 @@ export const ruleScorer = {
       };
     }
     // Fallback: name/alias match in filename or body
-    const needle = wp.name.toLowerCase();
-    const nameHit = artifacts.find((a) =>
-      (a.name + " " + (a.text ?? "")).toLowerCase().includes(needle)
-    );
+    const primary = wp.nameEn ?? wp.name;
+    const needles = [
+      ...(wp.aliases ?? []),
+      primary,
+      wp.name && wp.name !== primary && wp.name.length >= 5 ? wp.name : null,
+    ].filter(Boolean).map((n) => n.toLowerCase());
+    let needle = needles[0];
+    let nameHit;
+    for (const n of needles) {
+      nameHit = artifacts.find((a) => (a.name + " " + (a.text ?? "")).toLowerCase().includes(n));
+      if (nameHit) { needle = n; break; }
+    }
     if (nameHit) {
       const ctx = artifactContext(matchIndex, nameHit);
       const base = 60;
@@ -189,7 +198,7 @@ export const ruleScorer = {
     };
   },
 
-  async scoreGP({ process, paSpec, gp, bpResults, artifacts, projectFingerprint }) {
+  async scoreGP({ process = {}, paSpec, gp, bpResults, artifacts, projectFingerprint }) {
     const bpFullId = `${process.id}.${gp.id}`;
     const pamCitation = `PAM §5 ${gp.id}`;
     const refs = refsFromPamCitation(pamCitation);
@@ -223,10 +232,10 @@ export const ruleScorer = {
       };
     }
     // CL2/CL3 GPs — heuristic keyword overlap
-    const kws = extractKeywords(`${gp.title} ${gp.description ?? ""} ${paSpec.scope ?? ""}`, 8);
+    const kwSets = extractBilingualKeywords(gpKeywordSources(gp, paSpec), 8);
     const matchIndex = buildMatchIndex(artifacts, projectFingerprint);
-    const { weighted, total, evidence, missing, perArtifactHits } = matchKeywords(kws, artifacts, matchIndex);
-    const scorePercent = scoreFromWeighted(weighted, total || 1);
+    const { kws, total, ratio, evidence, missing, perArtifactHits } = matchBilingual(kwSets, artifacts, matchIndex);
+    const scorePercent = scoreFromWeighted(ratio, 1);
     const gaps = missing.length ? [`GP evidence missing: ${missing.slice(0, 5).join(", ")}`] : [];
     const contextConsistency = aggregateContext(matchIndex, perArtifactHits);
     const gpCtxContributing = [...perArtifactHits.keys()];
@@ -267,6 +276,58 @@ export const ruleScorer = {
     };
   },
 };
+
+export const ruleScorer = {
+  async scoreBP(args) {
+    const r = await ruleScorerCore.scoreBP(args);
+    return withKnowledge(r, safeKnowledge(() => getBpKnowledge(args.process?.id, args.bp?.id)));
+  },
+
+  async scoreWP(args) {
+    const r = await ruleScorerCore.scoreWP(args);
+    return withKnowledge(r, safeKnowledge(() => getWpKnowledge(args.process?.id, args.wp?.id)));
+  },
+
+  async scoreGP(args) {
+    const r = await ruleScorerCore.scoreGP(args);
+    return withKnowledge(r, safeKnowledge(() => getGpKnowledge(args.paSpec?.id, args.gp?.id, args.process?.id)));
+  },
+};
+
+// ── knowledge (references + hints) ───────────────────────────────────────
+
+const HINT_SCORE_THRESHOLD = 51;
+const MAX_HINTS = 2;
+const HINT_CHARS = 80;
+
+function safeKnowledge(fn) {
+  try {
+    return fn() ?? null;
+  } catch {
+    return null;
+  }
+}
+
+// references 를 싣고, 낮은 점수면 must-not-downrate 규칙을 확인 포인트로 gaps 에 덧붙인다.
+// 점수는 바꾸지 않는다. 규칙 순서는 knowledge 선택 순서(프로세스/PA scope 먼저)를 따른다.
+function withKnowledge(result, knowledge) {
+  if (!knowledge) return result;
+  const out = { ...result };
+  if (knowledge.references) out.references = knowledge.references;
+  if (out.scorePercent < HINT_SCORE_THRESHOLD) {
+    const hints = (knowledge.guideline?.rules ?? [])
+      .filter((r) => r.effect?.kind === "must-not-downrate")
+      .slice(0, MAX_HINTS)
+      .map((r) => `확인 포인트 [${r.id}]: ${clip(r.text, HINT_CHARS)}`);
+    if (hints.length) out.gaps = [...(out.gaps ?? []), ...hints];
+  }
+  return out;
+}
+
+function clip(text, max) {
+  const s = String(text ?? "");
+  return s.length > max ? s.slice(0, max) + "…" : s;
+}
 
 // ── project-context helpers ──────────────────────────────────────────────
 
@@ -421,6 +482,23 @@ function matchKeywords(keywords, artifacts, matchIndex) {
     if (!matched) missing.push(kw);
   }
   return { weighted, total: keywords.length, evidence, missing, perArtifactHits };
+}
+
+// Match each language's keyword set separately and keep the one with the
+// larger weighted hit ratio. An empty set is ignored; both empty => ratio 0.
+function matchBilingual(kwSets, artifacts, matchIndex) {
+  let best = { kws: [], total: 0, ratio: 0, evidence: [], missing: [], perArtifactHits: new Map() };
+  let first = true;
+  for (const kws of [kwSets.en, kwSets.ko]) {
+    if (!kws.length) continue;
+    const m = matchKeywords(kws, artifacts, matchIndex);
+    const ratio = m.total ? m.weighted / m.total : 0;
+    if (first || ratio > best.ratio) {
+      best = { kws, total: m.total, ratio, evidence: m.evidence, missing: m.missing, perArtifactHits: m.perArtifactHits };
+      first = false;
+    }
+  }
+  return best;
 }
 
 function snippet(text, needle, radius = 400) {

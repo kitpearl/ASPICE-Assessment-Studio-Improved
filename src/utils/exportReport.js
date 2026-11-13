@@ -1,5 +1,6 @@
 import jsPDF from "jspdf";
 import { normalizeEvidence } from "./evidence";
+import { referencesToText } from "./references";
 import { captureToPngCanvas, sliceCanvasToPdfPage } from "./pdfPaginator";
 import { RATING_META, RATING_ORDER, countRatings, isCl1Pass } from "../data/ratingMeta";
 import { FINDING_TYPE_LABEL, flattenStandardRefs, buildFindingNarrative } from "./findings";
@@ -77,6 +78,8 @@ export const exportReportAsText = ({ proc, results, fileName, date }) => {
     rule("─");
     push(`${proc.id}.${bp.id}  ${bp.title}`);
     push(`  판정: [${rating.rating}] (${m.range})`);
+    const refText = referencesToText(rating.references, rating.appliedRules, { pamSep: " / " });
+    if (refText) push(`  근거: ${refText}`);
 
     const findings = Array.isArray(rating.findings) ? rating.findings : [];
     if (findings.length > 0) {
@@ -319,7 +322,13 @@ const applyInlinePdfStyle = (root) => {
       applyInlineFindingStyle(bodyCell);
       return;
     }
-    const body = bodyCell.children;
+    // 근거 칩(ReferenceChips)은 references 유무에 따라 끼어들기 때문에 위치 계산에서 빼고 따로 줄인다.
+    const chips = bodyCell.querySelector("[data-reference-chips]");
+    if (chips) {
+      setStyle(chips, { "margin-bottom": "4px" });
+      chips.querySelectorAll("span, button").forEach((el) => setStyle(el, { "font-size": "7px", padding: "0 4px" }));
+    }
+    const body = Array.from(bodyCell.children).filter((c) => !c.hasAttribute("data-reference-chips"));
     if (body[1]) setStyle(body[1], { "font-size": "9px", color: "#3F3F46", "line-height": "1.4", "margin-bottom": "5px" });
     if (body[2]) setStyle(body[2], { "font-size": "7px", color: "#52525C", "letter-spacing": "0.12em", "font-weight": "700", "margin-bottom": "3px" });
     const evidenceList = body[3];
@@ -395,7 +404,7 @@ const renderHeader = (pdf, proc, pageWidth, headerH, headerPad, cont) => {
   pdf.setDrawColor(180, 180, 188); pdf.setLineWidth(0.3);
   pdf.line(0, headerH, pageWidth, headerH);
   pdf.setTextColor(10, 10, 12); pdf.setFontSize(10);
-  pdf.text(`ASPICE 4.0 · ${proc.id} ${proc.name}${cont ? " (cont.)" : ""}`, headerPad, 10);
+  pdf.text(`ASPICE PAM 4.1 · ${proc.id} ${proc.name}${cont ? " (cont.)" : ""}`, headerPad, 10);
   pdf.setFontSize(7.5); pdf.setTextColor(100, 100, 110);
   pdf.text(formatHeaderDate(new Date()), pageWidth - headerPad, 10, { align: "right" });
 };

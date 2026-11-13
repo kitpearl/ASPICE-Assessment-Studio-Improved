@@ -1,7 +1,7 @@
 {
   "name": "aspice-harness",
   "version": "0.2.0",
-  "description": "Spec-driven ASPICE v4.0 harness (CL1-CL3) with cross-process consistency and traceability verification.",
+  "description": "Spec-driven ASPICE PAM 4.1 harness (CL1-CL3) with cross-process consistency and traceability verification.",
   "type": "module",
   "main": "src/index.js",
   "bin": {
@@ -16,11 +16,14 @@
     "./crossProcess": "./src/crossProcess/index.js",
     "./io": "./src/io/index.js",
     "./llm": "./src/llm/index.js",
-    "./model": "./src/model/index.js"
+    "./model": "./src/model/index.js",
+    "./qa": "./src/qa/index.js",
+    "./knowledge": "./src/knowledge/index.js"
   },
   "scripts": {
     "start": "node src/cli.js",
     "extract": "node spec/extractor.js",
+    "pdf2txt": "node spec/tools/pdf2txt.mjs",
     "test": "node --test test/*.test.js"
   },
   "dependencies": {

@@ -4,6 +4,9 @@ import { buildGpPrompt } from "../llm/prompts/gpPrompt.js";
 import { buildExcerpt, extractKeywords } from "../io/excerpt.js";
 import { fingerprintForPrompt } from "../io/projectContext.js";
 import { validateLlmResult } from "./citationGuard.js";
+import { applyAppliedRules } from "./guidelineEffects.js";
+import { getGuidelineRulesById } from "./guidelineRules.js";
+import * as defaultKnowledge from "../knowledge/index.js";
 
 // Safety-net multiplier applied AFTER the LLM's own verdict. The assessor is
 // instructed to lower scorePercent itself when it flags partial/off-context
@@ -20,15 +23,39 @@ const CONTEXT_MULTIPLIERS = {
   "off-context": 0.8,
 };
 
+// 전체 규칙 ID 집합 (항목 지식이 없을 때 knownRuleIds 대체값)
+let _allRuleIds;
+function allRuleIds() {
+  if (!_allRuleIds) _allRuleIds = new Set(getGuidelineRulesById().keys());
+  return _allRuleIds;
+}
+
+// ctx.bp / ctx.gp / ctx.wp 에 따라 항목 지식을 조회한다. 실패하면 null.
+function lookupKnowledge(knowledge, ctx) {
+  const processId = ctx.process?.id;
+  try {
+    if (ctx.bp) return knowledge.getBpKnowledge?.(processId, ctx.bp.id) ?? null;
+    if (ctx.gp) return knowledge.getGpKnowledge?.(ctx.paSpec?.id, ctx.gp.id, processId) ?? null;
+    if (ctx.wp) return knowledge.getWpKnowledge?.(processId, ctx.wp.id) ?? null;
+  } catch (err) {
+    console.warn("[aspice/llm] knowledge lookup failed:", err.message);
+  }
+  return null;
+}
+
 /**
  * LlmScorer — single-shot assessor scorer that calls a provider-agnostic
  * LLM client and validates the response (JSON shape + PAM citation).
  * Malformed responses degrade gracefully: score=0, gap noted.
  *
- * @param {{client: import("../llm/client.js").LlmClient}} opts
+ * `knowledge` defaults to the PAM 4.1 / Guideline 2026 getters in
+ * src/knowledge (injectable for tests). Guideline rules the LLM marks as
+ * applied are enforced via applyAppliedRules AFTER the context multiplier.
+ *
+ * @param {{client: import("../llm/client.js").LlmClient, knowledge?: any}} opts
  * @returns {import("./scorer.js").Scorer}
  */
-export function createLlmScorer({ client }) {
+export function createLlmScorer({ client, knowledge = defaultKnowledge }) {
   if (!client) throw new Error("LlmScorer requires an LLM client");
 
   async function call(buildFn, ctx, keywords) {
@@ -37,19 +64,24 @@ export function createLlmScorer({ client }) {
       keywords,
     });
     const projectFingerprint = fingerprintForPrompt(ctx.projectFingerprint);
-    const prompt = buildFn({ ...ctx, artifactsExcerpt: excerpt, projectFingerprint });
+    const k = knowledge ? lookupKnowledge(knowledge, ctx) : null;
+    const references = k?.references ?? undefined;
+    const prompt = buildFn({ ...ctx, artifactsExcerpt: excerpt, projectFingerprint, knowledge: k });
     let raw;
     try {
       const { parsed } = await client.generateJson(prompt);
       raw = parsed;
     } catch (err) {
       console.warn("[aspice/llm] call failed:", err.message);
-      return fallback(`LLM call failed: ${err.message}`);
+      return fallback(`LLM call failed: ${err.message}`, undefined, references);
     }
-    const v = validateLlmResult(raw);
+    const knownRuleIds = Array.isArray(k?.guideline?.rules)
+      ? new Set(k.guideline.rules.map((r) => r.id))
+      : allRuleIds();
+    const v = validateLlmResult(raw, { knownRuleIds });
     if (!v.ok) {
       console.warn("[aspice/llm] response rejected:", v.reason, "— pamCitation:", raw?.pamCitation, "evidenceCount:", Array.isArray(raw?.evidence) ? raw.evidence.length : 0);
-      return fallback(v.reason, raw);
+      return fallback(v.reason, raw, references);
     }
     const { contextConsistency, standardReferences, findings, droppedFindings, droppedRefs } = v.result;
     if (droppedRefs.length > 0) {
@@ -66,7 +98,7 @@ export function createLlmScorer({ client }) {
     } else if (contextConsistency.status === "partial") {
       gaps.push(`프로젝트 컨텍스트 부분 일치: ${contextConsistency.note || "일부 산출물이 다른 컨텍스트로 보임"}`);
     }
-    return {
+    const result = {
       scorePercent: adjustedScore,
       evidence: v.result.evidence,
       gaps,
@@ -74,7 +106,11 @@ export function createLlmScorer({ client }) {
       contextConsistency,
       standardReferences,
       findings,
+      appliedRules: v.result.appliedRules,
     };
+    applyAppliedRules(result, getGuidelineRulesById());
+    if (references) result.references = references;
+    return result;
   }
 
   return {
@@ -93,7 +129,7 @@ export function createLlmScorer({ client }) {
   };
 }
 
-function fallback(reason, raw) {
+function fallback(reason, raw, references) {
   return {
     scorePercent: 0,
     evidence: [],
@@ -102,5 +138,6 @@ function fallback(reason, raw) {
     standardReferences: { pam: [], pamNote: [], bgbRL: [], iso: [], incose: [] },
     findings: [],
     ...(raw ? { rawLlmResponse: raw } : {}),
+    ...(references ? { references } : {}),
   };
 }

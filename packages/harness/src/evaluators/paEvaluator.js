@@ -44,6 +44,8 @@ export async function evaluatePAs(
           contextConsistency,
           standardReferences,
           findings,
+          references,
+          appliedRules,
         } = await scorer.scoreGP({
           process: processSpec,
           paSpec,
@@ -63,6 +65,9 @@ export async function evaluatePAs(
           contextConsistency: contextConsistency ?? { status: "unknown", note: "" },
           standardReferences: standardReferences ?? { pam: [], pamNote: [], bgbRL: [], iso: [], incose: [] },
           findings: Array.isArray(findings) ? findings : [],
+          appliedRules: appliedRules ?? [],
+          ...(pamCitationOf(references, gp) ? { pamCitation: pamCitationOf(references, gp) } : {}),
+          ...(references !== undefined ? { references } : {}),
         };
       })
     );
@@ -83,4 +88,8 @@ export async function evaluatePAs(
     });
   }
   return out;
+}
+
+function pamCitationOf(references, gp) {
+  return references?.pam?.citation ?? gp.pamCitation;
 }

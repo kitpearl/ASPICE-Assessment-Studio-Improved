@@ -19,7 +19,7 @@ export const AppFooter = () => (
       color: T.textDim,
       fontWeight: 500,
     }}>
-      <div>Automotive SPICE® VDA QMC · PAM v4.0 · Guidelines 2024-03-12</div>
+      <div>Automotive SPICE® VDA QMC · PAM v4.1 · Guidelines 3rd Ed. 2026-07</div>
       <div>⬤ F fully  ◆ L largely  ◇ P partially  ○ N not achieved</div>
     </div>
     <div style={{

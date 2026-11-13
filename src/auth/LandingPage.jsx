@@ -6,13 +6,13 @@ const PROCESS_GROUPS = ["SYS", "HWE", "SWE", "MLE", "ACQ", "SPL", "REU", "PIM", 
 const FEATURES = [
   {
     Icon: FileSearch,
-    title: "PAM 4.0 기반 NPLF 평가",
+    title: "PAM 4.1 기반 NPLF 평가",
     body: "PDF·DOCX·XLSX 산출물을 업로드하면 Base Practice 단위로 N·P·L·F 등급과 근거를 자동 도출합니다.",
   },
   {
     Icon: ShieldCheck,
     title: "VDA Guideline 해석 일관성",
-    body: "VDA 4.0 가이드라인의 해석 기준을 적용해 평가자 간 편차를 줄이고, 결론의 재현성을 높입니다.",
+    body: "VDA 가이드라인 3판(2026)의 해석 기준을 적용해 평가자 간 편차를 줄이고, 결론의 재현성을 높입니다.",
   },
   {
     Icon: History,
@@ -113,7 +113,7 @@ export function LandingPage({ onLogin, onSignup }) {
               <span style={{
                 width: 6, height: 6, borderRadius: 999, background: T.accent,
               }} />
-              Automotive SPICE® 4.0 · OII(Output Information Items) Diagnostic Workbench
+              Automotive SPICE® 4.1 · OII(Output Information Items) Diagnostic Workbench
             </div>
 
             <h1 style={{
@@ -208,8 +208,8 @@ export function LandingPage({ onLogin, onSignup }) {
               gap: 9,
             }}>
               {[
-                ["PAM", "v4.0 · 2023-11-29"],
-                ["Guidelines", "v4.0 · 2024-03-12"],
+                ["PAM", "v4.1 · 2026-08-24"],
+                ["Guidelines", "3rd Ed. · 2026-07"],
                 ["Scale", "ISO/IEC 33020 · NPLF"],
               ].map(([k, v]) => (
                 <div key={k} style={{

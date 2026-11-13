@@ -12,7 +12,7 @@ import { createLlmClient } from "./llm/client.js";
 const program = new Command();
 program
   .name("aspice")
-  .description("ASPICE v4.0 harness — CL1~CL3, cross-process traceability")
+  .description("ASPICE PAM 4.1 harness — CL1~CL3, cross-process traceability")
   .version("0.2.0");
 
 program

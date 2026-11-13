@@ -9,8 +9,8 @@
 //   _evidencePages.js   — annotate BP evidence with source-page numbers
 //   _legacyAdapter.js   — ProcessVerdict → legacy UI shape + Koreanization
 
-import { Harness, loadProcess, loadProcesses, loadWorkProducts } from "aspice-harness";
-import { ruleScorer, createLlmScorer, createHybridScorer, createCustomScorer } from "aspice-harness/evaluators";
+import { Harness, loadProcess, loadProcesses, loadWorkProducts, loadGuideline } from "aspice-harness";
+import { ruleScorer, createLlmScorer, createHybridScorer, createCustomScorer, applyAppliedRules } from "aspice-harness/evaluators";
 import { createLlmClient } from "aspice-harness/llm";
 import { indexArtifacts, scopeArtifactsForProcess } from "aspice-harness/io";
 import { loadProcessGraph } from "aspice-harness/spec";
@@ -25,11 +25,12 @@ import {
 import { buildArtifacts } from "./_artifactBuilder.js";
 import { annotateEvidenceWithPages } from "./_evidencePages.js";
 import { toLegacyShape } from "./_legacyAdapter.js";
+import { resolveLlmConfig, limitConcurrency } from "./_llmConfig.js";
 
 // Recognised scorer engines. Anything unknown normalises to "hybrid" so the
 // two modes (per-process / project) cannot diverge on scorer choice.
 //   rule   — offline auto-keyword/WPID matching
-//   llm    — LLM BP/WP/GP scoring (provider resolved from env: Anthropic/OpenAI)
+//   llm    — LLM BP/WP/GP scoring (provider/model from _llmConfig.js)
 //   hybrid — 0.4 rule + 0.6 llm (default)
 //   custom — offline, user-authored rule book (see customScorer.js)
 const KNOWN_ENGINES = new Set(["rule", "llm", "hybrid", "custom"]);
@@ -79,80 +80,21 @@ function memoizeLlmClient(client) {
   };
 }
 
-// Bound the number of concurrent generateJson calls. The evaluators fan out
-// BP/WP/GP scoring in parallel (and processes run in parallel on top of that),
-// so this central gate is what actually keeps API concurrency — and therefore
-// rate-limit exposure — at `max`. Wrapped *inside* memoize so cache hits return
-// instantly without consuming a slot.
-function limitConcurrency(client, max) {
-  let active = 0;
-  const queue = [];
-  const pump = () => {
-    while (active < max && queue.length) {
-      const { prompt, resolve, reject } = queue.shift();
-      active++;
-      Promise.resolve()
-        .then(() => client.generateJson(prompt))
-        .then(resolve, reject)
-        .finally(() => {
-          active--;
-          pump();
-        });
-    }
-  };
-  return {
-    ...client,
-    generateJson(prompt) {
-      return new Promise((resolve, reject) => {
-        queue.push({ prompt, resolve, reject });
-        pump();
-      });
-    },
-  };
-}
-
-// Resolve which LLM provider/key/model to use from the server env. Mirrors the
-// harness resolveProvider precedence but reads the explicitly-passed `env`
-// object (Vercel serverless and the Vite dev middleware each hand us their own).
-//   1. ASPICE_LLM_PROVIDER pins the provider when set
-//   2. otherwise prefer Anthropic if ANTHROPIC_API_KEY is present, else OpenAI
-// Returns null when no usable key is configured (rule/custom engines still run).
-function resolveLlmConfig(env = {}) {
-  const provider =
-    env.ASPICE_LLM_PROVIDER ||
-    (env.ANTHROPIC_API_KEY ? "anthropic" : env.OPENAI_API_KEY ? "openai" : null);
-  if (!provider) return null;
-  const apiKey = provider === "anthropic" ? env.ANTHROPIC_API_KEY : env.OPENAI_API_KEY;
-  if (!apiKey) return null;
-  const model = env.ASPICE_LLM_MODEL || (provider === "anthropic" ? "claude-sonnet-4-6" : "gpt-4o");
-  // Cap on concurrent in-flight LLM calls across the whole evaluation. The
-  // evaluators now fan out BP/WP/GP scoring in parallel, so without a global
-  // cap a project run could open dozens of API calls at once and hit rate
-  // limits. 5 is a safe default; override with ASPICE_LLM_CONCURRENCY.
-  const concurrency = parseConcurrency(env.ASPICE_LLM_CONCURRENCY, 5);
-  return { provider, apiKey, model, concurrency };
-}
-
-function parseConcurrency(raw, fallback) {
-  const n = Number.parseInt(raw, 10);
-  return Number.isFinite(n) && n > 0 ? n : fallback;
-}
-
 /** Build a single scorer for one engine id. */
-function buildSingleScorer(engine, llmConfig, customRules) {
+function buildSingleScorer(engine, env, customRules) {
   if (engine === "rule") return ruleScorer;
   // Custom is offline: it scores against the user's rule book and falls back
   // to the auto-keyword rule scorer for practices no rule covers.
   if (engine === "custom") {
     return createCustomScorer({ ruleBook: customRules, fallback: ruleScorer });
   }
-  if (!llmConfig?.apiKey) {
-    throw new Error(
-      `engine=${engine} requires an LLM API key (ANTHROPIC_API_KEY or OPENAI_API_KEY) in server env.`,
-    );
+  const cfg = resolveLlmConfig(env);
+  if (!cfg) {
+    throw new Error(`engine=${engine} requires ANTHROPIC_API_KEY or OPENAI_API_KEY in server env.`);
   }
-  const rawClient = createLlmClient(llmConfig);
-  const client = memoizeLlmClient(limitConcurrency(rawClient, llmConfig.concurrency ?? 5));
+  const { provider, apiKey, model, concurrency } = cfg;
+  const rawClient = limitConcurrency(createLlmClient({ provider, apiKey, model }), concurrency);
+  const client = memoizeLlmClient(rawClient);
   const llm = createLlmScorer({ client });
   if (engine === "llm") return llm;
   if (engine === "hybrid") return createHybridScorer({ rule: ruleScorer, llm });
@@ -183,6 +125,25 @@ function mergeContextConsistency(results) {
  * report still shows what each engine saw. Used when the user picks more than
  * one engine in the UI.
  */
+let _guidelineRulesById;
+function guidelineRulesById() {
+  if (!_guidelineRulesById) _guidelineRulesById = new Map((loadGuideline().rules ?? []).map((r) => [r.id, r]));
+  return _guidelineRulesById;
+}
+
+// Union of every engine's appliedRules, deduped by ruleId (an applied=true entry wins).
+function unionAppliedRules(results) {
+  const byId = new Map();
+  for (const r of results) {
+    for (const e of r.appliedRules ?? []) {
+      if (!e?.ruleId) continue;
+      const prev = byId.get(e.ruleId);
+      if (!prev || (prev.applied === false && e.applied !== false)) byId.set(e.ruleId, { ...e });
+    }
+  }
+  return [...byId.values()];
+}
+
 function buildAveragingScorer(scorers) {
   const merge = (method) => async (ctx) => {
     const settled = await Promise.allSettled(scorers.map(({ scorer }) => scorer[method](ctx)));
@@ -205,20 +166,26 @@ function buildAveragingScorer(scorers) {
     const scorePercent = oks.length
       ? Math.round(oks.reduce((a, b) => a + (b.scorePercent || 0), 0) / oks.length)
       : 0;
-    return {
+    const result = {
       scorePercent,
       evidence,
       gaps,
       pamCitation: oks.find((r) => r.pamCitation)?.pamCitation,
       contextConsistency: mergeContextConsistency(oks),
+      appliedRules: unionAppliedRules(oks),
     };
+    // Re-apply guideline caps so averaging cannot lift a score above an applied cap.
+    applyAppliedRules(result, guidelineRulesById());
+    const references = oks.find((r) => r.references)?.references;
+    if (references) result.references = references;
+    return result;
   };
   return { scoreBP: merge("scoreBP"), scoreWP: merge("scoreWP"), scoreGP: merge("scoreGP") };
 }
 
-function buildScorer(engines, llmConfig, customRules) {
-  if (engines.length === 1) return buildSingleScorer(engines[0], llmConfig, customRules);
-  const built = engines.map((id) => ({ id, scorer: buildSingleScorer(id, llmConfig, customRules) }));
+function buildScorer(engines, env, customRules) {
+  if (engines.length === 1) return buildSingleScorer(engines[0], env, customRules);
+  const built = engines.map((id) => ({ id, scorer: buildSingleScorer(id, env, customRules) }));
   return buildAveragingScorer(built);
 }
 
@@ -316,7 +283,7 @@ export async function handleEvaluate({ processId, artifact, artifacts, targetLev
   if (!processSpec) throw new Error(`Unknown process: ${processId}`);
 
   const resolved = resolveEngines(engines, engine);
-  const scorer = buildScorer(resolved, resolveLlmConfig(env), customRules);
+  const scorer = buildScorer(resolved, env, customRules);
   const harness = new Harness({ scorer, targetLevel: Number(targetLevel) });
 
   // Index once up-front so the per-process filter sees wpidCandidates.
@@ -344,7 +311,7 @@ export async function handleProject({ processIds, artifacts, targetLevel = 1, en
   rejectIfNoArtifacts(arts, skipped);
 
   const resolved = resolveEngines(engines, engine);
-  const scorer = buildScorer(resolved, resolveLlmConfig(env), customRules);
+  const scorer = buildScorer(resolved, env, customRules);
   const harness = new Harness({ scorer, targetLevel: Number(targetLevel) });
 
   const all = loadProcesses();

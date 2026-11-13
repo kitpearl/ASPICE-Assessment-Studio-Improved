@@ -1,4 +1,6 @@
 import { ASSESSOR_PERSONA } from "./assessorPersona.js";
+import { formatWpCharacteristics } from "../../knowledge/index.js";
+import { exactCitationLine } from "./common.js";
 
 /**
  * Build the assessor prompt for one Output Work Product.
@@ -8,7 +10,7 @@ import { ASSESSOR_PERSONA } from "./assessorPersona.js";
  * a perfectly-formed SRS from a different program does not satisfy the WP for
  * *this* program.
  */
-export function buildWpPrompt({ process, wp, artifactsExcerpt, projectFingerprint }) {
+export function buildWpPrompt({ process, wp, artifactsExcerpt, projectFingerprint, knowledge = null }) {
   const system = ASSESSOR_PERSONA;
 
   const context = [
@@ -16,6 +18,7 @@ export function buildWpPrompt({ process, wp, artifactsExcerpt, projectFingerprin
     `- Process: ${process.id} ${process.name}`,
     `- PAM section: ${process.pamSection}`,
     "",
+    ...(knowledge ? wpKnowledgeBlocks(knowledge) : []),
     `# 프로젝트 / 제품 컨텍스트 지문`,
     `  ${projectFingerprint || "(unknown)"}`,
     "",
@@ -23,6 +26,7 @@ export function buildWpPrompt({ process, wp, artifactsExcerpt, projectFingerprin
     artifactsExcerpt || "(no artifacts supplied)",
   ].join("\n");
 
+  const citation = knowledge?.references?.pam?.citation;
   const task = [
     `# 평가 대상 Output Work Product`,
     `  ${wp.id} ${wp.name}`,
@@ -30,7 +34,9 @@ export function buildWpPrompt({ process, wp, artifactsExcerpt, projectFingerprin
     `# 작업`,
     `- 이 프로젝트/제품을 위해 ${wp.id} ${wp.name} 이 적절한 특성으로 산출되었다는 증거가 있는가?`,
     `- 0~100 점으로 충족도를 평가하라.`,
-    `- pamCitation 은 반드시 "PAM §${process.pamSection}" 형식(§ + 섹션 번호)으로 작성하라. "PAM Annex B ${wp.id}" 같은 Work Product 번호 표기는 pamCitation 에 쓰지 마라 (${wp.id} 는 이미 bpId/finding 에 기록된다).`,
+    citation
+      ? exactCitationLine(citation)
+      : `- pamCitation 은 반드시 "PAM §${process.pamSection}" 형식(§ + 섹션 번호)으로 작성하라. "PAM Annex B ${wp.id}" 같은 Work Product 번호 표기는 pamCitation 에 쓰지 마라 (${wp.id} 는 이미 bpId/finding 에 기록된다).`,
     `- contextConsistency 를 판정하라 ("partial"/"off-context" 인 경우 감점 + note 필수).`,
     `- findings 배열에 최소 1개의 Finding 을 작성하라.`,
     `  - 각 Finding 의 bpId 는 "${process.id}.${wp.id}" 형식으로 기록하라 (WP 도 동일 필드 사용).`,
@@ -41,7 +47,7 @@ export function buildWpPrompt({ process, wp, artifactsExcerpt, projectFingerprin
     `  "scorePercent": <0-100>,`,
     `  "evidence": [{"artifactName": "...", "quote": "..."}],`,
     `  "gaps": ["..."],`,
-    `  "pamCitation": "PAM §${process.pamSection}",`,
+    `  "pamCitation": "${citation ?? `PAM §${process.pamSection}`}",`,
     `  "contextConsistency": { "status": "consistent|partial|off-context|unknown", "note": "..." },`,
     `  "standardReferences": {"pam": [], "pamNote": [], "bgbRL": [], "iso": []},`,
     `  "findings": [`,
@@ -63,4 +69,9 @@ export function buildWpPrompt({ process, wp, artifactsExcerpt, projectFingerprin
   ].join("\n");
 
   return { system, context, task };
+}
+
+function wpKnowledgeBlocks(k) {
+  const characteristics = formatWpCharacteristics(k.wp);
+  return ["# PAM 4.1 — 정보 항목 특징", characteristics || "(특징 정보 없음)", ""];
 }

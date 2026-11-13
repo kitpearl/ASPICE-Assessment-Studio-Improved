@@ -1,92 +1,134 @@
 {
   "id": "SUP.9",
-  "name": "Problem Resolution Management",
+  "name": "문제 해결 관리",
+  "nameEn": "Problem Resolution Management",
+  "pamVersion": "4.1",
   "category": "SUP",
   "pamSection": "4.8.3",
-  "purpose": "The purpose of the Problem Resolution Management Process is to ensure that problems are identified, recorded, analyzed, and their resolution is managed and controlled.",
+  "page": 94,
+  "purpose": "프로세스 목적은 문제가 식별, 기록, 분석되고, 그 해결이 관리되고 통제되도록 보장하는 것이다.",
   "outcomes": [
     {
       "id": 1,
-      "text": "Problems are uniquely identified, recorded and classified."
+      "text": "문제가 고유하게 식별, 기록, 분류된다."
     },
     {
       "id": 2,
-      "text": "Problems are analyzed and assessed to determine an appropriate solution."
+      "text": "적절한 해결책을 결정하기 위해 문제가 분석 및 평가된다."
     },
     {
       "id": 3,
-      "text": "Problem resolution is initiated."
+      "text": "문제 해결이 시작된다."
     },
     {
       "id": 4,
-      "text": "Problems are tracked to closure."
+      "text": "문제가 종료까지 추적된다."
     },
     {
       "id": 5,
-      "text": "The status of problems including trends identified are reported to stakeholders."
+      "text": "식별된 추이를 포함하여 문제의 상태가 이해관계자에게 보고된다."
     }
   ],
   "basePractices": [
     {
       "id": "BP1",
-      "title": "Identify and record the problem",
-      "description": "Each problem is uniquely identified, described and recorded. A status is assigned to each problem to facilitate tracking. Supporting information is provided to reproduce and diagnose the problem. NOTE 1: Problems may relate to e.g., product, resources, or methods. NOTE 2: Example values for the problem status are “new”, “solved”, “closed”, etc. NOTE 3: Supporting information may include e.g, the origin of the problem, how it can be reproduced, environmental information, by whom it has been detected. NOTE 4: Unique identification supports traceability to changes made as needed by the change request management process (SUP.10).",
-      "pamCitation": "PAM §SUP.9 BP1"
+      "title": "문제를 식별하고 기록한다",
+      "description": "각 문제가 고유하게 식별, 설명, 기록된다. 추적이 용이하도록 각 문제에 상태가 배정된다. 문제를 재현하고 진단하기 위해 지원 정보가 제공된다.",
+      "notes": [
+        "비고 1: 문제는 제품, 자원 또는 방법과 관련이 있을 수 있다.",
+        "비고 2: 문제 상태의 예시 값은 ‘신규’, ‘해결됨’, ‘종료됨’ 등이다.",
+        "비고 3: 지원 정보는 검증 실패에 대한 문제의 발생원인, 문제의 재현 방법, 환경 정보, 문제 발견자 등을 포함할 수 있다.",
+        "비고 4: 고유 식별은 변경 요청 관리 프로세스(SUP.10)에 의해 필요에 따라 수행된 변경 사항에 대한 추적성을 지원한다."
+      ],
+      "page": 94,
+      "pamCitation": "PAM 4.1 §4.8.3 SUP.9.BP1",
+      "titleEn": "Identify and record the problems",
+      "descriptionEn": "Each problem is uniquely identified, described and recorded. A status is assigned to each problem to facilitate tracking. Supporting information is provided to reproduce and diagnose the problems. NOTE 1: Problems may relate to, e.g., product, resources, or methods. NOTE 2: Example values for the problem status are “new”, “solved”, “closed”, etc. NOTE 3: Supporting information may include, e.g., the origins of the problems, such as failed verification, how they can be reproduced, environmental information, by whom they have been detected. NOTE 4: Unique identification supports traceability to changes made as needed by the change request management process (SUP.10)."
     },
     {
       "id": "BP2",
-      "title": "Determine the cause and the impact of the problem",
-      "description": "Analyze the problem, determine its cause, including common causes if existing, and impact. Involve relevant parties. Categorize the problem. NOTE 5: Problem categorization (e.g., light, medium, severe) may be based on severity, criticality, urgency, etc.",
-      "pamCitation": "PAM §SUP.9 BP2"
+      "title": "문제의 원인 및 영향을 결정한다",
+      "description": "문제를 분석하고 공통 원인이 존재한다면, 이를 포함한 원인 및 영향을 결정한다. 관련 당사자를 참여시킨다. 문제를 분류한다.",
+      "notes": [
+        "비고 5: 문제 분류(예: 경미, 보통, 심각)는 심각도, 중요도, 긴급도 등을 기반으로 할 수 있다."
+      ],
+      "page": 94,
+      "pamCitation": "PAM 4.1 §4.8.3 SUP.9.BP2",
+      "titleEn": "Determine the causes and the impacts of the problems",
+      "descriptionEn": "Analyze the problems, determine their causes, including common causes if existing, and impacts. Involve the relevant parties. Categorize the problems. NOTE 5: Problem categorization (e.g., light, medium, severe) may be based on severity, criticality, urgency, etc."
     },
     {
       "id": "BP3",
-      "title": "Authorize urgent resolution action",
-      "description": "Obtain authorization for immediate action if a problem requires an urgent resolution according to the categorization.",
-      "pamCitation": "PAM §SUP.9 BP3"
+      "title": "긴급 해결 조치를 허가한다",
+      "description": "분류에 따라 긴급 해결이 필요한 문제의 경우, 즉각적인 조치에 대한 허가를 얻는다.",
+      "notes": [],
+      "page": 94,
+      "pamCitation": "PAM 4.1 §4.8.3 SUP.9.BP3",
+      "titleEn": "Authorize urgent resolution actions",
+      "descriptionEn": "Obtain authorization for immediate action if a problem requires an urgent resolution according to the categorization."
     },
     {
       "id": "BP4",
-      "title": "Raise alert notifications",
-      "description": "If according to the categorization the problem has a high impact on other systems or other affected parties, an alert notification needs to be raised accordingly.",
-      "pamCitation": "PAM §SUP.9 BP4"
+      "title": "경고 알림을 발행한다",
+      "description": "분류에 따라 문제가 다른 시스템 또는 영향받는 당사자에게 큰 영향을 미칠 경우, 이에 따라 경고 알림을 할 필요가 있다.",
+      "notes": [],
+      "page": 95,
+      "pamCitation": "PAM 4.1 §4.8.3 SUP.9.BP4",
+      "titleEn": "Raise alert notifications",
+      "descriptionEn": "If, according to the categorization, problems have a high impact on other systems or other affected parties, alert notifications need to be raised accordingly."
     },
     {
       "id": "BP5",
-      "title": "Initiate problem resolution",
-      "description": "Initiate appropriate actions according to the categorization to resolve the problem long-term, including review of those actions or initiate a change request. This includes synchronization and consistency with short-term urgent resolution actions, if applicable.",
-      "pamCitation": "PAM §SUP.9 BP5"
+      "title": "문제 해결을 시작한다",
+      "description": "문제를 장기적으로 해결하고 재발 방지하기 위해 분류에 따라 해당 조치의 검토를 포함하여 적절한 조치를 시작하거나 변경 요청을 시작한다. 이는 해당되는 경우 단기 긴급 해결 조치와의 동기화 및 일관성을 포함한다.",
+      "notes": [],
+      "page": 95,
+      "pamCitation": "PAM 4.1 §4.8.3 SUP.9.BP5",
+      "titleEn": "Initiate problem resolution",
+      "descriptionEn": "Initiate appropriate actions according to the categorization to resolve the problems long-term and prevent recurrence, including reviews of those actions, or initiate change requests. This includes synchronization and consistency with short-term urgent resolution actions, if applicable."
     },
     {
       "id": "BP6",
-      "title": "Track problems to closure",
-      "description": "Track the status of problems to closure including all related change requests. The closure of problems is accepted by relevant stakeholders.",
-      "pamCitation": "PAM §SUP.9 BP6"
+      "title": "문제를 종료까지 추적한다",
+      "description": "관련된 모든 변경 요청을 포함하여 문제의 상태를 종료까지 추적한다. 문제의 종료가 관련 이해관계자에 의해 수락된다.",
+      "notes": [],
+      "page": 95,
+      "pamCitation": "PAM 4.1 §4.8.3 SUP.9.BP6",
+      "titleEn": "Track the problems to closure",
+      "descriptionEn": "Track the statuses of the problems to closure including all related change requests. The closure of the problems is accepted by the relevant stakeholders."
     },
     {
       "id": "BP7",
-      "title": "Report the status of problem resolution activities",
-      "description": "Collect and analyze problem resolution management data, identify trends, and initiate related actions. Regularly report the results of data analysis, the identified trends and the status of problem resolution activities to relevant stakeholders. NOTE 6: Collected data may contain information about where the problems occurred, how and when they were found, what their impacts were, etc. SUP.9 Problem Resolution Management 1 emoctuO 2 emoctuO 3 emoctuO 4 emoctuO 5 emoctuO",
-      "pamCitation": "PAM §SUP.9 BP7"
+      "title": "문제 해결 활동의 상태를 보고한다",
+      "description": "문제 해결 관리 데이터를 수집 및 분석하고, 추이를 식별하고, 관련 조치를 시작한다. 데이터 분석 결과, 식별된 추이, 문제 해결 활동의 상태를 영향받는 이해관계자에게 정기적으로 보고한다.",
+      "notes": [
+        "비고 6: 수집된 데이터는 문제가 발생한 위치, 문제의 발견 방법과 시간, 문제의 영향 등에 대한 정보를 포함할 수 있다."
+      ],
+      "page": 95,
+      "pamCitation": "PAM 4.1 §4.8.3 SUP.9.BP7",
+      "titleEn": "Report the status of problem resolution activities",
+      "descriptionEn": "Collect and analyze problem resolution management data, identify trends, and initiate related actions. Regularly report the results of data analysis, the identified trends and the status of problem resolution activities to the affected parties. NOTE 6: Collected data may contain information about where the problems occurred, how and when they were found, what their impacts were, etc."
     }
   ],
   "outputWorkProducts": [
     {
       "id": "13-07",
-      "name": "Problem"
+      "name": "문제",
+      "nameEn": "Problem"
     },
     {
       "id": "15-55",
-      "name": "Problem analysis evidence"
+      "name": "문제 분석 증거",
+      "nameEn": "Problem analysis evidence"
     },
     {
       "id": "15-12",
-      "name": "Problem status"
+      "name": "문제 상태",
+      "nameEn": "Problem status"
     }
   ],
   "inputWorkProducts": [],
   "traceBPs": [
-    "BP1",
     "BP5"
   ]
 }

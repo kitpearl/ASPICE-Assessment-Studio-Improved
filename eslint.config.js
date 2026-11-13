@@ -5,7 +5,7 @@ import reactRefresh from 'eslint-plugin-react-refresh'
 import { defineConfig, globalIgnores } from 'eslint/config'
 
 export default defineConfig([
-  globalIgnores(['dist']),
+  globalIgnores(['dist', 'packages/harness/legacy/**']),
   {
     files: ['**/*.{js,jsx}'],
     extends: [
@@ -23,11 +23,13 @@ export default defineConfig([
       },
     },
     rules: {
-      'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]' }],
+      // Capitalised names are React components used only as JSX (e.g. `{ Icon }`
+      // destructured from props), which core no-unused-vars cannot see.
+      'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]', argsIgnorePattern: '^[A-Z_]' }],
     },
   },
   {
-    files: ['api/**/*.js', 'vite.config.js', 'eslint.config.js'],
+    files: ['api/**/*.js', 'vite.config.js', 'eslint.config.js', 'packages/harness/**/*.js'],
     languageOptions: {
       globals: globals.node,
     },

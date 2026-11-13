@@ -20,7 +20,7 @@ export const AppHeader = ({ topLeftSlot, topRightSlot }) => (
           marginBottom: 14,
           fontWeight: 500,
         }}>
-          VDA · Automotive SPICE® 4.0 · OII(Output Information Items) Diagnostic Workbench
+          VDA · Automotive SPICE® 4.1 · OII(Output Information Items) Diagnostic Workbench
         </div>
         <h1 style={{
           fontFamily: FONTS.sans,
@@ -42,8 +42,8 @@ export const AppHeader = ({ topLeftSlot, topRightSlot }) => (
         textAlign: "right",
         lineHeight: 1.85,
       }}>
-        <div>REF · PAM v4.0 (2023-11-29)</div>
-        <div>REF · Guidelines (2024-03-12)</div>
+        <div>REF · PAM v4.1 (2026-08-24)</div>
+        <div>REF · Guidelines 3rd Ed. (2026-07)</div>
         <div>SCALE · ISO/IEC 33020 NPLF</div>
         <div style={{ marginTop: 8, color: T.accent }}>⬤ {Object.keys(ASPICE_DATA).length} PROCESSES LOADED</div>
       </div>

@@ -1,5 +1,5 @@
 // Rating scale boundaries follow the harness canonical
-// `ratingScale.json` (intacs extended 6-point scale, §3.2.2 of PAM v4.0).
+// `ratingScale.json` (intacs extended 6-point scale, §3.2.2 of PAM v4.1).
 // BP / GP / PA render on 6 levels; CL aggregation collapses to 4.
 
 import { ratingScale as HARNESS_SCALE } from "aspice-harness/spec/all";

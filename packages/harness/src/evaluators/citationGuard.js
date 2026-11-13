@@ -13,6 +13,14 @@
  *   PAM §5 GP 1.1.1        ← top-level GP section, no subsection dots
  *   PAM §SWE.2 BP1         ← process-prefixed form (canonical spec form)
  *   PAM §SUP.10
+ *   PAM §4.4.1 SWE.1.BP2 ← process-qualified BP
+ * PAM 4.1 forms (version prefix, same section shapes):
+ *   PAM 4.1 §4.3.2 BP5
+ *   PAM 4.1 §5.3.1 GP 2.1.1
+ * Annex B work-product forms:
+ *   PAM Annex B 17-00
+ *   PAM 4.1 Annex B 17-00
+ *
  *
  * Beyond the PAM section citation, individual Finding 객체는
  * standardReferences 슬롯에 다음 표기를 추가로 실을 수 있다 (P1):
@@ -32,8 +40,12 @@
  */
 
 import { makeFinding, validateFinding } from "../model/finding.js";
+import { normalizeGuidelineCitations } from "./guidelineEffects.js";
 
-const CITATION_RE = /PAM\s*§\s*(?:\d+(?:\.\d+){0,3}|[A-Z]{2,4}\.\d+)(?:\s+(?:BP\d+|GP\s?\d\.\d\.\d))?/;
+// Section form: "PAM [4.1] §x.y.z [SWE.1.BP2 | BP2 | GP 2.1.1]" (또는 §SWE.2 / §SUP.10 같은
+// 프로세스 접두 형태); Annex form: "PAM [4.1] Annex B 17-00".
+const CITATION_RE =
+  /PAM(?:\s*4\.1)?\s*§\s*(?:\d+(?:\.\d+){0,3}|[A-Z]{2,4}\.\d+)(?:\s+(?:(?:[A-Z]{3}\.\d+\.)?BP\d+|GP\s?\d\.\d\.\d))?|PAM(?:\s*4\.1)?\s+Annex\s+B\s+\d{2}-\d{2}/;
 const PAM_NOTE_RE = /^PAM\s+Note\s+[A-Z]{2,4}\.\d+-\d+$/;
 // BGB 표기 두 가지를 수용:
 //   1. 단순 등급: RL3 / RL3.2 (legacy compat)
@@ -162,7 +174,7 @@ export function normalizeFindings(rawFindings) {
  * @param {any} raw  LLM JSON response
  * @returns {{ok: true, result: any} | {ok: false, reason: string}}
  */
-export function validateLlmResult(raw) {
+export function validateLlmResult(raw, opts = {}) {
   if (!raw || typeof raw !== "object") {
     return { ok: false, reason: "response is not an object" };
   }
@@ -189,6 +201,7 @@ export function validateLlmResult(raw) {
       droppedRefs,
       findings,
       droppedFindings,
+      appliedRules: normalizeGuidelineCitations(raw.guidelineCitations, opts.knownRuleIds ?? new Set()),
     },
   };
 }

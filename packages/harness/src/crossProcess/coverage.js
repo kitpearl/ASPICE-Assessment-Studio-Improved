@@ -59,7 +59,7 @@ export function isRequirementId(id, prefixSet = REQUIREMENT_PREFIXES) {
 }
 
 export function computeCoverage(artifacts, opts = {}) {
-  // v4.0 work products — requirements (17-*) and verification/validation
+  // v4.1 work products — requirements (17-*) and verification/validation
   // evidence (08-60/59 plan, 15-52/13-24 results, 03-50 verification data).
   const reqWps = new Set(["17-00", "17-05", "17-54", "17-55", "17-57"]);
   const testWps = new Set(["08-60", "08-59", "08-58", "08-57", "15-52", "13-24", "13-25", "03-50"]);

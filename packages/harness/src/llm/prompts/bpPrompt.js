@@ -1,5 +1,6 @@
 import { ASSESSOR_PERSONA } from "./assessorPersona.js";
 import { buildIncoseGuidance } from "../../../spec/incose/index.js";
+import { guidelineBlocks, exactCitationLine, guidelineCitationsLine, GUIDELINE_CITATIONS_SCHEMA_LINE, formatOutcomes, addNotesLines, titleWithEn } from "./common.js";
 
 /**
  * Build the assessor prompt for one Base Practice.
@@ -8,7 +9,7 @@ import { buildIncoseGuidance } from "../../../spec/incose/index.js";
  * into cached + dynamic message blocks (Anthropic) or a concatenated user
  * message (OpenAI):
  *   - system  : assessor persona + 출력 규약 (stable, cacheable across all calls)
- *   - context : process spec + evidence excerpt (stable within a process eval)
+ *   - context : process spec + PAM 4.1 / Guideline 2026 knowledge + evidence excerpt (stable within a process eval)
  *   - task    : BP-specific question (varies per call)
  *
  * Project-context check: the assessor must additionally judge whether each
@@ -27,6 +28,9 @@ import { buildIncoseGuidance } from "../../../spec/incose/index.js";
  * _harnessService.js) actually converge the two modes onto one verdict per
  * prompt, which is its whole purpose. `mode` is accepted (and ignored) for
  * call-site compatibility.
+ *
+ * `knowledge` (BpKnowledge from src/knowledge) is optional; when null the
+ * context and task are built exactly as before the knowledge layer existed.
  */
 export function buildBpPrompt({
   process,
@@ -35,6 +39,7 @@ export function buildBpPrompt({
   projectFingerprint,
   // eslint-disable-next-line no-unused-vars -- accepted for call-site stability; scoring is mode-independent (see above)
   mode = "project",
+  knowledge = null,
 }) {
   const system = ASSESSOR_PERSONA;
 
@@ -44,6 +49,7 @@ export function buildBpPrompt({
     `- PAM section: ${process.pamSection}`,
     `- Process purpose: ${process.purpose}`,
     "",
+    ...(knowledge ? bpKnowledgeBlocks(knowledge) : []),
     `# 프로젝트 / 제품 컨텍스트 지문 (업로드 배치의 지배적 용어)`,
     `  ${projectFingerprint || "(unknown)"}`,
     "",
@@ -58,6 +64,7 @@ export function buildBpPrompt({
   // byte-identical 로 유지되어 prompt cache 와 회귀 테스트가 깨지지 않는다.
   const incoseGuidance = buildIncoseGuidance(bpFullId);
   const incoseApplicable = Boolean(incoseGuidance);
+  const citation = knowledge?.references?.pam?.citation;
 
   const task = [
     `# 평가 대상 Base Practice`,
@@ -67,7 +74,9 @@ export function buildBpPrompt({
     "",
     `# 작업`,
     `- 0~100 점으로 충족도를 평가하라.`,
-    `- pamCitation 은 "PAM §${process.pamSection} ${bp.id}" 또는 더 구체적인 인용으로 작성하라.`,
+    citation
+      ? exactCitationLine(citation)
+      : `- pamCitation 은 "PAM §${process.pamSection} ${bp.id}" 또는 더 구체적인 인용으로 작성하라.`,
     `- contextConsistency 를 판정하라: "consistent" | "partial" | "off-context" | "unknown".`,
     `  partial/off-context 인 경우 scorePercent 감점 + note 에 사유 기록 필수.`,
     `- findings 배열에 최소 1개의 Finding 을 작성하라 (가이드: 시스템 메시지 § Finding 작성 룰).`,
@@ -79,14 +88,16 @@ export function buildBpPrompt({
           `  요구사항 진술/집합의 INCOSE 특성 위반·충족을 Finding 으로 보고하고, 적용 INCOSE 인용을 standardReferences.incose 에 기록하라 (예: "INCOSE GtWR C7", "INCOSE GtWR R18").`,
         ]
       : []),
+    ...(knowledge ? [guidelineCitationsLine()] : []),
     "",
     `# 출력 JSON 스키마`,
     `{`,
     `  "scorePercent": <0-100>,`,
     `  "evidence": [{"artifactName": "...", "quote": "...", "location": "..."}],`,
     `  "gaps": ["..."],`,
-    `  "pamCitation": "PAM §${process.pamSection} ${bp.id}",`,
+    `  "pamCitation": "${citation ?? `PAM §${process.pamSection} ${bp.id}`}",`,
     `  "contextConsistency": { "status": "consistent|partial|off-context|unknown", "note": "..." },`,
+    ...(knowledge ? [GUIDELINE_CITATIONS_SCHEMA_LINE] : []),
     `  "standardReferences": {`,
     `    "pam": ["PAM §..."],`,
     `    "pamNote": ["PAM Note ${process.id}-N"],`,
@@ -113,4 +124,27 @@ export function buildBpPrompt({
   ].join("\n");
 
   return { system, context, task };
+}
+
+function bpKnowledgeBlocks(k) {
+  const p = k.process ?? {};
+  const b = k.bp ?? {};
+  const wps = (k.outputWorkProducts ?? []).map((w) => `- ${w.id} ${w.name}`);
+  return [
+    "# PAM 4.1 — 프로세스",
+    `${p.id} ${p.name ?? ""}`.trim(),
+    `목적: ${p.purpose ?? ""}`,
+    "성과:",
+    formatOutcomes(p.outcomes),
+    "",
+    "# PAM 4.1 — 평가 대상 BP",
+    `${p.id}.${b.id}: ${titleWithEn(b.title, b.titleEn)}`,
+    b.description ? `설명: ${b.description}` : "",
+    ...addNotesLines(b.notes),
+    "",
+    "# 출력 정보 항목",
+    ...(wps.length ? wps : ["(없음)"]),
+    "",
+    ...guidelineBlocks(k.guideline),
+  ];
 }

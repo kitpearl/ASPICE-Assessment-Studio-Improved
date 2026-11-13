@@ -1,5 +1,5 @@
 // Category → process-id buckets for the sidebar. Populated dynamically from
-// the harness canonical so v4.0 additions (MLE, PIM.3, SUP.11, HWE, REU.2)
+// the harness canonical so v4 additions (MLE, PIM.3, SUP.11, HWE, REU.2)
 // appear automatically.
 
 import { PROCESS_IDS, ASPICE_DATA } from "./aspiceData";

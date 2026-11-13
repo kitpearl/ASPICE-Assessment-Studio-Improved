@@ -34,6 +34,8 @@ export async function evaluateBPs(processSpec, artifacts, scorer, options = {}) 
       contextConsistency,
       standardReferences,
       findings,
+      references,
+      appliedRules,
     } = await scorer.scoreBP({
       process: processSpec,
       bp,
@@ -83,10 +85,12 @@ export async function evaluateBPs(processSpec, artifacts, scorer, options = {}) 
       scorePercent,
       evidence,
       gaps,
-      pamCitation: bp.pamCitation ?? processSpec.pamSection,
+      pamCitation: references?.pam?.citation ?? bp.pamCitation ?? processSpec.pamSection,
       contextConsistency: contextConsistency ?? { status: "unknown", note: "" },
       standardReferences: mergedRefs,
       findings: enrichedFindings,
+      appliedRules: appliedRules ?? [],
+      ...(references !== undefined ? { references } : {}),
     };
     })
   );

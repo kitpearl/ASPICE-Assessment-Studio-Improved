@@ -1,124 +1,195 @@
 {
   "id": "MLE.1",
-  "name": "Machine Learning Requirements Analysis",
+  "name": "머신 러닝 요구사항 분석",
+  "nameEn": "Machine Learning Requirements Analysis",
+  "pamVersion": "4.1",
   "category": "MLE",
   "pamSection": "4.6.1",
-  "purpose": "The purpose is to refine the machine learning-related software requirements into a set of ML requirements.",
+  "page": 67,
+  "purpose": "프로세스 목적은 머신 러닝 관련 소프트웨어 요구사항을 ML 요구사항 집합으로 구체화하는 것이다.",
   "outcomes": [
     {
       "id": 1,
-      "text": "The ML requirements including ML data requirements are identified and specified based on the software requirements and the components of the software architecture."
+      "text": "ML 데이터 요구사항을 포함하여 ML 요구사항이 소프트웨어 요구사항 및 소프트웨어 아키텍처의 컴포넌트를 기반으로 식별되고 명세된다."
     },
     {
       "id": 2,
-      "text": "ML requirements are structured and prioritized."
+      "text": "ML 요구사항이 구조화되고 우선순위가 정해진다."
     },
     {
       "id": 3,
-      "text": "ML requirements are analyzed for correctness and verifiability."
+      "text": "ML 요구사항의 정확성과 검증가능성이 분석된다."
     },
     {
       "id": 4,
-      "text": "The impact of ML requirements on the ML operating environment is analyzed."
+      "text": "ML 요구사항이 ML 운용 환경에 미치는 영향이 분석된다"
     },
     {
       "id": 5,
-      "text": "Consistency and bidirectional traceability are established between ML requirements and software requirements, and between ML requirements and software architecture."
+      "text": "ML 요구사항과 소프트웨어 요구사항 간, ML 요구사항과 소프트웨어 아키텍처 간의 일관성 및 양방향 추적성이 수립된다."
     },
     {
       "id": 6,
-      "text": "The ML requirements are agreed and communicated to all affected parties."
+      "text": "ML 요구사항이 합의되고 영향받는 모든 당사자에게 의사소통된다."
     }
   ],
   "basePractices": [
     {
       "id": "BP1",
-      "title": "Specify ML requirements",
-      "description": "Use the software requirements and the software architecture to identify and specify functional and non-functional ML requirements, as well as ML data requirements specifying data characteristics (e.g., gender, weather conditions, street conditions within the ODD) and their expected distributions. robustness, performance, and level of trustworthiness. also for other MLE processes. requirements.",
-      "pamCitation": "PAM §MLE.1 BP1"
+      "title": "ML 요구사항을 명세한다",
+      "description": "소프트웨어 요구사항 및 소프트웨어 아키텍처를 사용하여 기능적 및 비기능적 ML 요구사항뿐만 아니라, 데이터 특징과 그 기대 분포를 명세하는 ML 데이터 요구사항을 식별하고 명세한다.",
+      "notes": [
+        "비고 1: 비기능적 요구사항은 ODD 의 관련 특징과 강건성, 성능, 신뢰성(trustworthiness)과 같은 측면을 포함할 수 있다.",
+        "비고 2: ML 데이터 요구사항은 SUP.11 머신 러닝 데이터 관리 및 기타 MLE 프로세스에 대한 입력으로 사용된다.",
+        "비고 3: ML 만 개발하는 경우, 이해관계자 요구사항은 소프트웨어 요구사항으로 간주된다.",
+        "비고 4: 데이터 특징에는 예를 들어 성별, 날씨 조건, ODD 내의 도로 조건이 있을 수 있다."
+      ],
+      "page": 68,
+      "pamCitation": "PAM 4.1 §4.6.1 MLE.1.BP1",
+      "titleEn": "Specify the ML requirements",
+      "descriptionEn": "Use the software requirements and the software architecture to identify and specify the functional and non-functional ML requirements, as well as the ML data requirements specifying the data characteristics and their expected distributions.",
+      "notesEn": [
+        "Non-functional requirements may include relevant characteristics of the ODD and aspects such as robustness, performance, and level of trustworthiness.",
+        "The ML data requirements are input for SUP.11 Machine Learning Data Management but also for other MLE processes.",
+        "In case of ML development only, stakeholder requirements represent the software requirements.",
+        "Data characteristics can be, e.g., gender, weather conditions, street conditions within the ODD."
+      ]
     },
     {
       "id": "BP2",
-      "title": "Structure ML requirements",
-      "description": "Structure and prioritize the ML requirements. Note 4: Examples for structuring criteria can be grouping (e.g., by functionality) or variants identification. release scopes. Refer to SPL.2.BP1.",
-      "pamCitation": "PAM §MLE.1 BP2"
+      "title": "ML 요구사항을 구조화한다",
+      "description": "ML 요구사항을 구조화하고 우선순위를 정한다.",
+      "notes": [
+        "비고 5: 구조화 기준의 예로는 그룹화(예: 기능별 그룹화) 또는 배리언트 식별이 있다.",
+        "비고 6: 우선순위는 예를 들어, 출시 범위의 정의를 통해 프로젝트 또는 이해관계자 요구에 따라 정할 수 있다. SPL.2.BP1 을 참조한다."
+      ],
+      "page": 68,
+      "pamCitation": "PAM 4.1 §4.6.1 MLE.1.BP2",
+      "titleEn": "Structure the ML requirements",
+      "descriptionEn": "Structure and prioritize the ML requirements.",
+      "notesEn": [
+        "Examples for structuring criteria can be grouping (e.g., by functionality) or variants identification.",
+        "Prioritization can be done according to project or stakeholder needs via, e.g., the definition of release scopes. Refer to SPL.2.BP1."
+      ]
     },
     {
       "id": "BP3",
-      "title": "Analyze ML requirements",
-      "description": "Analyze the specified ML requirements including their interdependencies to ensure correctness, technical feasibility, and ability for machine learning model testing, and to support project management regarding project estimates. requirements. | | | the software requirements and the components of the software architecture. 2) ML requirements are structured and prioritized. 3) ML requirements are analyzed for correctness and verifiability. 4) The impact of ML requirements on the ML operating environment is analyzed. 5) Consistency and bidirectional traceability are established between ML requirements and software requirements, and between ML requirements and software architecture. 6) The ML requirements are agreed and communicated to all affected parties. | | | architecture to identify and specify functional and non-functional ML requirements, as well as ML data requirements specifying data characteristics (e.g., gender, weather conditions, street conditions within the ODD) and their expected distributions. robustness, performance, and level of trustworthiness. also for other MLE processes. requirements. | | | identification. release scopes. Refer to SPL.2.BP1. | | | interdependencies to ensure correctness, technical feasibility, and ability for machine learning model testing, and to support project management regarding project estimates.",
-      "pamCitation": "PAM §MLE.1 BP3"
+      "title": "요구사항을 분석한다",
+      "description": "정확성, 기술적 실현가능성, 머신 러닝 모델 테스트 가능성을 보장하고 프로젝트 추정 관련 프로젝트 관리를 지원하기 위해 상호의존성을 포함한 명세된 ML 요구사항을 분석한다.",
+      "notes": [
+        "비고 7: 프로젝트 실현가능성은 MAN.3.BP3, 프로젝트 추정은 MAN.3.BP5 를 참조한다."
+      ],
+      "page": 68,
+      "pamCitation": "PAM 4.1 §4.6.1 MLE.1.BP3",
+      "titleEn": "Analyze the ML requirements",
+      "descriptionEn": "Analyze the specified ML requirements including their interdependencies to ensure correctness, technical feasibility, and ability for machine learning model testing, and to support project management regarding project estimates.",
+      "notesEn": [
+        "See MAN.3.BP3 for project feasibility and MAN.3.BP5 for project estimates."
+      ]
     },
     {
       "id": "BP4",
-      "title": "Analyze the impact on the ML operating environment",
-      "description": "Analyze the impact that the ML requirements will have on interfaces of software components and the ML operating environment. the trained ML model and the deployed ML model need for execution.",
-      "pamCitation": "PAM §MLE.1 BP4"
+      "title": "ML 운용 환경에 미치는 영향을 분석한다",
+      "description": "ML 요구사항이 소프트웨어 컴포넌트의 인터페이스 및 ML 운용 환경에 미치는 영향을 분석한다.",
+      "notes": [
+        "비고 8: ML 운용 환경은 훈련된 ML 모델과 전개된 ML 모델 모두가 실행에 필요한 인프라 및 정보로 정의된다."
+      ],
+      "page": 68,
+      "pamCitation": "PAM 4.1 §4.6.1 MLE.1.BP4",
+      "titleEn": "Analyze the impact on the ML operating environment",
+      "descriptionEn": "Analyze the impact that the ML requirements will have on the interfaces of the software components and the ML operating environment.",
+      "notesEn": [
+        "The ML operating environment is defined as the infrastructure and information which both the trained ML model and the deployed ML model need for execution."
+      ]
     },
     {
       "id": "BP5",
-      "title": "Ensure consistency and establish bidirectional traceability",
-      "description": "Ensure consistency and establish bidirectional traceability between ML requirements and software requirements and between ML requirements and the software architecture. requests, and verification coverage demonstration. Traceability alone, e.g., the existence of links, does not necessarily mean that the information is consistent with each other.",
-      "pamCitation": "PAM §MLE.1 BP5"
+      "title": "일관성을 보장하고 양방향 추적성을 수립한다",
+      "description": "ML 요구사항과 소프트웨어 요구사항 간, ML 요구사항과 소프트웨어 아키텍처 간의 일관성을 보장하고 양방향 추적성을 수립한다.",
+      "notes": [
+        "비고 9: 양방향 추적성은 일관성을 지원하고, 변경 요청의 영향 분석 및 검증 커버리지 입증을 용이하게 한다. 예를 들어, 링크의 존재와 같은 추적성 자체만으로는 정보에 일관성이 있다는 것을 의미하지는 않는다.",
+        "비고 10: 중복 추적성은 의도되지 않지만, 주어진 추적성 경로 중 적어도 하나는 확보되어야 한다."
+      ],
+      "page": 68,
+      "pamCitation": "PAM 4.1 §4.6.1 MLE.1.BP5",
+      "titleEn": "Ensure consistency and establish bidirectional traceability",
+      "descriptionEn": "Ensure consistency and establish bidirectional traceability between the ML requirements and the software requirements and between the ML requirements and the software architecture.",
+      "notesEn": [
+        "Bidirectional traceability supports consistency, facilitates impact analyses of change requests, and verification coverage demonstration. Traceability alone, e.g., the existence of links, does not necessarily mean that the information is consistent.",
+        "Redundant traceability is not intended, but at least one out of the given traceability paths is required."
+      ]
     },
     {
       "id": "BP6",
-      "title": "Communicate agreed ML requirements and impact on the operating",
-      "description": "environment. Communicate the agreed ML requirements, and the results of the impact analysis on the ML operating environment to all affected parties. MLE.1 Machine Learning Requirements Analysis 1 emoctuO 2 emoctuO 3 emoctuO 4 emoctuO 5 emoctuO 6 emoctuO",
-      "pamCitation": "PAM §MLE.1 BP6"
+      "title": "합의된 ML 요구사항 및 운용 환경에 미치는 영향을 의사소통한다",
+      "description": "합의된 ML 요구사항과 ML 운용 환경에 미치는 영향 분석 결과를 영향받는 모든 당사자에게 의사소통한다.",
+      "notes": [],
+      "page": 69,
+      "pamCitation": "PAM 4.1 §4.6.1 MLE.1.BP6",
+      "titleEn": "Communicate the agreed ML requirements and the impact on the operating environment",
+      "descriptionEn": "Communicate the agreed ML requirements, and the results of the impact analysis on the ML operating environment to all affected parties."
     }
   ],
   "outputWorkProducts": [
     {
       "id": "17-00",
-      "name": "Requirement"
+      "name": "요구사항",
+      "nameEn": "Requirement"
     },
     {
       "id": "17-54",
-      "name": "Requirement attribute"
+      "name": "요구사항 속성",
+      "nameEn": "Requirement Attribute"
     },
     {
       "id": "13-52",
-      "name": "Communication evidence"
+      "name": "의사소통 증거",
+      "nameEn": "Communication evidence"
     },
     {
       "id": "13-51",
-      "name": "Consistency evidence"
+      "name": "일관성 증거",
+      "nameEn": "Consistency Evidence"
     },
     {
       "id": "15-51",
-      "name": "Analysis results"
+      "name": "분석 결과",
+      "nameEn": "Analysis results"
     }
   ],
   "inputWorkProducts": [
     {
       "id": "04-06",
-      "name": "System Architecture",
+      "name": "시스템 아키텍처",
+      "nameEn": "System Architecture",
       "fromProcess": "SYS.3"
     },
     {
       "id": "13-16",
-      "name": "Change request",
+      "name": "변경 요청",
+      "nameEn": "Change request",
       "fromProcess": "SUP.10"
     },
     {
       "id": "17-00",
-      "name": "Requirement",
+      "name": "요구사항",
+      "nameEn": "Requirement",
       "fromProcess": "SYS.2"
     },
     {
       "id": "17-54",
-      "name": "Requirement Attribute",
+      "name": "요구사항 속성",
+      "nameEn": "Requirement Attribute",
       "fromProcess": "SYS.2"
     },
     {
       "id": "17-57",
-      "name": "Special Characteristics",
+      "name": "특별 특성",
+      "nameEn": "Special Characteristics",
       "fromProcess": "SYS.3"
     }
   ],
   "traceBPs": [
-    "BP3",
     "BP5"
   ]
 }

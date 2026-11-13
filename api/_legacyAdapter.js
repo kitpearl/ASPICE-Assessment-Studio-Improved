@@ -52,6 +52,9 @@ function condenseGap(raw) {
   return s;
 }
 
+// Rating basis shown in front of every summary line.
+const BASIS_PREFIX = "기준: PAM 4.1 · Guidelines 2026 · ";
+
 /** Convert ProcessVerdict → legacy UI shape {ratings, summary, strengths, gaps}. */
 export function toLegacyShape(v, skipped = []) {
   const ratings = (v.bps || []).map((b) => {
@@ -81,6 +84,8 @@ export function toLegacyShape(v, skipped = []) {
       // back to the rationale + evidence path above.
       findings: Array.isArray(b.findings) ? b.findings : [],
       standardReferences: b.standardReferences ?? { pam: [], pamNote: [], bgbRL: [], iso: [], incose: [] },
+      references: b.references,
+      appliedRules: b.appliedRules ?? [],
     };
   });
   const strong = (v.bps || []).filter((b) => b.scorePercent >= 68);
@@ -89,7 +94,7 @@ export function toLegacyShape(v, skipped = []) {
     ? ` · 스킵된 파일 ${skipped.length}개: ${skipped.map((s) => s.name).join(", ")}`
     : "";
   const fpNote = summarizeProjectFingerprint(v.projectFingerprint);
-  const summary = `CL${v.capabilityLevel} — ${v.capabilityLevelReason ?? ""}${skipNote}${fpNote}`;
+  const summary = `${BASIS_PREFIX}CL${v.capabilityLevel} — ${v.capabilityLevelReason ?? ""}${skipNote}${fpNote}`;
   return {
     ratings,
     summary,

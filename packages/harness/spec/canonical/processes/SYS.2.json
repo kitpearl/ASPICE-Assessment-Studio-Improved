@@ -1,124 +1,188 @@
 {
   "id": "SYS.2",
-  "name": "System Requirements Analysis",
+  "name": "시스템 요구사항 분석",
+  "nameEn": "System Requirements Analysis",
+  "pamVersion": "4.1",
   "category": "SYS",
   "pamSection": "4.3.2",
-  "purpose": "The purpose is to establish a structured and analyzed set of system requirements consistent with the stakeholder requirements.",
+  "page": 40,
+  "purpose": "프로세스 목적은 이해관계자 요구사항과 일관된, 구조화되고 분석된 시스템 요구사항 집합을 수립하는 것이다.",
   "outcomes": [
     {
       "id": 1,
-      "text": "System requirements are specified."
+      "text": "시스템 요구사항이 명세된다."
     },
     {
       "id": 2,
-      "text": "System requirements are structured and prioritized."
+      "text": "시스템 요구사항이 구조화되고 우선순위가 정해진다."
     },
     {
       "id": 3,
-      "text": "System requirements are analyzed for correctness and technical feasibility."
+      "text": "시스템 요구사항의 정확성과 기술적 실현가능성이 분석된다."
     },
     {
       "id": 4,
-      "text": "The impact of system requirements on the operating environment is analyzed."
+      "text": "시스템 요구사항이 운용 환경에 미치는 영향이 분석된다."
     },
     {
       "id": 5,
-      "text": "Consistency and bidirectional traceability are established between system requirements and stakeholder requirements."
+      "text": "시스템 요구사항과 이해관계자 요구사항 간의 일관성 및 양방향 추적성이 수립된다."
     },
     {
       "id": 6,
-      "text": "The system requirements are agreed and communicated to all affected parties."
+      "text": "시스템 요구사항이 합의되고 영향받는 모든 당사자에게 의사소통된다."
     }
   ],
   "basePractices": [
     {
       "id": "BP1",
-      "title": "Specify system requirements",
-      "description": "Use the stakeholder requirements to identify and document the functional and non-functional requirements for the system according to defined characteristics for requirements. 26262-8:2018, or the INCOSE Guide For Writing Requirements. verifiability (i.e., verification criteria being inherent in the requirements text), unambiguity/comprehensibility, freedom from design and implementation, and not contradicting any other requirement).",
-      "pamCitation": "PAM §SYS.2 BP1"
+      "title": "시스템 요구사항을 명세한다",
+      "description": "이해관계자 요구사항을 사용하여 정의된 요구사항 특징에 따라 시스템의 기능적 및 비기능적 요구사항을 식별하고 문서화한다.",
+      "notes": [
+        "비고 1: 요구사항의 특징은 ISO IEEE 29148, ISO 26262-8:2018 또는 INCOSE Guide For Writing Requirements 등의 표준에 정의되어 있다.",
+        "비고 2: 기술 표준에서 공통적으로 사용되는 요구사항의 정의된 특징의 예로는 검증가능성(즉, 검증 기준이 요구사항 문장에 포함되어 있음), 명확성/이해가능성, 설계 및 구현으로부터의 자유, 다른 어떠한 요구사항과도 모순되지 않음이 있다."
+      ],
+      "page": 40,
+      "pamCitation": "PAM 4.1 §4.3.2 SYS.2.BP1",
+      "titleEn": "Specify the system requirements",
+      "descriptionEn": "Use the stakeholder requirements to identify and document the functional and non-functional requirements for the system according to the defined characteristics for requirements.",
+      "notesEn": [
+        "Characteristics of requirements are defined in standards such as ISO IEEE 29148, ISO 26262-8:2018, or the INCOSE Guide For Writing Requirements.",
+        "Examples for defined characteristics of requirements shared by technical standards are verifiability (i.e., verification criteria being inherent in the requirements text), unambiguity/comprehensibility, freedom from design and implementation, and not contradicting any other requirement)."
+      ]
     },
     {
       "id": "BP2",
-      "title": "Structure system requirements",
-      "description": "Structure and prioritize the system requirements. Note 3: Examples for structuring criteria can be grouping (e.g., by functionality) or product variants identification. release scopes. Please refer to SPL.2.BP1.",
-      "pamCitation": "PAM §SYS.2 BP2"
+      "title": "시스템 요구사항을 구조화한다",
+      "description": "시스템 요구사항을 구조화하고 우선순위를 정한다.",
+      "notes": [
+        "비고 3: 구조화의 예로는 기능별 그룹화 또는 제품 배리언트 식별이 있다.",
+        "비고 4: 우선순위는 예를 들어, 출시 범위 정의를 통해 프로젝트나 이해관계자 요구에 따라 수행될 수 있다. SPL.2.BP1 을 참조한다."
+      ],
+      "page": 40,
+      "pamCitation": "PAM 4.1 §4.3.2 SYS.2.BP2",
+      "titleEn": "Structure the system requirements",
+      "descriptionEn": "Structure and prioritize the system requirements.",
+      "notesEn": [
+        "Examples for structuring can be grouping by functionality or product variants identification.",
+        "Prioritization can be done according to project or stakeholder needs via, e.g., definition of release scopes. Please refer to SPL.2.BP1."
+      ]
     },
     {
       "id": "BP3",
-      "title": "Analyze system requirements",
-      "description": "Analyze the specified system requirements including their interdependencies to ensure correctness, technical feasibility, and to support project management regarding project estimates. prototype development or product demonstrators. with the stakeholder requirements. | | | 2) System requirements are structured and prioritized. 3) System requirements are analyzed for correctness and technical feasibility. 4) The impact of system requirements on the operating environment is analyzed. 5) Consistency and bidirectional traceability are established between system requirements and stakeholder requirements. 6) The system requirements are agreed and communicated to all affected parties. | | | document the functional and non-functional requirements for the system according to defined characteristics for requirements. 26262-8:2018, or the INCOSE Guide For Writing Requirements. verifiability (i.e., verification criteria being inherent in the requirements text), unambiguity/comprehensibility, freedom from design and implementation, and not contradicting any other requirement). | | | identification. release scopes. Please refer to SPL.2.BP1. | | | including their interdependencies to ensure correctness, technical feasibility, and to support project management regarding project estimates. prototype development or product demonstrators. | | |",
-      "pamCitation": "PAM §SYS.2 BP3"
+      "title": "시스템 요구사항을 분석한다",
+      "description": "정확성과 기술적 실현가능성을 보장하고 프로젝트 추정 관련 프로젝트 관리를 지원하기 위해 상호의존성을 포함한 명세된 시스템 요구사항을 분석한다.",
+      "notes": [
+        "비고 5: 프로젝트 실현가능성은 MAN.3.BP3, 프로젝트 추정은 MAN.3.BP5 를 참조한다.",
+        "비고 6: 기술적 실현가능성은 예를 들어, 플랫폼이나 제품 라인을 기반으로 하거나, 프로토타입 개발 또는 제품 시연 모델을 통해 평가될 수 있다."
+      ],
+      "page": 41,
+      "pamCitation": "PAM 4.1 §4.3.2 SYS.2.BP3",
+      "titleEn": "Analyze the system requirements",
+      "descriptionEn": "Analyze the specified system requirements including their interdependencies to ensure correctness, technical feasibility, and to support project management regarding project estimates.",
+      "notesEn": [
+        "See MAN.3.BP3 for project feasibility and MAN.3.BP5 for project estimates.",
+        "Technical feasibility can be evaluated based on, e.g., platform or product line, or by means of prototype development or product demonstrators."
+      ]
     },
     {
       "id": "BP4",
-      "title": "Analyze the impact on the system context",
-      "description": "Analyze the impact that the system requirements will have on elements in the relevant system context.",
-      "pamCitation": "PAM §SYS.2 BP4"
+      "title": "시스템 맥락에 미치는 영향을 분석한다",
+      "description": "시스템 요구사항이 관련 시스템 맥락의 요소에 미칠 영향을 분석한다.",
+      "notes": [],
+      "page": 41,
+      "pamCitation": "PAM 4.1 §4.3.2 SYS.2.BP4",
+      "titleEn": "Analyze the impact on the system context",
+      "descriptionEn": "Analyze the impact that the system requirements will have on the elements in the relevant system context."
     },
     {
       "id": "BP5",
-      "title": "Ensure consistency and establish bidirectional traceability",
-      "description": "Ensure consistency and establish bidirectional traceability between system requirements and stakeholder requirements. requests, and supports the demonstration of coverage of stakeholder requirements. Traceability alone, e.g., the existence of links, does not necessarily mean that the information is consistent with each other. trace to. Examples are process requirements. Such stakeholder requirements are still subject to verification.",
-      "pamCitation": "PAM §SYS.2 BP5"
+      "title": "일관성을 보장하고 양방향 추적성을 수립한다",
+      "description": "시스템 요구사항과 이해관계자 요구사항 간의 일관성을 보장하고 양방향 추적성을 수립한다.",
+      "notes": [
+        "비고 7: 양방향 추적성은 일관성을 지원하고, 변경 요청의 영향 분석을 용이하게 하며, 이해관계자 요구사항의 커버리지 입증을 지원한다. 예를 들어, 링크의 존재와 같은 추적성 자체만으로는 정보에 일관성이 있다는 것을 의미하지는 않는다.",
+        "비고 8: 시스템 요구사항이 추적하지 않는 비기능적 이해관계자 요구사항이 있을 수 있다. 예를 들어, 프로세스 요구사항이 있다. 이러한 이해관계자 요구사항도 여전히 검증 대상이다."
+      ],
+      "page": 41,
+      "pamCitation": "PAM 4.1 §4.3.2 SYS.2.BP5",
+      "titleEn": "Ensure consistency and establish bidirectional traceability",
+      "descriptionEn": "Ensure consistency and establish bidirectional traceability between the system requirements and the stakeholder requirements.",
+      "notesEn": [
+        "Bidirectional traceability supports consistency, facilitates the impact analyses of change requests, and supports the demonstration of coverage of the stakeholder requirements. Traceability alone, e.g., the existence of links, does not necessarily mean that the information is consistent.",
+        "There may be non-functional stakeholder requirements that the system requirements do not trace to. Examples are process requirements. Such stakeholder requirements are still subject to verification."
+      ]
     },
     {
       "id": "BP6",
-      "title": "Communicate agreed system requirements and impact on the system",
-      "description": "context. Communicate the agreed system requirements, and results of the impact analysis on the system context, to all affected parties. SYS.2 System Requirements Analysis 1 emoctuO 2 emoctuO 3 emoctuO 4 emoctuO 5 emoctuO 6 emoctuO",
-      "pamCitation": "PAM §SYS.2 BP6"
+      "title": "합의된 시스템 요구사항과 시스템 맥락에 미치는 영향을 의사소통한다",
+      "description": "합의된 시스템 요구사항과 시스템 맥락에 미치는 영향 분석 결과를 영향받는 모든 당사자에게 의사소통한다.",
+      "notes": [],
+      "page": 41,
+      "pamCitation": "PAM 4.1 §4.3.2 SYS.2.BP6",
+      "titleEn": "Communicate the agreed system requirements and the impact on the system context",
+      "descriptionEn": "Communicate the agreed system requirements, and the results of the impact analysis on the system context, to all affected parties."
     }
   ],
   "outputWorkProducts": [
     {
       "id": "17-00",
-      "name": "Requirement"
+      "name": "요구사항",
+      "nameEn": "Requirement"
     },
     {
       "id": "17-54",
-      "name": "Requirement Attribute"
+      "name": "요구사항 속성",
+      "nameEn": "Requirement Attribute"
     },
     {
       "id": "15-51",
-      "name": "Analysis Results"
+      "name": "분석 결과",
+      "nameEn": "Analysis results"
     },
     {
       "id": "13-51",
-      "name": "Consistency Evidence"
+      "name": "일관성 증거",
+      "nameEn": "Consistency Evidence"
     },
     {
       "id": "13-52",
-      "name": "Communication Evidence"
+      "name": "의사소통 증거",
+      "nameEn": "Communication evidence"
     }
   ],
   "inputWorkProducts": [
     {
       "id": "08-56",
-      "name": "Schedule",
+      "name": "일정",
+      "nameEn": "Schedule",
       "fromProcess": "MAN.3"
     },
     {
       "id": "13-16",
-      "name": "Change request",
+      "name": "변경 요청",
+      "nameEn": "Change request",
       "fromProcess": "SUP.10"
     },
     {
       "id": "13-19",
-      "name": "Review evidence",
+      "name": "검토 증거",
+      "nameEn": "Review evidence",
       "fromProcess": "SUP.1"
     },
     {
       "id": "17-00",
-      "name": "Requirement",
+      "name": "요구사항",
+      "nameEn": "Requirement",
       "fromProcess": "SYS.1"
     },
     {
       "id": "17-54",
-      "name": "Requirement Attribute",
+      "name": "요구사항 속성",
+      "nameEn": "Requirement Attribute",
       "fromProcess": "SYS.1"
     }
   ],
   "traceBPs": [
-    "BP3",
     "BP5"
   ]
 }

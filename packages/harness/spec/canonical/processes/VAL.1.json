@@ -1,100 +1,167 @@
 {
   "id": "VAL.1",
-  "name": "Validation",
+  "name": "밸리데이션",
+  "nameEn": "Validation",
+  "pamVersion": "4.1",
   "category": "VAL",
   "pamSection": "4.5.1",
-  "purpose": "The purpose is to provide evidence that the end product, allowing direct end user interaction, satisfies the intended use expectations in its operational target environment.",
+  "page": 64,
+  "purpose": "프로세스 목적은 최종 사용자가 직접 상호작용할 수 있는 최종 제품이 운용 대상 환경에서 의도된 사용 기대를 만족함을 입증하는 증거를 제공하는 것이다.",
   "outcomes": [
     {
       "id": 1,
-      "text": "Validation measures are selected considering criteria for regression verification."
+      "text": "밸리데이션 방안이 회귀 밸리데이션 기준을 고려하여 선택된다."
     },
     {
       "id": 2,
-      "text": "The product is validated using the selected validation measures and the results of validation are recorded."
+      "text": "제품이 선택된 밸리데이션 방안을 사용하여 밸리데이션되고, 밸리데이션 결과가 기록된다."
     },
     {
       "id": 3,
-      "text": "Consistency and unidirectional traceability are established between validation measures and stakeholder requirements; and consistency and bidirectional traceability is established between validation results and validation measures."
+      "text": "해당되는 경우, 밸리데이션 방안과 이해관계자 요구사항 간의 일관성 및 양방향 추적성이 수립된다. 밸리데이션 결과와 밸리데이션 방안 간의 양방향 추적성이 수립된다."
     },
     {
       "id": 4,
-      "text": "Results of the validation are summarized and communicated to all affected parties."
+      "text": "밸리데이션 결과가 요약되고, 영향받는 모든 당사자에게 의사소통된다."
     }
   ],
   "basePractices": [
     {
       "id": "BP1",
-      "title": "Specify validation measures for product validation",
-      "description": "Specify the validation measures for the end product based on the stakeholder requirements to provide evidence that it fulfills its intended use expectations in its operational target environment, and • techniques for the validation measures, • pass/fail criteria for validation measures, • a definition of entry and exit criteria for the validation measures, • necessary sequence of validation measures, and • the required validation infrastructure and environment setup. approval requirements. Further examples of sources of intended use expectations are technical risks (see MAN.5, SYS.3.BP4, SWE.2.BP3, HWE.2.BP6). repeated validation of (often rapidly developed) increments in product evolution may be employed to refine stakeholder requirements, and to mitigate risks in the correct identification of needs. formally expressed, but sometimes overriding, attitudes, experience, and subjective tests that comprise stakeholder or end user satisfaction.",
-      "pamCitation": "PAM §VAL.1 BP1"
+      "title": "제품 밸리데이션을 위한 밸리데이션 방안을 명세한다",
+      "description": "운용 대상 환경에서 의도된 사용 기대를 충족한다는 증거를 제공하기 위해 이해관계자 요구사항을 기반으로 최종 제품의 밸리데이션 방안을 다음을 포함하여 명세한다. • 밸리데이션 방안의 기법 • 해당되는 경우, 밸리데이션 방안의 통과/실패 기준 • 해당되는 경우, 밸리데이션 방안의 진입 기준 정의 • 밸리데이션 방안의 필요한 순서 • 요구되는 밸리데이션 인프라 및 환경 설정",
+      "notes": [
+        "비고 1: 밸리데이션과 관련된 이해관계자 요구사항의 예로는 형식 승인(homologation) 또는 법적 형식 인증(type approval) 요구사항이 있다. 의도된 사용 기대의 추가적인 출처의 예로는 기술적 위험이 있다(MAN.5, SYS.3.BP4, SWE.2.BP3, HWE.2.BP6 참조).",
+        "비고 2: 이해관계자 요구사항이 포괄적으로 명세할 수 없거나 자주 변경되는 경우, 이해관계자 요구사항을 구체화하고 요구를 올바르게 식별하는 과정에서 위험을 완화하기 위해, 제품 진화 과정에서 (종종 신속하게 개발된) 증분에 대해 반복적으로 밸리데이션이 수행될 수 있다.",
+        "비고 3: 밸리데이션은 종종 덜 형식적으로 표현되지만 때로는 우선시되기도 하며 이해관계자 또는 최종 사용자의 만족을 구성하는 태도, 경험 및 주관적 평가를 제품이 충족하는지를 확인하기 위해 수행될 수 있다."
+      ],
+      "page": 65,
+      "pamCitation": "PAM 4.1 §4.5.1 VAL.1.BP1",
+      "titleEn": "Specify validation measures for the product validation",
+      "descriptionEn": "Specify the validation measures for the end product based on the stakeholder requirements to provide evidence that it fulfills its intended use expectations in its operational target environment, and this may include • techniques for the validation measures, • pass/fail criteria for the validation measures, if applicable • a definition of entry criteria for the validation measures, if applicable • necessary sequence of the validation measures, and • the required validation infrastructure and environment setup.",
+      "notesEn": [
+        "An example for validation-relevant stakeholder requirements are homologation or legal type approval requirements. Further examples of sources of intended use expectations are technical risks (see MAN.5, SYS.3.BP4, SWE.2.BP3, HWE.2.BP6).",
+        "Where stakeholder requirements cannot be specified comprehensively or change frequently, repeated validation of (often rapidly developed) increments in product evolution may be employed to refine stakeholder requirements, and to mitigate risks in the correct identification of needs.",
+        "Validation may also be conducted to confirm that the product also satisfies the often less formally expressed, but sometimes overriding, attitudes, experience, and subjective tests that comprise stakeholder or end user satisfaction."
+      ]
     },
     {
       "id": "BP2",
-      "title": "Select validation measures",
-      "description": "Document the selection of validation measures considering selection criteria including criteria for regression validation. The documented selection of validation measures shall have sufficient coverage according to the release scope. as test bench, test track, validation on public roads, field use by end users), homologation/ type approval, confirmation of requirements, or the need for regression due to e.g., changes to stakeholder requirements and needs.",
-      "pamCitation": "PAM §VAL.1 BP2"
+      "title": "밸리데이션 방안을 선택한다",
+      "description": "회귀 밸리데이션의 기준을 포함한 선택 기준을 고려하여 밸리데이션 방안의 선택을 문서화한다. 문서화된 밸리데이션 방안 선택은 출시 범위에 따라 충분한 커버리지를 가져야 한다.",
+      "notes": [
+        "비고 4: 선택 기준의 예로는 납품될 제품의 사용 목적(예: 테스트 벤치, 테스트 트랙, 공공 도로에서의 밸리데이션, 최종 사용자의 현장 사용), 형식 승인 및 형식 인증, 요구사항 확인 또는 이해관계자 요구사항 및 요구의 변경으로 인한 회귀 필요성이 있다."
+      ],
+      "page": 66,
+      "pamCitation": "PAM 4.1 §4.5.1 VAL.1.BP2",
+      "titleEn": "Select validation measures",
+      "descriptionEn": "Document the selection of validation measures considering the selection criteria including criteria for regression validation. The documented selection of validation measures shall have sufficient coverage according to the release scope.",
+      "notesEn": [
+        "Examples for criteria for selection can be the release purpose of the delivered product (such as test bench, test track, validation on public roads, field use by end users), homologation/ type approval, confirmation of requirements, or the need for regression due to, e.g., changes to stakeholder requirements and needs."
+      ]
     },
     {
       "id": "BP3",
-      "title": "Perform validation and evaluate results",
-      "description": "Perform the validation of the integrated end product using the selected validation measures. Record the validation results including pass/fail status. Evaluate the validation results. requirements e.g, in the case of mock-ups or concept studies. measures for the end product based on the stakeholder requirements to provide evidence that it fulfills its intended use expectations in its operational target environment, and • techniques for the validation measures, • pass/fail criteria for validation measures, • a definition of entry and exit criteria for the validation measures, • necessary sequence of validation measures, and • the required validation infrastructure and environment setup. approval requirements. Further examples of sources of intended use expectations are technical risks (see MAN.5, SYS.3.BP4, SWE.2.BP3, HWE.2.BP6). repeated validation of (often rapidly developed) increments in product evolution may be employed to refine stakeholder requirements, and to mitigate risks in the correct identification of needs. formally expressed, but sometimes overriding, attitudes, experience, and subjective tests that comprise stakeholder or end user satisfaction. | | | considering selection criteria including criteria for regression validation. The documented selection of validation measures shall have sufficient coverage according to the release scope. as test bench, test track, validation on public roads, field use by end users), homologation/ type approval, confirmation of requirements, or the need for regression due to e.g., changes to stakeholder requirements and needs. | | | end product using the selected validation measures. Record the validation results including pass/fail status. Evaluate the validation results. requirements e.g, in the case of mock-ups or concept studies.",
-      "pamCitation": "PAM §VAL.1 BP3"
+      "title": "밸리데이션을 수행하고 결과를 평가한다",
+      "description": "선택한 밸리데이션 방안을 사용하여 통합된 최종 제품의 밸리데이션을 수행한다. 통과/실패 상태를 포함하여 밸리데이션 결과를 기록한다. 밸리데이션 결과를 평가한다.",
+      "notes": [
+        "비고 5: 밸리데이션 결과는 목업이나 개념 연구의 경우, 이해관계자 또는 시스템 요구사항을 식별하기 위한 방법으로 사용될 수 있다.",
+        "비고 6: 기대된 결과와 다른 벨리데이션 결과에 대한 처리는 SUP.9 를 참조한다."
+      ],
+      "page": 66,
+      "pamCitation": "PAM 4.1 §4.5.1 VAL.1.BP3",
+      "titleEn": "Perform the validation and evaluate the results",
+      "descriptionEn": "Perform the validation of the integrated end product using the selected validation measures. Record the validation results including pass/fail status. Evaluate the validation results.",
+      "notesEn": [
+        "Validation results can be used as a means for identifying stakeholder or system requirements, e.g., in the case of mock-ups or concept studies.",
+        "See SUP.9 for handling the validation results which deviate from expected results."
+      ]
     },
     {
       "id": "BP4",
-      "title": "Ensure consistency and establish bidirectional traceability",
-      "description": "Ensure consistency and establish bidirectional traceability from validation measures to the stakeholder requirements from which they are derived. Establish bidirectional traceability between validation results and validation measures. requirements, homologation requirements, results of technical risk analyses, or stakeholder and system requirements (see SYS.1 and SYS.2). bidirectional traceability from those sources to the validation measures are not possible. In such a case, unidirectional traceability is sufficient. requests, and demonstration of verification coverage. Traceability alone, e.g., the existence of links, does not necessarily mean that the information is consistent with each other.",
-      "pamCitation": "PAM §VAL.1 BP4"
+      "title": "일관성을 보장하고 양방향 추적성을 수립한다",
+      "description": "해당되는 경우, 밸리데이션 방안부터 밸리데이션 방안을 도출하게 한 이해관계자 요구사항까지 일관성을 보장하고 양방향 추적성을 수립한다. 밸리데이션 결과와 밸리데이션 방안 간의 양방향 추적성을 수립한다.",
+      "notes": [
+        "비고 7: 밸리데이션 방안을 도출할 수 있는 출처의 예로는, 법적 요구사항, 형식 승인 요구사항, 기술적 위험 분석의 결과 또는 이해관계자 및 시스템 요구사항이 있다(SYS.1 및 SYS.2 참조).",
+        "비고 8: 밸리데이션 방안의 출처가 법적 또는 형식 승인 요구사항 등인 경우, 해당 출처에서 밸리데이션 방안까지 직접적인 양방향 추적성을 수립할 수 없다. 이러한 경우, 단방향 추적성만으로도 충분하다.",
+        "비고 9: 양방향 추적성은 일관성을 지원하고, 변경 요청의 영향 분석 및 커버리지 입증을 용이하게 한다. 예를 들어, 링크의 존재와 같은 추적성 자체만으로는 정보에 일관성이 있다는 것을 의미하지는 않는다."
+      ],
+      "page": 66,
+      "pamCitation": "PAM 4.1 §4.5.1 VAL.1.BP4",
+      "titleEn": "Ensure consistency and establish bidirectional traceability",
+      "descriptionEn": "Ensure consistency and establish bidirectional traceability, if applicable, from validation measures to the stakeholder requirements from which they are derived. Establish bidirectional traceability between the validation results and the validation measures.",
+      "notesEn": [
+        "Examples of sources of validation measures from which they can be derived are legal requirements, homologation requirements, results of technical risk analyses, or stakeholder and system requirements (see SYS.1 and SYS.2).",
+        "If sources of validation measures are, e.g., legal or homologation requirements, then direct bidirectional traceability from those sources to the validation measures are not possible. In such a case, unidirectional traceability is sufficient.",
+        "Bidirectional traceability supports consistency, and facilitates impact analyses of change requests, and demonstration of validation coverage. Traceability alone, e.g., the existence of links, does not necessarily mean that the information is consistent."
+      ]
     },
     {
       "id": "BP5",
-      "title": "Summarize and communicate results",
-      "description": "Summarize the validation results and communicate them to all affected parties. other parties to judge the consequences. VAL.1 Validation 1 emoctuO 2 emoctuO 3 emoctuO 4 emoctuO",
-      "pamCitation": "PAM §VAL.1 BP5"
+      "title": "결과를 요약하고 의사소통한다",
+      "description": "밸리데이션 결과를 요약하고 영향받는 모든 당사자에게 의사소통 한다.",
+      "notes": [
+        "비고 10: 요약에 테스트 케이스 실행으로부터의 모든 필요한 정보를 제공하여 다른 당사자가 결과를 판단할 수 있도록 한다."
+      ],
+      "page": 66,
+      "pamCitation": "PAM 4.1 §4.5.1 VAL.1.BP5",
+      "titleEn": "Summarize and communicate the results",
+      "descriptionEn": "Summarize the validation results and communicate them to all affected parties.",
+      "notesEn": [
+        "Providing all necessary information from the test case execution in a summary enables other parties to judge the consequences."
+      ]
     }
   ],
   "outputWorkProducts": [
     {
       "id": "08-59",
-      "name": "Validation Measure"
+      "name": "밸리데이션 방안",
+      "nameEn": "Validation Measure"
     },
     {
       "id": "08-57",
-      "name": "Validation Measure Selection Set"
+      "name": "밸리데이션 방안 선택 집합",
+      "nameEn": "Validation Measure Selection Set"
     },
     {
       "id": "13-24",
-      "name": "Validation Results"
+      "name": "밸리데이션 결과",
+      "nameEn": "Validation Results"
     },
     {
       "id": "13-51",
-      "name": "Consistency Evidence"
+      "name": "일관성 증거",
+      "nameEn": "Consistency Evidence"
     },
     {
       "id": "13-52",
-      "name": "Communication Evidence"
+      "name": "의사소통 증거",
+      "nameEn": "Communication evidence"
     }
   ],
   "inputWorkProducts": [
     {
       "id": "11-06",
-      "name": "Integrated System",
+      "name": "통합된 시스템",
+      "nameEn": "Integrated System",
       "fromProcess": "SYS.5"
     },
     {
       "id": "13-19",
-      "name": "Review evidence",
+      "name": "검토 증거",
+      "nameEn": "Review evidence",
       "fromProcess": "SUP.1"
     },
     {
       "id": "15-52",
-      "name": "Verification Results",
+      "name": "검증 결과",
+      "nameEn": "Verification Results",
       "fromProcess": "SYS.5"
     },
     {
       "id": "17-00",
-      "name": "Requirement",
+      "name": "요구사항",
+      "nameEn": "Requirement",
       "fromProcess": "SYS.2"
     }
   ],

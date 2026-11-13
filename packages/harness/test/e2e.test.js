@@ -127,3 +127,14 @@ test("e2e: each finding inherits the BP-level standardReferences (P5/P5-bis)", a
     }
   }
 });
+
+test("evaluateProcess result carries references and meta.ratingConditionRules", async () => {
+  const fixtureArtifacts = [
+    await loadFixture("sys2_srs.md"),
+    await loadFixture("sys2_trace_matrix.csv"),
+  ];
+  const v = await new Harness({ scorer: ruleScorer }).evaluateProcess({ processId: "SYS.2", artifacts: fixtureArtifacts });
+  assert.ok(v.bps[0].references.pam.citation.startsWith("PAM 4.1 §4.3.2 SYS.2.BP1"));
+  assert.ok(Array.isArray(v.meta.ratingConditionRules));
+  assert.ok(Array.isArray(v.bps[0].appliedRules));
+});

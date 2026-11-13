@@ -1,107 +1,167 @@
 {
   "id": "SUP.1",
-  "name": "Quality Assurance",
+  "name": "품질 보증",
+  "nameEn": "Quality Assurance",
+  "pamVersion": "4.1",
   "category": "SUP",
   "pamSection": "4.8.1",
-  "purpose": "The purpose of the Quality Assurance Process is to provide independent and objective assurance that work products and processes comply with defined criteria and that non- conformances are resolved and further prevented.",
+  "page": 89,
+  "purpose": "프로세스 목적은 작업 산출물과 프로세스가 정의된 기준을 준수하고, 부적합 사항이 해결되고 더 나아가 예방되는 것을 독립적이고 객관적으로 보증하는 것이다.",
   "outcomes": [
     {
       "id": 1,
-      "text": "Quality assurance is performed independently and objectively without conflicts of interest."
+      "text": "품질 보증이 이해 상충 없이 독립적이고 객관적으로 수행된다."
     },
     {
       "id": 2,
-      "text": "Criteria for the quality of work products and process performance are defined."
+      "text": "작업 산출물 및 프로세스 수행의 품질 기준이 정의된다."
     },
     {
       "id": 3,
-      "text": "Conformance of work products and process performance with the defined criteria and targets is verified, documented and communicated to the relevant parties."
+      "text": "작업 산출물과 프로세스 성과가 정의된 기준 및 목표에 적합한지 확인하고 문서화하며, 관련 당사자에게 의사소통된다."
     },
     {
       "id": 4,
-      "text": "Non-conformances are tracked, resolved, and further prevented."
+      "text": "부적합 사항이 추적, 해결되고 더 나아가 예방된다."
     },
     {
       "id": 5,
-      "text": "Non-conformances are escalated to appropriate levels of management."
+      "text": "부적합 사항이 관리 책임자의 적절한 수준으로 에스컬레이션된다."
     },
     {
       "id": 6,
-      "text": "Management ensures that escalated non-conformances are resolved."
+      "text": "관리 책임자는 에스컬레이션된 부적합 사항이 해결되도록 보장한다."
     }
   ],
   "basePractices": [
     {
       "id": "BP1",
-      "title": "Ensure independence of quality assurance",
-      "description": "Ensure that quality assurance is performed independently and objectively without conflicts of interest. organizational structure as well as responsibility for processes that are subject to quality assurance (no self-monitoring).",
-      "pamCitation": "PAM §SUP.1 BP1"
+      "title": "품질 보증의 독립성을 보장한다",
+      "description": "품질 보증이 이해 상충 없이 독립적이고 객관적으로 수행되도록 보장한다.",
+      "notes": [
+        "비고 1: 독립성을 평가하기 위한 가능한 입력은 재무 및/또는 조직 구조에 대한 소속과 품질 보증 대상 프로세스에 대한 책임(자체 모니터링 없음) 등이 있다."
+      ],
+      "page": 89,
+      "pamCitation": "PAM 4.1 §4.8.1 SUP.1.BP1",
+      "titleEn": "Ensure independence of quality assurance",
+      "descriptionEn": "Ensure that quality assurance is performed independently and objectively without conflicts of interest.",
+      "notesEn": [
+        "Possible inputs for evaluating the independence may be assignment to financial and/or organizational structure as well as responsibility for processes that are subject to quality assurance (no self-monitoring)."
+      ]
     },
     {
       "id": "BP2",
-      "title": "Define criteria for quality assurance",
-      "description": "Define quality criteria for work products as well as for process tasks and their performance. standards, milestones, etc.",
-      "pamCitation": "PAM §SUP.1 BP2"
+      "title": "품질 보증의 기준을 정의한다",
+      "description": "작업 산출물과 프로세스 업무 및 수행에 대한 품질 기준을 정의한다.",
+      "notes": [
+        "비고 2: 품질 기준은 고객 요구사항, 표준, 마일스톤 등의 내부 및 외부 입력을 고려할 수 있다."
+      ],
+      "page": 89,
+      "pamCitation": "PAM 4.1 §4.8.1 SUP.1.BP2",
+      "titleEn": "Define the criteria for quality assurance",
+      "descriptionEn": "Define the quality criteria for work products as well as for process tasks and their performance.",
+      "notesEn": [
+        "Quality criteria may consider internal and external inputs such as customer requirements, standards, milestones, etc."
+      ]
     },
     {
       "id": "BP3",
-      "title": "Assure quality of work products",
-      "description": "Identify work products subject to quality assurance according to the quality criteria. Perform appropriate activities to evaluate the work products against the defined quality criteria and document the results. improve the work products for further use. assurance that work products and processes comply with defined criteria and that non- conformances are resolved and further prevented. | | | 2) Criteria for the quality of work products and process performance are defined. 3) Conformance of work products and process performance with the defined criteria and targets is verified, documented and communicated to the relevant parties. 4) Non-conformances are tracked, resolved, and further prevented. 5) Non-conformances are escalated to appropriate levels of management. 6) Management ensures that escalated non-conformances are resolved. | | | performed independently and objectively without conflicts of interest. organizational structure as well as responsibility for processes that are subject to quality assurance (no self-monitoring). | | | well as for process tasks and their performance. standards, milestones, etc. | | | assurance according to the quality criteria. Perform appropriate activities to evaluate the work products against the defined quality criteria and document the results. improve the work products for further use. | | |",
-      "pamCitation": "PAM §SUP.1 BP3"
+      "title": "작업 산출물의 품질을 보증한다",
+      "description": "품질 기준에 따라 품질 보증 대상 작업 산출물을 식별한다. 정의된 품질 기준 대비 작업 산출물을 평가하고 결과를 문서화하기 위한 적절한 활동을 수행한다.",
+      "notes": [
+        "비고 3: 품질 보증 활동은 검토, 문제 분석, 향후 사용을 위해 작업 산출물을 개선하는 교훈을 포함할 수 있다."
+      ],
+      "page": 90,
+      "pamCitation": "PAM 4.1 §4.8.1 SUP.1.BP3",
+      "titleEn": "Assure quality of the work products",
+      "descriptionEn": "Identify the work products subject to quality assurance according to the quality criteria. Perform appropriate activities to evaluate the work products against the defined quality criteria and document the results.",
+      "notesEn": [
+        "Quality assurance activities may include reviews, problem analysis and lessons learned that improve the work products for further use."
+      ]
     },
     {
       "id": "BP4",
-      "title": "Assure quality of process activities",
-      "description": "Identify processes subject to quality assurance according to the quality criteria. Perform appropriate activities to evaluate the processes against their defined quality criteria and associated target values and document the results. NOTE 4: Quality assurance activities may include process assessments, problem analysis, regular check of methods, tools, and the adherence to defined processes, and consideration of lessons learned.",
-      "pamCitation": "PAM §SUP.1 BP4"
+      "title": "프로세스 활동의 품질을 보증한다",
+      "description": "품질 기준에 따라 품질 보증 대상 프로세스를 식별한다. 정의된 품질 기준 및 관련 목표 값 대비 프로세스를 평가하고 결과를 문서화하기 위한 적절한 활동을 수행한다.",
+      "notes": [
+        "비고 4: 품질 보증 활동은 프로세스 평가, 문제분석, 방법 및 도구의 정기점검, 정의된 프로세스에 대한 준수, 교훈에 대한 고려를 포함할 수 있다."
+      ],
+      "page": 90,
+      "pamCitation": "PAM 4.1 §4.8.1 SUP.1.BP4",
+      "titleEn": "Assure quality of the process activities",
+      "descriptionEn": "Identify the processes subject to quality assurance according to the quality criteria. Perform appropriate activities to evaluate the processes against their defined quality criteria and associated target values and document the results. NOTE 4: Quality assurance activities may include process assessments, problem analysis, regular check of methods, tools, and the adherence to defined processes, and consideration of lessons learned."
     },
     {
       "id": "BP5",
-      "title": "Summarize and communicate quality assurance activities and results",
-      "description": "Regularly report performance, non-conformances, and trends of quality assurance activities to all affected parties.",
-      "pamCitation": "PAM §SUP.1 BP5"
+      "title": "품질 보증 활동과 결과를 요약하고 의사소통한다",
+      "description": "품질 보증 활동의 수행, 부적합 사항 및 추이 정보를 영향받는 모든 당사자에게 정기적으로 보고한다.",
+      "notes": [],
+      "page": 90,
+      "pamCitation": "PAM 4.1 §4.8.1 SUP.1.BP5",
+      "titleEn": "Summarize and communicate quality assurance activities and results",
+      "descriptionEn": "Regularly report performance, non-conformances, and trends of quality assurance activities to all affected parties."
     },
     {
       "id": "BP6",
-      "title": "Ensure resolution of non-conformances",
-      "description": "Analyze, track, correct, resolve, and further prevent non-conformances found in quality assurance activities. NOTE 5: Non-conformances detected in work products may be entered into the problem resolution management process (SUP.9). NOTE 6: Non-conformances detected in the process definition or implementation may be entered into a process improvement process (PIM.3).",
-      "pamCitation": "PAM §SUP.1 BP6"
+      "title": "부적합 사항의 해결을 보장한다",
+      "description": "품질 보증 활동에서 발견된 부적합 사항을 분석, 추적, 수정, 해결 및 더 나아가 예방한다.",
+      "notes": [
+        "비고 5: 작업 산출물에서 발견된 부적합 사항은 문제 해결 관리 프로세스(SUP.9)에 입력될 수 있다.",
+        "비고 6: 프로세스 정의 또는 이행에서 발견된 부적합 사항은 프로세스 개선 프로세스(PIM.3)에 입력될 수 있다."
+      ],
+      "page": 90,
+      "pamCitation": "PAM 4.1 §4.8.1 SUP.1.BP6",
+      "titleEn": "Ensure the resolution of non-conformances",
+      "descriptionEn": "Analyze, track, correct, resolve, and further prevent non-conformances found in quality assurance activities. NOTE 5: Non-conformances detected in work products may be entered into the problem resolution management process (SUP.9). NOTE 6: Non-conformances detected in the process definition or implementation may be entered into a process improvement process (PIM.3)."
     },
     {
       "id": "BP7",
-      "title": "Escalate non-conformances",
-      "description": "Escalate relevant non-conformances to appropriate levels of management and other relevant stakeholders to facilitate their resolution. NOTE 7: The decision whether to escalate non-conformances may be based on criteria such as delay of resolution, urgency, and risk. SUP.1 Quality Assurance 1 emoctuO 2 emoctuO 3 emoctuO 4 emoctuO 5 emoctuO 6 emoctuO",
-      "pamCitation": "PAM §SUP.1 BP7"
+      "title": "부적합 사항을 에스컬레이션한다",
+      "description": "관련 부적합 사항을 적절한 수준의 관리 책임자 및 기타 관련 이해관계자에게 에스컬레이션하여 해결을 용이하게 만든다.",
+      "notes": [
+        "비고 7: 부적합 사항의 에스컬레이션 여부는 해결 지연, 긴급도, 위험 등의 기준을 기반으로 결정될 수 있다."
+      ],
+      "page": 90,
+      "pamCitation": "PAM 4.1 §4.8.1 SUP.1.BP7",
+      "titleEn": "Escalate non-conformances",
+      "descriptionEn": "Escalate relevant non-conformances to appropriate levels of management and other relevant stakeholders to facilitate their resolution. NOTE 7: The decision whether to escalate non-conformances may be based on criteria such as delay of resolution, urgency, and risk."
     }
   ],
   "outputWorkProducts": [
     {
       "id": "16-50",
-      "name": "Organizational structure"
+      "name": "조직 구조",
+      "nameEn": "Organizational structure"
     },
     {
       "id": "18-52",
-      "name": "Escalation path"
+      "name": "에스컬레이션 경로",
+      "nameEn": "Escalation path"
     },
     {
       "id": "18-07",
-      "name": "Quality criteria"
+      "name": "품질 기준",
+      "nameEn": "Quality criteria"
     },
     {
       "id": "13-52",
-      "name": "Communication evidence"
+      "name": "의사소통 증거",
+      "nameEn": "Communication evidence"
     },
     {
       "id": "13-18",
-      "name": "Quality conformance evidence"
+      "name": "품질 적합성 증거",
+      "nameEn": "Quality conformance evidence"
     },
     {
       "id": "13-19",
-      "name": "Review evidence"
+      "name": "검토 증거",
+      "nameEn": "Review evidence"
     },
     {
       "id": "14-02",
-      "name": "Corrective action"
+      "name": "시정 조치",
+      "nameEn": "Corrective action"
     }
   ],
   "inputWorkProducts": [],

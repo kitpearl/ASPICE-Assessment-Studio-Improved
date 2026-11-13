@@ -5,11 +5,17 @@ import {
   loadProcess,
   loadProcessAttributes,
   loadWorkProducts,
+  loadGuideline,
   ratingScale,
 } from "../spec/canonical/index.js";
 import { extractInternalIds, indexArtifacts } from "../src/io/artifactIndex.js";
+import { readFileSync } from "node:fs";
+import { dirname, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 
-test("canonical: 32 processes extracted from PAM v4.0", () => {
+const __dirname = dirname(fileURLToPath(import.meta.url));
+
+test("canonical: 32 processes from PAM 4.1", () => {
   const procs = loadProcesses();
   assert.equal(procs.length, 32, `expected 32 processes, got ${procs.length}`);
 
@@ -28,13 +34,25 @@ test("canonical: 32 processes extracted from PAM v4.0", () => {
   assert.deepEqual(ids, expected);
 });
 
-test("canonical: SYS.2 BPs, outcomes, output WPs are correct", () => {
+test("canonical: SWE.1 korean primary with english aid", () => {
+  const p = loadProcess("SWE.1");
+  assert.equal(p.pamVersion, "4.1");
+  assert.equal(p.name, "소프트웨어 요구사항 분석");
+  assert.equal(p.nameEn, "Software Requirements Analysis");
+  assert.equal(p.basePractices.length, 6);
+  assert.equal(p.basePractices[0].titleEn, "Specify the software requirements");
+  assert.equal(p.basePractices[0].notes.length, 4);
+  assert.equal(p.basePractices[0].pamCitation, "PAM 4.1 §4.4.1 SWE.1.BP1");
+  assert.ok(p.inputWorkProducts.length > 0);
+});
+
+test("canonical: SYS.2 structure", () => {
   const p = loadProcess("SYS.2");
   assert.ok(p, "SYS.2 should load");
-  assert.equal(p.name, "System Requirements Analysis");
+  assert.equal(p.name, "시스템 요구사항 분석");
   assert.equal(p.category, "SYS");
   assert.equal(p.pamSection, "4.3.2");
-  assert.match(p.purpose, /structured and analyzed set of system requirements/);
+  assert.match(p.purpose, /구조화되고 분석된 시스템 요구사항/);
   assert.equal(p.outcomes.length, 6);
   assert.equal(p.basePractices.length, 6);
   assert.deepEqual(p.basePractices.map((b) => b.id), ["BP1", "BP2", "BP3", "BP4", "BP5", "BP6"]);
@@ -70,6 +88,54 @@ test("canonical: work product catalog populated", () => {
   // Common WPs we reference in the harness logic
   assert.ok(wps["17-00"], "17-00 Requirement catalogued");
   assert.ok(wps["13-51"], "13-51 Consistency Evidence catalogued");
+});
+
+test("canonical: SPL.2 has BP7 without english", () => {
+  const bp7 = loadProcess("SPL.2").basePractices.find((b) => b.id === "BP7");
+  assert.ok(bp7 && !bp7.titleEn);
+});
+
+test("canonical: only MLE.4.BP5 and SPL.2.BP7 lack english (no invented text)", () => {
+  const missing = loadProcesses()
+    .flatMap((p) => p.basePractices.filter((b) => !b.titleEn).map((b) => `${p.id}.${b.id}`))
+    .sort();
+  assert.deepEqual(missing, ["MLE.4.BP5", "SPL.2.BP7"]);
+  const summary = JSON.parse(readFileSync(resolve(__dirname, "../spec/canonical/_summary.json"), "utf8"));
+  const fromSummary = summary.processesById
+    .flatMap((p) => p.bpsWithoutEnglish.map((id) => `${p.id}.${id}`))
+    .sort();
+  assert.deepEqual(fromSummary, ["MLE.4.BP5", "SPL.2.BP7"]);
+});
+
+test("canonical: PA 1.1 ~ 3.2 only in loader, GP english present", () => {
+  const pas = loadProcessAttributes();
+  assert.deepEqual(Object.keys(pas).sort(), ["PA 1.1", "PA 2.1", "PA 2.2", "PA 3.1", "PA 3.2"]);
+  assert.equal(
+    pas["PA 2.1"].genericPractices[0].titleEn,
+    "Identify the objectives and define a strategy for the performance of the process"
+  );
+});
+
+test("canonical: work products keep aliases, add korean names, mark retired", () => {
+  const wps = loadWorkProducts();
+  assert.ok(wps["17-00"].aliases.includes("srs"));
+  assert.equal(wps["17-00"].name, "요구사항");
+  assert.equal(wps["17-00"].nameEn, "Requirement");
+  assert.ok(wps["01-50"].characteristics.examples.length === 2);
+  assert.equal(Object.values(wps).filter((w) => !w.retired).length, 112);
+});
+
+test("canonical: guideline loads", () => {
+  const g = loadGuideline();
+  assert.equal(g.rules.length, 254);
+  assert.ok(g.notes.process["SWE.1"].length > 0);
+});
+
+test("canonical: all.json bundle excludes guideline text", () => {
+  const all = JSON.parse(readFileSync(resolve(__dirname, "../spec/canonical/all.json"), "utf8"));
+  assert.equal(all.version, "aspice-v4.1");
+  assert.equal(all.guidelineRuleCounts["SWE.1"], 10);
+  assert.equal(all.guideline, undefined);
 });
 
 test("ratingScale: 6-point extended scale with CL aggregation", () => {

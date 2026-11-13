@@ -1,89 +1,138 @@
 {
   "id": "MAN.6",
-  "name": "Measurement",
+  "name": "측정",
+  "nameEn": "Measurement",
+  "pamVersion": "4.1",
   "category": "MAN",
   "pamSection": "4.9.3",
-  "purpose": "The purpose is to Collect and analyze data relating to the development results and processes implemented within the organization and its projects, to support effective management of the processes.",
+  "page": 106,
+  "purpose": "프로세스 목적은 조직 및 프로젝트에서 수행된 개발 결과 및 프로세스에 관련된 데이터를 수집하고 분석하여, 프로세스의 효과적인 관리를 지원하는 것이다.",
   "outcomes": [
     {
       "id": 1,
-      "text": "The measurement information needs that are necessary to evaluate the achievement of process objectives and the achievement of desired work products are identified."
+      "text": "프로세스 목표의 달성과 원하는 작업 산출물의 달성을 평가하는 데 필요한 측정 정보 요구가 식별된다."
     },
     {
       "id": 2,
-      "text": "An appropriate set of metrics, driven by the information needs are identified and/or developed."
+      "text": "정보 요구에 의해 도출된 적절한 메트릭 집합이 식별 및/또는 개발된다."
     },
     {
       "id": 3,
-      "text": "Measurement activities are identified and performed."
+      "text": "측정 활동이 식별되고 수행된다."
     },
     {
       "id": 4,
-      "text": "The required metrics are collected, stored, analyzed, and the results interpreted."
+      "text": "요구되는 메트릭이 수집, 저장, 분석되고 결과가 해석된다."
     },
     {
       "id": 5,
-      "text": "Metrics are used to support decisions and provide an objective basis for communication."
+      "text": "의사 결정을 지원하고 의사소통을 위한 객관적 기반을 제공하기 위해 메트릭이 사용된다."
     }
   ],
   "basePractices": [
     {
       "id": "BP1",
-      "title": "Identify information needs",
-      "description": "Identify the measurement information needs that are necessary to evaluate the achievement of process objectives and work products. used in an iterative way.",
-      "pamCitation": "PAM §MAN.6 BP1"
+      "title": "정보 요구를 식별한다",
+      "description": "프로세스 목표 및 작업 산출물의 달성을 평가하는 데 필요한 측정 정보 요구를 식별한다.",
+      "notes": [
+        "비고 1: 정보 요구는 시간에 따라 변경될 수 있다. 그러므로 측정 프로세스가 반복적으로 사용될 수 있다.",
+        "비고 2: 정보 요구는 이해관계자 및 의사결정자와 정렬되는 것이 좋다."
+      ],
+      "page": 106,
+      "pamCitation": "PAM 4.1 §4.9.3 MAN.6.BP1",
+      "titleEn": "Identify the information needs",
+      "descriptionEn": "Identify the measurement information needs that are necessary to evaluate the achievement of process objectives and work products.",
+      "notesEn": [
+        "Information needs may change over time. Therefore, the measurement process may be used in an iterative way.",
+        "The information needs should be aligned with the stakeholders and decision makers."
+      ]
     },
     {
       "id": "BP2",
-      "title": "Specify metrics",
-      "description": "Identify and develop an appropriate set of metrics based on measurement information needs. implemented within the organization and its projects, to support effective management of the processes. | | | process objectives and the achievement of desired work products are identified. 2) An appropriate set of metrics, driven by the information needs are identified and/or developed. 3) Measurement activities are identified and performed. 4) The required metrics are collected, stored, analyzed, and the results interpreted. 5) Metrics are used to support decisions and provide an objective basis for communication. | | | necessary to evaluate the achievement of process objectives and work products. used in an iterative way. | | | measurement information needs.",
-      "pamCitation": "PAM §MAN.6 BP2"
+      "title": "메트릭을 명세한다",
+      "description": "적절한 메트릭 집합을 측정 정보 요구를 기반으로 식별하고 개발한다.",
+      "notes": [
+        "비고 3: 메트릭은 프로세스 또는 개발 결과와 관련이 있을 수 있다."
+      ],
+      "page": 106,
+      "pamCitation": "PAM 4.1 §4.9.3 MAN.6.BP2",
+      "titleEn": "Specify metrics",
+      "descriptionEn": "Identify and develop an appropriate set of metrics based on the measurement information needs.",
+      "notesEn": [
+        "Metrics may be related to processes or development results."
+      ]
     },
     {
       "id": "BP3",
-      "title": "Collect and store metrics",
-      "description": "Collect and store both base and derived metrics, including any context information necessary to verify and understand the metrics. defects found” or “number of lines of code”, where derived metrics are two or more metrics that are brought in relation to each other like “number of defects found per line of code”.",
-      "pamCitation": "PAM §MAN.6 BP3"
+      "title": "메트릭을 수집하고 저장한다",
+      "description": "메트릭을 검증하고 이해하는 데 필요한 맥락 정보를 포함하여 기본 메트릭과 도출된 메트릭을 모두 수집하고 저장한다.",
+      "notes": [
+        "비고 4: 기본 메트릭은 이 프로세스의 맥락 하에서 ‘발견된 결함 수’ 또는 ‘코드 라인 수’ 등 직접 수집된 메트릭이며, 도출된 메트릭은 ‘코드 라인당 발견된 결함 수’ 와 같이 서로 연관된 두 개 이상의 메트릭을 말한다."
+      ],
+      "page": 107,
+      "pamCitation": "PAM 4.1 §4.9.3 MAN.6.BP3",
+      "titleEn": "Collect and store the metrics",
+      "descriptionEn": "Collect and store both base and derived metrics, including any context information necessary to verify and understand the metrics.",
+      "notesEn": [
+        "Base metrics in the context of this process are directly gathered metrics like “number of defects found” or “number of lines of code”, where derived metrics are two or more metrics that are brought in relation to each other like “number of defects found per line of code”."
+      ]
     },
     {
       "id": "BP4",
-      "title": "Analyze collected metrics",
-      "description": "Analyze, interpret and review measured values to support decision-making.",
-      "pamCitation": "PAM §MAN.6 BP4"
+      "title": "수집된 메트릭을 분석한다",
+      "description": "의사결정을 지원하기 위해 측정된 값을 분석, 해석 및 검토한다.",
+      "notes": [],
+      "page": 107,
+      "pamCitation": "PAM 4.1 §4.9.3 MAN.6.BP4",
+      "titleEn": "Analyze the collected metrics",
+      "descriptionEn": "Analyze, interpret and review the measured values to support decision-making."
     },
     {
       "id": "BP5",
-      "title": "Communicate analysis results",
-      "description": "Communicate analysis results to all affected parties.",
-      "pamCitation": "PAM §MAN.6 BP5"
+      "title": "분석 결과를 의사소통한다",
+      "description": "분석 결과를 영향받는 모든 당사자에게 의사소통한다.",
+      "notes": [],
+      "page": 107,
+      "pamCitation": "PAM 4.1 §4.9.3 MAN.6.BP5",
+      "titleEn": "Communicate the analysis results",
+      "descriptionEn": "Communicate the analysis results to all affected parties."
     },
     {
       "id": "BP6",
-      "title": "Use metrics for decision-making",
-      "description": "Make accessible and use information from collected metrics and analysis results for any decision-making process for which it is relevant. MAN.6 Measurement 1 emoctuO 2 emoctuO 3 emoctuO 4 emoctuO 5 emoctuO",
-      "pamCitation": "PAM §MAN.6 BP6"
+      "title": "의사결정을 위해 메트릭을 사용한다",
+      "description": "관련 의사결정 프로세스에 대해 수집된 메트릭과 분석 결과의 정보에 접근 가능하게 하고 사용한다.",
+      "notes": [],
+      "page": 107,
+      "pamCitation": "PAM 4.1 §4.9.3 MAN.6.BP6",
+      "titleEn": "Use metrics for decision-making",
+      "descriptionEn": "Make accessible and use information from the collected metrics and analysis results for any decision-making process for which it is relevant."
     }
   ],
   "outputWorkProducts": [
     {
       "id": "03-03",
-      "name": "Benchmarking data"
+      "name": "벤치마킹 데이터",
+      "nameEn": "Benchmarking data"
     },
     {
       "id": "03-04",
-      "name": "Customer satisfaction data"
+      "name": "고객 만족 데이터",
+      "nameEn": "Customer satisfaction data"
     },
     {
       "id": "03-06",
-      "name": "Process performance information"
+      "name": "프로세스 수행 정보",
+      "nameEn": "Process performance information"
     },
     {
       "id": "07-51",
-      "name": "Measurement result"
+      "name": "측정 결과",
+      "nameEn": "Measurement result"
     },
     {
       "id": "15-51",
-      "name": "Analysis results"
+      "name": "분석 결과",
+      "nameEn": "Analysis results"
     }
   ],
   "inputWorkProducts": [],

@@ -89,7 +89,7 @@ const hi = (s) => `<strong style="color:#0F172A">${esc(s)}</strong>`;
 const overviewHtml = () => `
   ${sectionTitleHtml("개요")}
   <div style="font-size:12px;color:#334155;line-height:1.75">
-    본 스튜디오는 ${hi("VDA Automotive SPICE® 4.0")} 기준에 따라 산출물을 자동 진단합니다.
+    본 스튜디오는 ${hi("VDA Automotive SPICE® 4.1")} 기준에 따라 산출물을 자동 진단합니다.
     두 가지 평가 모드를 제공합니다 — ${hi("프로세스 모드")}(단일 프로세스 · 단일 문서)와
     ${hi("프로젝트 모드")}(다중 프로세스 · 다중 산출물 · Cross-process 검증).
   </div>
@@ -347,7 +347,7 @@ function drawHeader(pdf, mode, pageIndex, pageCount) {
   pdf.line(0, HEADER_H_MM, pw, HEADER_H_MM);
   pdf.setTextColor(10, 10, 12);
   pdf.setFontSize(9);
-  pdf.text(`ASPICE 4.0 USER GUIDE  ·  ${meta.headerLabel}`, SIDE_MM, 9);
+  pdf.text(`ASPICE 4.1 USER GUIDE  ·  ${meta.headerLabel}`, SIDE_MM, 9);
   pdf.setFontSize(7.5);
   pdf.setTextColor(100, 100, 110);
   pdf.text(`${pageIndex} / ${pageCount}`, pw - SIDE_MM, 9, { align: "right" });

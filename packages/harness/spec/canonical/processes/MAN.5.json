@@ -1,91 +1,150 @@
 {
   "id": "MAN.5",
-  "name": "Risk Management",
+  "name": "위험 관리",
+  "nameEn": "Risk Management",
+  "pamVersion": "4.1",
   "category": "MAN",
   "pamSection": "4.9.2",
-  "purpose": "The purpose is to Regularly identify, analyze, treat and monitor process related risks and product related risks.",
+  "page": 104,
+  "purpose": "프로세스 목적은 프로세스 관련 위험과 제품 관련 위험을 정기적으로 식별, 분석, 대응하고 모니터링하는 것이다.",
   "outcomes": [
     {
       "id": 1,
-      "text": "The sources of risks are identified and regularly updated."
+      "text": "위험의 출처가 식별되고 정기적으로 갱신된다."
     },
     {
       "id": 2,
-      "text": "Potential undesirable events are identified as they develop during the conduct of the project."
+      "text": "잠재적인 바람직하지 않은 사건이 프로젝트 진행 중에 발생함에 따라 식별된다."
     },
     {
       "id": 3,
-      "text": "Risks are analyzed and the priority in which to apply resources to treatment of these risks is determined."
+      "text": "위험이 분석되고 해당 위험을 처리하는 데 자원을 적용할 우선순위가 결정된다."
     },
     {
       "id": 4,
-      "text": "Risk measures are defined, applied, and assessed to determine changes in the status of risk"
+      "text": "위험 방안이 정의, 적용되고, 위험 상태의 변화 및 위험 처리 활동의 진척을 결정하기 위해 평가된다."
     },
     {
       "id": 5,
-      "text": "Appropriate treatment is taken to correct or avoid the impact of risk based on its priority, probability, and consequence or other defined risk threshold."
+      "text": "우선순위, 발생 가능성, 결과 또는 기타 정의된 위험 임계값을 기반으로 위험의 영향을 수정하거나 피하기 위해 적절한 처리가 실시된다."
     }
   ],
   "basePractices": [
     {
       "id": "BP1",
-      "title": "Identify sources of risks",
-      "description": "Identify and regularly update the sources of risks with affected parties.",
-      "pamCitation": "PAM §MAN.5 BP1"
+      "title": "위험의 출처를 식별한다",
+      "description": "영향받는 당사자와 위험의 출처를 식별하고 정기적으로 갱신한다.",
+      "notes": [
+        "비고 1: 위험은 기술적, 경제적, 일정 위험을 포함할 수 있다.",
+        "비고 2: 위험은 공급업체의 납품물 및 서비스를 포함할 수 있다.",
+        "비고 3: 위험의 출처는 전체 프로젝트 수명주기에서 다양하게 나타날 수 있다."
+      ],
+      "page": 104,
+      "pamCitation": "PAM 4.1 §4.9.2 MAN.5.BP1",
+      "titleEn": "Identify sources of risks",
+      "descriptionEn": "Identify and regularly update the sources of risks with affected parties.",
+      "notesEn": [
+        "Risks may include technical, economical, and schedule risks.",
+        "Risks may include the suppliers’ deliverables and services.",
+        "The risk sources may vary across the entire project lifecycle."
+      ]
     },
     {
       "id": "BP2",
-      "title": "Identify potential undesirable events",
-      "description": "Identify potential undesirable events within the scope of the risk management for the project.",
-      "pamCitation": "PAM §MAN.5 BP2"
+      "title": "잠재적인 바람직하지 않은 사건을 식별한다",
+      "description": "프로젝트의 위험 관리 범위 내에서 잠재적인 바람직하지 않은 사건을 식별한다.",
+      "notes": [],
+      "page": 104,
+      "pamCitation": "PAM 4.1 §4.9.2 MAN.5.BP2",
+      "titleEn": "Identify the potential undesirable events",
+      "descriptionEn": "Identify the potential undesirable events within the scope of the risk management for the project."
     },
     {
       "id": "BP3",
-      "title": "Determine risks",
-      "description": "Determine the probability and severity of the undesirable events to support priorities for the mitigation of the risks. functional analysis, simulation, FMEA, FTA etc.",
-      "pamCitation": "PAM §MAN.5 BP3"
+      "title": "위험을 결정한다",
+      "description": "위험 완화의 우선순위를 지원하기 위해 잠재적인 바람직하지 않은 사건의 발생 가능성, 결과와 심각도를 분석함으로써 위험을 결정한다.",
+      "notes": [
+        "비고 4: 시스템의 기술적 위험을 분석하기 위해 기능 분석, 시뮬레이션, FMEA, FTA 등 다양한 방법을 사용할 수 있다."
+      ],
+      "page": 105,
+      "pamCitation": "PAM 4.1 §4.9.2 MAN.5.BP3",
+      "titleEn": "Determine the risks",
+      "descriptionEn": "Determine the risks by analyzing the probability, consequence and severity of the potential undesirable events to support priorities for the mitigation of the risks.",
+      "notesEn": [
+        "Different methods may be used to analyze technical risks of a system, for example, functional analysis, simulation, FMEA, FTA etc."
+      ]
     },
     {
       "id": "BP4",
-      "title": "Define risk treatment options",
-      "description": "For each risk select a treatment option to accept, mitigate, avoid, or share (transfer) the risk.",
-      "pamCitation": "PAM §MAN.5 BP4"
+      "title": "위험 처리 수단을 정의한다",
+      "description": "각 위험에 대해 수용, 완화, 회피 또는 공유(전가)하는 처리 수단을 정의한다.",
+      "notes": [],
+      "page": 105,
+      "pamCitation": "PAM 4.1 §4.9.2 MAN.5.BP4",
+      "titleEn": "Define risk treatment options",
+      "descriptionEn": "For each risk define a treatment option to accept, mitigate, avoid, or share (transfer) the risk."
     },
     {
       "id": "BP5",
-      "title": "Define and perform risk treatment activities",
-      "description": "Define and perform risk activities for risk treatment options.",
-      "pamCitation": "PAM §MAN.5 BP5"
+      "title": "위험 처리 활동을 정의하고 수행한다",
+      "description": "위험 처리 수단을 위한 위험 처리 활동을 정의하고 수행한다.",
+      "notes": [],
+      "page": 105,
+      "pamCitation": "PAM 4.1 §4.9.2 MAN.5.BP5",
+      "titleEn": "Define and perform risk treatment activities",
+      "descriptionEn": "Define and perform risk activities for the risk treatment options."
     },
     {
       "id": "BP6",
-      "title": "Monitor risks",
-      "description": "Regularly re-evaluate the risk related to the identified potential undesirable events to determine changes in the status of a risk and to evaluate the progress of the risk treatment activities. management.",
-      "pamCitation": "PAM §MAN.5 BP6"
+      "title": "위험을 모니터링한다",
+      "description": "위험을 정기적으로 재평가하여, 위험 상태의 변화를 결정하고 위험 처리 활동의 진척을 평가한다.",
+      "notes": [
+        "비고 5: 우선순위가 높은 위험은 관리 책임자의 상위 수준에게 의사소통되고, 관리 책임자의 상위 수준에 의해 모니터링될 필요가 있을 수 있다."
+      ],
+      "page": 105,
+      "pamCitation": "PAM 4.1 §4.9.2 MAN.5.BP6",
+      "titleEn": "Monitor the risks",
+      "descriptionEn": "Regularly re-evaluate the risks to determine changes in the status of a risk and to evaluate the progress of the risk treatment activities.",
+      "notesEn": [
+        "Risks of high priority may need to be communicated to and monitored by higher levels of management."
+      ]
     },
     {
       "id": "BP7",
-      "title": "Take corrective action",
-      "description": "When risk treatment activities are not effective, take appropriate corrective action. mitigation concepts or adjusting the existing concepts. MAN.5 Risk Management 1 emoctuO 2 emoctuO 3 emoctuO 4 emoctuO 5 emoctuO",
-      "pamCitation": "PAM §MAN.5 BP7"
+      "title": "시정 조치를 실시한다",
+      "description": "위험 처리 활동이 효과적이지 않을 경우, 적절한 시정 조치를 실시한다.",
+      "notes": [
+        "비고 6: 시정 조치에는 위험의 재평가, 새로운 완화 개념을 개발하고 이행하는 것 또는 기존 개념의 조정을 포함할 수 있다."
+      ],
+      "page": 105,
+      "pamCitation": "PAM 4.1 §4.9.2 MAN.5.BP7",
+      "titleEn": "Take corrective action",
+      "descriptionEn": "When risk treatment activities are not effective, take appropriate corrective action.",
+      "notesEn": [
+        "Corrective actions may involve reevaluation of risks, developing and implementing new mitigation concepts or adjusting the existing concepts."
+      ]
     }
   ],
   "outputWorkProducts": [
     {
       "id": "15-51",
-      "name": "Analysis results"
+      "name": "분석 결과",
+      "nameEn": "Analysis results"
     },
     {
       "id": "15-09",
-      "name": "Risk status"
+      "name": "위험 상태",
+      "nameEn": "Risk status"
     },
     {
       "id": "08-55",
-      "name": "Risk measure"
+      "name": "위험 방안",
+      "nameEn": "Risk measure"
     },
     {
       "id": "14-02",
-      "name": "Corrective action"
+      "name": "시정 조치",
+      "nameEn": "Corrective action"
     }
   ],
   "inputWorkProducts": [],

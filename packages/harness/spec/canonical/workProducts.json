@@ -1,120 +1,2515 @@
 {
+  "01-03": {
+    "id": "01-03",
+    "name": "소프트웨어 컴포넌트",
+    "nameEn": "Software Component",
+    "aliases": [
+      "소프트웨어 컴포넌트",
+      "sw 컴포넌트",
+      "software component"
+    ],
+    "characteristics": {
+      "summary": "1.2 절의 정의를 참조한다.",
+      "identifies": [
+        "소프트웨어 아키텍처에서 소프트웨어 유닛 수준보다 상위에 있는 소프트웨어 엘리먼트 또는 그러한 소프트웨어 요소의 구현물"
+      ],
+      "includes": [
+        "라이브러리, 모듈, 서비스, 스크립트 등의설계 모델 요소 또는 실행 가능한 소스 코드"
+      ],
+      "examples": []
+    },
+    "page": 138
+  },
+  "01-50": {
+    "id": "01-50",
+    "name": "통합된 소프트웨어",
+    "nameEn": "Integrated Software",
+    "aliases": [
+      "통합 소프트웨어",
+      "통합 sw",
+      "integrated software",
+      "통합된 소프트웨어"
+    ],
+    "characteristics": {
+      "summary": "여러 소프트웨어 컴포넌트를 통합하여 구성된 기능 실행 가능한 소프트웨어.",
+      "identifies": [
+        "모든 구성된 소프트웨어 엘리먼트"
+      ],
+      "includes": [
+        "적용 매개변수"
+      ],
+      "examples": [
+        "스터빙이 포함된 시뮬레이터",
+        "객체 코드"
+      ]
+    },
+    "page": 138
+  },
+  "01-52": {
+    "id": "01-52",
+    "name": "형상 항목 목록",
+    "nameEn": "Configuration item list",
+    "aliases": [
+      "형상 항목 목록",
+      "형상 식별 목록",
+      "configuration item list"
+    ],
+    "characteristics": {
+      "summary": "형상 통제 하에 있는 형상 가능한 항목의 목록.",
+      "identifies": [
+        "형상 항목의 명칭",
+        "작업 산출물(Work Products)",
+        "형상 항목에 대한 고유 참조"
+      ],
+      "includes": [
+        "형상 항목 속성 및 특성"
+      ],
+      "examples": []
+    },
+    "page": 139
+  },
+  "01-53": {
+    "id": "01-53",
+    "name": "훈련된 ML 모델",
+    "nameEn": "Trained ML model",
+    "aliases": [
+      "학습된 ml 모델",
+      "trained ml model",
+      "훈련된 ML 모델"
+    ],
+    "characteristics": {
+      "summary": "ML 훈련 프로세스의 결과로 생성된 머신러닝(ML) 모델",
+      "identifies": [
+        "훈련 시 최적화된 가중치 집합"
+      ],
+      "includes": [
+        "ML 아키텍처를 나타내는 소프트웨어",
+        "하이퍼파라미터 집합"
+      ],
+      "examples": []
+    },
+    "page": 139
+  },
+  "01-54": {
+    "id": "01-54",
+    "name": "하이퍼파라미터",
+    "nameEn": "Hyperparameter",
+    "aliases": [
+      "하이퍼파라미터",
+      "hyperparameter"
+    ],
+    "characteristics": {
+      "summary": "머신러닝 모델의 훈련 프로세스를 관리하기 위해 사용되는 설정 또는 구성.",
+      "identifies": [
+        "설명",
+        "초기 값",
+        "ML 훈련 결과 값"
+      ],
+      "includes": [
+        "에포크 수",
+        "네트워크 규모(레이어 수 또는 레이어당 뉴 sys.3.bp1 런 수)"
+      ],
+      "examples": [
+        "학습률",
+        "손실 함수"
+      ]
+    },
+    "page": 139
+  },
   "02-01": {
     "id": "02-01",
-    "name": "Commitment/Agreement",
-    "aliases": []
-  },
-  "13-52": {
-    "id": "13-52",
-    "name": "Communication evidence",
+    "name": "책무/합의사항",
+    "nameEn": "Commitment/Agreement",
     "aliases": [
-      "의사소통 증거",
-      "커뮤니케이션 증거",
-      "공지 메일",
-      "배포 메일",
-      "communication evidence"
-    ]
+      "책무/합의사항"
+    ],
+    "characteristics": {
+      "summary": "거래 또는 관계의 조건에 관하여 둘 이상의 당사자 간에 상호 합의된 사항.",
+      "identifies": [
+        "모든 관련 당사자",
+        "협업의 목적",
+        "정의",
+        "기밀유지",
+        "종료 조건"
+      ],
+      "includes": [
+        "일시 및 기간",
+        "인력 및 장비 등의 자원",
+        "공수",
+        "시설",
+        "책임"
+      ],
+      "examples": []
+    },
+    "page": 139
+  },
+  "03-03": {
+    "id": "03-03",
+    "name": "벤치마킹 데이터",
+    "nameEn": "Benchmarking data",
+    "aliases": [
+      "벤치마킹 데이터"
+    ],
+    "characteristics": {
+      "summary": "성과 값의 비교를 확립하기 위해 성과 측정 결과로 나온 데이터.",
+      "identifies": [
+        "현재 성과 측정",
+        "과거 및 현재의 값",
+        "벤치마킹 되는 기준 및 정보"
+      ],
+      "includes": [
+        "측정 메트릭에 대한 참조",
+        "목적에 대한 참조(예: 목표, 프로세스, 제품 또는 관련 시장)"
+      ],
+      "examples": []
+    },
+    "page": 140
+  },
+  "03-04": {
+    "id": "03-04",
+    "name": "고객 만족 데이터",
+    "nameEn": "Customer satisfaction data",
+    "aliases": [
+      "고객 만족 데이터"
+    ],
+    "characteristics": {
+      "summary": "고객의 능동적 및 수동적 피드백 정보.",
+      "identifies": [
+        "관련 제품 및 서비스",
+        "데이터 수집 방법(예: 현장 성능, 설문조사, 인터뷰, 회의록, 제품 시연)"
+      ],
+      "includes": [
+        "노트",
+        "관찰 사항",
+        "추세 데이터",
+        "개선 기회",
+        "고객 만족 수준"
+      ],
+      "examples": []
+    },
+    "page": 140
+  },
+  "03-06": {
+    "id": "03-06",
+    "name": "프로세스 수행 정보",
+    "nameEn": "Process performance information",
+    "aliases": [
+      "프로세스 수행 정보"
+    ],
+    "characteristics": {
+      "summary": "성과 평가를 위한 정보에 부합하는, 정량적 또는 정성적으로 측정 가능한 지표에 관한 측정.",
+      "identifies": [
+        "정량적 또는 정성적으로 측정 가능한 지표를 산출하기 위한 측정 메트릭",
+        "공수",
+        "시간",
+        "데이터"
+      ],
+      "includes": [
+        "성과 수준 정의(예: 정의된 용량의 사용 수준, 합의 사항)",
+        "목표 정의(예: 처리량)",
+        "자원 활용 데이터(예: 가동 시간, 서비스 중단 시간)",
+        "시간표",
+        "작업 완료 기준(예: 작업 실행 시간)",
+        "프로세스 및 작업 산출물의 품질(예: 부적합 사항 비율) 참조 및 예시:",
+        "프로세스 성과별 산출물, 서비스 수준, 운영 성과"
+      ],
+      "examples": []
+    },
+    "page": 140
+  },
+  "03-50": {
+    "id": "03-50",
+    "name": "검증 방안 데이터",
+    "nameEn": "Verification Measure Data",
+    "aliases": [
+      "검증 데이터",
+      "테스트 데이터",
+      "verification measure data",
+      "검증 방안 데이터"
+    ],
+    "characteristics": {
+      "summary": "검증 방안을 실행하는 동안 기록된 데이터.",
+      "identifies": [
+        "로그 데이터(예: 원시 데이터 또는 도구 생성 출력)",
+        "측정 및 계산 값",
+        "시뮬레이션 프로토콜",
+        "검토 데이터"
+      ],
+      "includes": [
+        "확인 사항 기록"
+      ],
+      "examples": []
+    },
+    "page": 140
+  },
+  "03-51": {
+    "id": "03-51",
+    "name": "ML 데이터 집합",
+    "nameEn": "ML data set",
+    "aliases": [
+      "ml 데이터셋",
+      "ml data set",
+      "ml dataset",
+      "ML 데이터 집합"
+    ],
+    "characteristics": {
+      "summary": "머신러닝 모델의 훈련 및 벨리데이션 또는 테스트를 위한 데이터 선택.",
+      "identifies": [
+        "패턴",
+        "관계",
+        "기능"
+      ],
+      "includes": [
+        "주석 및 라벨",
+        "ML 훈련 및 밸리데이션 데이터 집합",
+        "ML 테스트 데이터 집합"
+      ],
+      "examples": []
+    },
+    "page": 141
+  },
+  "03-53": {
+    "id": "03-53",
+    "name": "ML 데이터",
+    "nameEn": "ML data",
+    "aliases": [
+      "ml 데이터",
+      "ml data",
+      "ML 데이터"
+    ],
+    "characteristics": {
+      "summary": "메타데이터가 부여된 머신러닝에 사용되는 데이터.",
+      "identifies": [
+        "고유 ID",
+        "속성",
+        "데이터 특징 (예: 오디오 기록, 센서 데이터, 사진 및 동영상)",
+        "알고리즘에 의해 생성된 데이터"
+      ],
+      "includes": [
+        "다른 데이터를 처리하여 생성된 데이터(예: 노이즈 추가, 색상 변경 또는 병합된 사진)"
+      ],
+      "examples": []
+    },
+    "page": 141
+  },
+  "03-54": {
+    "id": "03-54",
+    "name": "하드웨어 생산 데이터",
+    "nameEn": "Hardware Production Data",
+    "aliases": [
+      "하드웨어 생산 데이터"
+    ],
+    "characteristics": {
+      "summary": "하드웨어 생산 시 사용되거나 생성되는 데이터.",
+      "identifies": [
+        "레이아웃 데이터 (예: GERBER 형식)",
+        "테스트 커버리지"
+      ],
+      "includes": [
+        "자재 명세서 (BOM)"
+      ],
+      "examples": [
+        "반도체 개발에서 레이아웃 데이터는 GDS2 형식 등의 마스크 데이터일 수 있다."
+      ]
+    },
+    "page": 141
+  },
+  "04-02": {
+    "id": "04-02",
+    "name": "도메인 아키텍처",
+    "nameEn": "Domain architecture",
+    "aliases": [
+      "도메인 아키텍처",
+      "domain architecture"
+    ],
+    "characteristics": {
+      "summary": "도메인에 고유한 상위 수준의 설계 및 구조.",
+      "identifies": [
+        "테일러링 대상 도메인 모델(들)",
+        "자산 명세",
+        "다른 도메인과의 경계 및 관계에 대한 정의 (예: 도메인 인터페이스 명세서 내용)",
+        "도메인 용어",
+        "도메인 표현 표준"
+      ],
+      "includes": [
+        "선택된 아키텍처를 정당화하는 근거",
+        "기능 및 특성",
+        "해당 도메인의 능력 및 개념"
+      ],
+      "examples": []
+    },
+    "page": 141
+  },
+  "04-04": {
+    "id": "04-04",
+    "name": "소프트웨어 아키텍처",
+    "nameEn": "Software Architecture",
+    "aliases": [
+      "소프트웨어 아키텍처",
+      "sw 아키텍처",
+      "소프트웨어 구조",
+      "아키텍처 설계서",
+      "아키텍처 설계",
+      "swad",
+      "software architectural design"
+    ],
+    "characteristics": {
+      "summary": "소프트웨어의 상위 수준 설계 및 구조.",
+      "identifies": [
+        "소프트웨어의 전체 구조",
+        "소프트웨어 컴포넌트의 기능적 동작",
+        "비기능적 특징",
+        "적용 매개변수 설정",
+        "인터페이스의 기술적 특징 (예: 애플리케이션 프로그래밍 인터페이스(API))",
+        "다양한 상태 및 운용 모드에서의 동적 동작 (예: 시작, 종료, 캘리브레이션)",
+        "타이밍 정의 (예: 타임 슬라이스, 주기 시간)",
+        "우선순위 (예: 프로세스 및 위협)",
+        "이벤트 처리 (예: 인터럽트 및 해당 우선순위)"
+      ],
+      "includes": [
+        "선택한 아키텍처에 대한 정당화 근거",
+        "단일 엘리먼트 또는 전체 다이어그램 또는 모델을 위한 설명 주석 (예: 자연어를 사용한)"
+      ],
+      "examples": []
+    },
+    "page": 142
+  },
+  "04-05": {
+    "id": "04-05",
+    "name": "소프트웨어 상세 설계",
+    "nameEn": "Software Detailed Design",
+    "aliases": [
+      "소프트웨어 상세설계",
+      "sw 상세설계",
+      "상세설계서",
+      "상세 설계",
+      "swdd",
+      "software detailed design",
+      "소프트웨어 상세 설계"
+    ],
+    "characteristics": {
+      "summary": "소프트웨어 엘리먼트의 내부 구조 및 동작.",
+      "identifies": [
+        "제어 흐름",
+        "입력/출력 데이터의 형식",
+        "알고리즘",
+        "데이터 구조",
+        "변수"
+      ],
+      "includes": [
+        "선택한 설계를 정당화하는 근거",
+        "인터페이스",
+        "설명 주석",
+        "UML, SysML 등의 준정형 언어 엘리먼트"
+      ],
+      "examples": [
+        "모델 기반 개발 설계에서는 형식 언어 또는 준졍형 언어에 의한 표현을 사용할 수 있다."
+      ]
+    },
+    "page": 142
+  },
+  "04-06": {
+    "id": "04-06",
+    "name": "시스템 아키텍처",
+    "nameEn": "System Architecture",
+    "aliases": [
+      "시스템 아키텍처",
+      "시스템 구조",
+      "syad",
+      "system architectural design",
+      "system architecture"
+    ],
+    "characteristics": {
+      "summary": "시스템의 상위 수준 설계 및 구조.",
+      "identifies": [
+        "시스템 구조의 개요",
+        "시스템 엘리먼트",
+        "시스템 엘리먼트의 동작(예: 작동 모드, 캘리브레이션 순서, 성능)",
+        "환경과의 상호작용",
+        "시스템 엘리먼트들과 환경 간 인터페이스",
+        "하드웨어 소프트웨어 인터페이스 (예: 마이크로컨트롤러의 입출력 핀)",
+        "파라미터(예: 리소스 및 성능 특징 관련)",
+        "도메인별 공학적 참조 (예: 열의 영향에 대한 기계공학적 평가)"
+      ],
+      "includes": [
+        "선택한 아키텍처를 정당화하는 근거",
+        "하위 아키텍처에 대한 참조(예: 하드웨어 아키텍처(04-52), 소프트웨어 아키텍처(04-06) 또는 ML 아키텍처(04-51))"
+      ],
+      "examples": [
+        "연결성을 위한 배선 기술, 제어 장치 및 무선 인터페이스를 식별한 차량 배선 개요"
+      ]
+    },
+    "page": 143
+  },
+  "04-51": {
+    "id": "04-51",
+    "name": "ML 아키텍처",
+    "nameEn": "ML architecture",
+    "aliases": [
+      "ml 아키텍처",
+      "머신러닝 아키텍처",
+      "ml architecture",
+      "ML 아키텍처"
+    ],
+    "characteristics": {
+      "summary": "머신러닝 시스템의 상위 수준 설계 및 구조.",
+      "identifies": [
+        "ML 기반 소프트웨어 엘리먼트의 전체 구조",
+        "ML 모델 및 기타 ML 아키텍처 엘리먼트를 포함한 엘리먼트",
+        "ML 기반 소프트웨어 엘리먼트 내부의 인터페이스",
+        "다른 소프트웨어 엘리먼트와의 인터페이스",
+        "리소스 소비 목표"
+      ],
+      "includes": [
+        "선택한 아키텍처를 정당화하는 근거",
+        "사용된 레이어, 활성화 함수, 손실 함수 및 역전파 등 ML 모델의 세부 사항",
+        "훈련을 위한 하이퍼파라미터의 범위 및 초기 값",
+        "ML 요구사항에 대한 참조"
+      ],
+      "examples": []
+    },
+    "page": 143
+  },
+  "04-52": {
+    "id": "04-52",
+    "name": "하드웨어 아키텍처",
+    "nameEn": "Hardware Architecture",
+    "aliases": [
+      "하드웨어 아키텍처",
+      "hw 아키텍처",
+      "hwad",
+      "hardware architecture"
+    ],
+    "characteristics": {
+      "summary": "전자 장치 시스템의 물리적 컴포넌트에 대한 상위 수준 설계 및 구조.",
+      "identifies": [
+        "하드웨어의 전체 구조",
+        "하드웨어 컴포넌트",
+        "자체 개발한 하드웨어 컴포넌트 및 공급된 하드웨어 컴포넌트",
+        "하드웨어 컴포넌트 간 인터페이스"
+      ],
+      "includes": [
+        "선택한 아키텍처를 정당화하는 근거",
+        "하드웨어 컴포넌트 간 관계 및 의존성",
+        "하드웨어 배리언트 명세",
+        "전원 공급, 열 관리 및 접지 개념"
+      ],
+      "examples": [
+        "집적회로(IC) 컴포넌트의 배치 위치는 '평면도' 아키텍처 문서에 기록된다."
+      ]
+    },
+    "page": 143
+  },
+  "04-53": {
+    "id": "04-53",
+    "name": "하드웨어 상세 설계",
+    "nameEn": "Hardware Detailed Design",
+    "aliases": [
+      "하드웨어 상세설계",
+      "hw 상세설계",
+      "hwdd",
+      "hardware detailed design",
+      "하드웨어 상세 설계"
+    ],
+    "characteristics": {
+      "summary": "하드웨어 하위 시스템의 내부 구조 및 동작.",
+      "identifies": [
+        "하드웨어 부품 간의 상호 연결",
+        "하드웨어 부품의 인터페이스"
+      ],
+      "includes": [
+        "운용 모드 및 내부 상태에서의 동적 동작 (예: 전원 공급 및 차단 순서)",
+        "타이밍 명세 (예: 주파수 및 지연)",
+        "기술 및 해당 특징 (예: 변조 및 필터 설정)",
+        "선택한 설계를 정당화하는 근거",
+        "데이터시트 및 애플리케이션 노트에 대한 참조",
+        "레이아웃 제약 사항"
+      ],
+      "examples": []
+    },
+    "page": 144
+  },
+  "04-54": {
+    "id": "04-54",
+    "name": "하드웨어 스키매틱",
+    "nameEn": "Hardware Schematics",
+    "aliases": [
+      "하드웨어 회로도",
+      "hw 회로도",
+      "hardware schematic",
+      "하드웨어 스키매틱"
+    ],
+    "characteristics": {
+      "summary": "하드웨어 시스템의 컴포넌트 및 연결에 대한 상세 다이어그램.",
+      "identifies": [
+        "하드웨어 부품",
+        "하드웨어 부품 간의 연결"
+      ],
+      "includes": [
+        "하드웨어 부품 및 배리언트의 식별 정보"
+      ],
+      "examples": []
+    },
+    "page": 144
+  },
+  "04-55": {
+    "id": "04-55",
+    "name": "하드웨어 레이아웃",
+    "nameEn": "Hardware Layout",
+    "aliases": [
+      "하드웨어 레이아웃",
+      "hw 레이아웃",
+      "hardware layout"
+    ],
+    "characteristics": {
+      "summary": "회로 기판 또는 장치 내부 부품의 물리적 배치.",
+      "identifies": [
+        "하드웨어 부품의 위치",
+        "제조 데이터(예: 회로 경로, 테스트 포인트)",
+        "재료별 조정",
+        "형상, 마스크 및 라벨",
+        "레이아웃 식별 정보"
+      ],
+      "includes": [
+        "선택한 설계를 정당화하는 근거"
+      ],
+      "examples": [
+        "인쇄 회로 기판 (PCB) 레이아웃은 vias 와 여러 층을 포함한다",
+        "솔더 마스크"
+      ]
+    },
+    "page": 144
+  },
+  "04-56": {
+    "id": "04-56",
+    "name": "하드웨어 엘리먼트 인터페이스",
+    "nameEn": "Hardware Element Interface",
+    "aliases": [
+      "하드웨어 인터페이스",
+      "hw 인터페이스",
+      "hardware element interface",
+      "하드웨어 엘리먼트 인터페이스"
+    ],
+    "characteristics": {
+      "summary": "하드웨어 시스템 내부 물리적 컴포넌트들 간의 상호작용에 대한 설명.",
+      "identifies": [
+        "전기 상호 연결",
+        "열 인터페이스",
+        "전기 특징",
+        "신호 허용 오차",
+        "대역폭 등의 성능 요구"
+      ],
+      "includes": [
+        "출력, 입력 및 유형의 정의",
+        "열 방출",
+        "통신 파라미터",
+        "신호 파라미터"
+      ],
+      "examples": [
+        "SPI, I2C, CAN 과 같은 표준 인터페이스 및 프로토콜"
+      ]
+    },
+    "page": 145
+  },
+  "06-04": {
+    "id": "06-04",
+    "name": "훈련 교재",
+    "nameEn": "Training material",
+    "aliases": [
+      "훈련 교재"
+    ],
+    "characteristics": {
+      "summary": "훈련을 지원하기 위해 생성되거나 사용되는 리소스.",
+      "identifies": [
+        "시스템의 운용, 유지보수 또는 개발을 위한 지식",
+        "적용 분야"
+      ],
+      "includes": [
+        "과정 목록 및 가용성",
+        "절차",
+        "지침",
+        "교육 식별 정보"
+      ],
+      "examples": []
+    },
+    "page": 145
+  },
+  "06-50": {
+    "id": "06-50",
+    "name": "통합 순서 지침",
+    "nameEn": "Integration Sequence Instruction",
+    "aliases": [
+      "통합 순서 지침"
+    ],
+    "characteristics": {
+      "summary": "여러 시스템 또는 컴포넌트를 통합된 형상으로 결합, 조립 혹은 연결하는 작업 흐름 정의.",
+      "identifies": [
+        "하드웨어, 기계 부품 및 배선 엘리먼트 등의 물리적 엘리먼트",
+        "소프트웨어",
+        "적용 매개변수",
+        "통합 순서 및 정렬",
+        "전제 조건"
+      ],
+      "includes": [
+        "안전 지침",
+        "복구 또는 대체 절차",
+        "검증 활동"
+      ],
+      "examples": []
+    },
+    "page": 145
+  },
+  "06-51": {
+    "id": "06-51",
+    "name": "테일러링 가이드라인",
+    "nameEn": "Tailoring guideline",
+    "aliases": [
+      "테일러링 가이드라인"
+    ],
+    "characteristics": {
+      "summary": "프로세스, 방법, 문서 또는 요구사항을 특정 프로젝트, 제품 또는 조직의 맥락에 맞게 조정하기 위한 규칙의 집합.",
+      "identifies": [
+        "테일러링 기준",
+        "테일러링 절차",
+        "승인 조건",
+        "정의된 프로세스의 무결성 및 일관성 요구"
+      ],
+      "includes": [
+        "테일러링 매트릭스",
+        "테일러링 계기",
+        "정의된 프로세스의 자산"
+      ],
+      "examples": []
+    },
+    "page": 146
+  },
+  "06-52": {
+    "id": "06-52",
+    "name": "백업 및 복구 체계 정보",
+    "nameEn": "Backup and recovery mechanism information",
+    "aliases": [
+      "백업 및 복구 체계 정보"
+    ],
+    "characteristics": {
+      "summary": "데이터 손실 또는 손상 발생 시 백업하고 복원하는 데 사용되는 프로세스 및 도구.",
+      "identifies": [
+        "백업 및 복구체계의 설명 및 확인",
+        "해당 절차 또는 규정에 대한 참조"
+      ],
+      "includes": [],
+      "examples": []
+    },
+    "page": 146
+  },
+  "07-04": {
+    "id": "07-04",
+    "name": "프로세스 메트릭",
+    "nameEn": "Process metric",
+    "aliases": [
+      "프로세스 메트릭"
+    ],
+    "characteristics": {
+      "summary": "• 프로세스 수행에 대한 측정: - 충분한 작업 산출물 생산 능력 - 프로세스 준수 여부 - 프로세스 수행에 걸리는 시간 - 프로세스 관련 결함 • 프로세스 변경의 영향 측정 • 프로세스 효율성 측정",
+      "identifies": [],
+      "includes": [],
+      "examples": []
+    },
+    "page": 146
+  },
+  "07-05": {
+    "id": "07-05",
+    "name": "Project metric",
+    "nameEn": "Project metric",
+    "aliases": [],
+    "retired": true
+  },
+  "07-06": {
+    "id": "07-06",
+    "name": "Quality metric",
+    "nameEn": "Quality metric",
+    "aliases": [],
+    "retired": true
+  },
+  "07-08": {
+    "id": "07-08",
+    "name": "Service level metric",
+    "nameEn": "Service level metric",
+    "aliases": [],
+    "retired": true
+  },
+  "07-51": {
+    "id": "07-51",
+    "name": "측정 결과",
+    "nameEn": "Measurement result",
+    "aliases": [
+      "측정 결과"
+    ],
+    "characteristics": {
+      "summary": "정성적 또는 정량적 데이터 수집 결과.",
+      "identifies": [
+        "데이터 출처",
+        "데이터 소유권",
+        "평가 및 측정 작업 흐름",
+        "준수 요구사항 (예: 데이터 보호 관련)",
+        "승인 및 수용 기준"
+      ],
+      "includes": [
+        "벤치마킹 요구",
+        "저작권",
+        "메트릭 참조 (예: 프로세스, 프로젝트 또는 품질)"
+      ],
+      "examples": [
+        "품질 메트릭 (예: 사용성, 신뢰성 및 효율성) 은 최종 고객 대상 설문조사에서 식별할 수 있다",
+        "5D 주기 시간의 성능을 측정하기 위한 현장 고장 측정",
+        "프로젝트 관리를 위한 프로젝트 메트릭 (예: 계획 대비 자원 활용)"
+      ]
+    },
+    "page": 146
+  },
+  "07-61": {
+    "id": "07-61",
+    "name": "정량적 프로세스 메트릭",
+    "nameEn": "Quantitative process metric",
+    "aliases": [
+      "정량적 프로세스 메트릭"
+    ],
+    "characteristics": {
+      "summary": "프로세스의 측정 가능한 관계 및 특징에 대한 정량적 평가.",
+      "identifies": [
+        "측정 가능한 지표",
+        "정량적으로 측정 가능한 지표들의 관계",
+        "경향 평가"
+      ],
+      "includes": [
+        "프로세스 요소 및 설명",
+        "저장소 및 도구 (예: 과거 데이터 저장을 위하여)"
+      ],
+      "examples": [
+        "비즈니스 목표에서 도출된 정보 요구"
+      ]
+    },
+    "page": 147
+  },
+  "07-62": {
+    "id": "07-62",
+    "name": "프로세스 분석 기법",
+    "nameEn": "Process analysis techniques",
+    "aliases": [
+      "프로세스 분석 기법"
+    ],
+    "characteristics": {
+      "summary": "프로세스를 특정 한계 이내에 통제하기 위한 작업 흐름 설명.",
+      "identifies": [
+        "계산 명세 (예: 통계 알고리즘)",
+        "수학적 참조",
+        "데이터 구조"
+      ],
+      "includes": [
+        "데이터 수집 빈도"
+      ],
+      "examples": []
+    },
+    "page": 147
+  },
+  "07-63": {
+    "id": "07-63",
+    "name": "프로세스 통제 한계",
+    "nameEn": "Process control limits",
+    "aliases": [
+      "프로세스 통제 한계"
+    ],
+    "characteristics": {
+      "summary": "프로세스 모니터링 및 관리에 사용되는 경계.",
+      "identifies": [
+        "정량적 통제 한계",
+        "관련 프로세스 메트릭"
+      ],
+      "includes": [],
+      "examples": []
+    },
+    "page": 147
+  },
+  "07-64": {
+    "id": "07-64",
+    "name": "프로세스 측정 데이터",
+    "nameEn": "Process measurement data",
+    "aliases": [
+      "프로세스 측정 데이터"
+    ],
+    "characteristics": {
+      "summary": "프로세스 인스턴스 전반에 걸쳐 수집된 데이터.",
+      "identifies": [
+        "데이터 속성 (예: 타임스탬프)",
+        "프로세스 측정 메트릭과의 관계",
+        "보관 및 검색",
+        "접근에 대한 통제"
+      ],
+      "includes": [],
+      "examples": []
+    },
+    "page": 147
+  },
+  "08-53": {
+    "id": "08-53",
+    "name": "업무 범위",
+    "nameEn": "Scope of work",
+    "aliases": [
+      "작업 범위",
+      "scope of work",
+      "업무 범위"
+    ],
+    "characteristics": {
+      "summary": "프로젝트 또는 프로그램의 업무, 책임 및 납품물에 대한 정의.",
+      "identifies": [
+        "납품물과 그 의도된 사용",
+        "기능 설명",
+        "납품 및 납품일",
+        "마일스톤",
+        "작업 산출물",
+        "활동",
+        "범위 밖의 정의",
+        "수용 요구사항"
+      ],
+      "includes": [
+        "고객 및 시장 정보",
+        "적용 가능한 표준 및 법적 요구사항",
+        "재사용 옵션",
+        "제 3 자 납품물의 통합"
+      ],
+      "examples": []
+    },
+    "page": 147
+  },
+  "08-54": {
+    "id": "08-54",
+    "name": "실현가능성 분석",
+    "nameEn": "Feasibility analysis",
+    "aliases": [
+      "타당성 분석",
+      "feasibility analysis",
+      "실현가능성 분석"
+    ],
+    "characteristics": {
+      "summary": "가용 시간과 자원 내에서 프로젝트 목표를 달성할 수 있는 능력에 대한 평가.",
+      "identifies": [
+        "가용 자원",
+        "공수 (예: 활동의 변동 가능한 기간 및 고정 기간)"
+      ],
+      "includes": [
+        "지원 및 공유 자원에 대한 의존성",
+        "기술적 평가",
+        "복구 옵션",
+        "크리티컬 패스(Critical Path) 분석"
+      ],
+      "examples": []
+    },
+    "page": 148
+  },
+  "08-55": {
+    "id": "08-55",
+    "name": "위험 방안",
+    "nameEn": "Risk measure",
+    "aliases": [
+      "리스크 측정",
+      "위험 측정",
+      "risk measure",
+      "위험 방안"
+    ],
+    "characteristics": {
+      "summary": "위험 수준을 나타내기 위한 정량적 또는 정성적 값.",
+      "identifies": [
+        "완화, 회피 또는 공유(전가)해야 할 위험",
+        "관련 활동",
+        "활동의 성공 또는 실패 기준",
+        "모니터링 빈도"
+      ],
+      "includes": [
+        "노출 및 검출 가능성 정보",
+        "생성자",
+        "대안 대응 옵션",
+        "주장(claims) 등의 위험 정당화"
+      ],
+      "examples": []
+    },
+    "page": 148
+  },
+  "08-56": {
+    "id": "08-56",
+    "name": "일정",
+    "nameEn": "Schedule",
+    "aliases": [
+      "일정",
+      "프로젝트 일정",
+      "마스터 일정",
+      "schedule"
+    ],
+    "characteristics": {
+      "summary": "이벤트, 업무 또는 활동의 시간과 순서를 정의하는 계획.",
+      "identifies": [
+        "활동",
+        "시간적 요구사항 (예: 시작일 및 완료 기한)",
+        "활동 간의 의존성",
+        "크리티컬 패스 (Critical Path)"
+      ],
+      "includes": [
+        "진척 평가 (예: 개별 활동의 완료)",
+        "계획된 자원",
+        "입력 데이터",
+        "자원 작업 부하 평가",
+        "공유 자원"
+      ],
+      "examples": []
+    },
+    "page": 148
+  },
+  "08-57": {
+    "id": "08-57",
+    "name": "밸리데이션 방안 선택 집합",
+    "nameEn": "Validation Measure Selection Set",
+    "aliases": [
+      "확인 측정 선정",
+      "validation measure selection",
+      "밸리데이션 방안 선택 집합"
+    ],
+    "characteristics": {
+      "summary": "특정 목적을 위해 선택된 밸리데이션 방안의 집합.",
+      "identifies": [
+        "밸리데이션 방안",
+        "적용 범위 (예: 배리언트, 회귀 또는 하위 컴포넌트)"
+      ],
+      "includes": [
+        "밸리데이션 방안의 식별",
+        "재 밸리데이션 기준 (예: 변경 발생 시)",
+        "의존성"
+      ],
+      "examples": []
+    },
+    "page": 149
+  },
+  "08-58": {
+    "id": "08-58",
+    "name": "검증 방안 선택 집합",
+    "nameEn": "Verification Measure Selection Set",
+    "aliases": [
+      "검증 케이스 선정",
+      "검증 항목 선정",
+      "검증 측정 선정",
+      "verification measure selection",
+      "verification measure selection set",
+      "검증 방안 선택 집합"
+    ],
+    "characteristics": {
+      "summary": "특정 목적을 위해 선택된 검증 방안의 집합.",
+      "identifies": [
+        "검증 방안",
+        "적용 범위 (예: 배리언트, 회귀 또는 하위 컴포넌트)"
+      ],
+      "includes": [
+        "검증 방안의 식별",
+        "재검증 기준 (예: 변경 발생 시)",
+        "의존성"
+      ],
+      "examples": []
+    },
+    "page": 149
+  },
+  "08-59": {
+    "id": "08-59",
+    "name": "밸리데이션 방안",
+    "nameEn": "Validation Measure",
+    "aliases": [
+      "확인 측정",
+      "확인 절차",
+      "validation measure",
+      "밸리데이션 방안"
+    ],
+    "characteristics": {
+      "summary": "의도된 사용을 벨리데이션 하기 위해, 현실적 조건에서 측정 또는 테스트의 정확성과 신뢰성을 확보하는데 사용되는 도구 또는 방법.",
+      "identifies": [
+        "테스트 범위 설명",
+        "테스트 중 수행할 측정",
+        "테스트 단계 설명",
+        "최종 사용자 설문조사 등을 바탕으로 한 합격/불합격 기준"
+      ],
+      "includes": [
+        "시뮬레이션 시나리오",
+        "에뮬레이션(Emulation)",
+        "진입 기준",
+        "기법 및 자원",
+        "벨리데이션 환경의 설정 및 구성",
+        "순서"
+      ],
+      "examples": []
+    },
+    "page": 149
+  },
+  "08-60": {
+    "id": "08-60",
+    "name": "검증 방안",
+    "nameEn": "Verification Measure",
+    "aliases": [
+      "검증 측정",
+      "검증 절차",
+      "검증 계획",
+      "테스트 계획",
+      "테스트 명세",
+      "verification measure",
+      "verification plan",
+      "test plan",
+      "test specification",
+      "검증 방안"
+    ],
+    "characteristics": {
+      "summary": "명세된 기능을 검증하기 위해 명세된 조건에서 측정 또는 테스트의 정확성과 신뢰성을 확보하는 데 사용되는 도구 또는 방법.",
+      "identifies": [
+        "테스트 범위 설명 (예: 결함 주입 안전 케이스)",
+        "분류 (예: 블랙박스 테스트 또는 그레이박스 테스트)",
+        "테스트 중 수행할 측정 (예: 광학 검사)",
+        "테스트 단계 설명",
+        "최종 사용자 설문조사 등을 바탕으로 한 합격/불합격 기준"
+      ],
+      "includes": [
+        "시뮬레이션 시나리오",
+        "에뮬레이션(Emulation)",
+        "진입 기준",
+        "등가 클래스 및 경계 값",
+        "계산 및 수학적 함수",
+        "검토 검증 등의 기법 및 자원",
+        "검증 환경의 설정 및 구성",
+        "순서"
+      ],
+      "examples": []
+    },
+    "page": 149
+  },
+  "08-61": {
+    "id": "08-61",
+    "name": "자원 할당",
+    "nameEn": "Resource allocation",
+    "aliases": [
+      "자원 할당",
+      "리소스 할당",
+      "resource allocation"
+    ],
+    "characteristics": {
+      "summary": "업무 및 위치별 자원의 분포.",
+      "identifies": [
+        "자원 식별 정보",
+        "업무",
+        "위치",
+        "시간적 요구",
+        "역할",
+        "가용성 제약사항"
+      ],
+      "includes": [
+        "작업 부하 평가",
+        "물리적 및 물적 자원"
+      ],
+      "examples": [
+        "테스트 팀의 자원 분포 (예: 인력, 도구 라이선스, 테스트 하드웨어)"
+      ]
+    },
+    "page": 150
+  },
+  "08-62": {
+    "id": "08-62",
+    "name": "의사소통 매트릭스",
+    "nameEn": "Communication matrix",
+    "aliases": [
+      "커뮤니케이션 매트릭스",
+      "의사소통 매트릭스",
+      "communication matrix"
+    ],
+    "characteristics": {
+      "summary": "의사소통을 관리하기 위한 조직의 관계 및 의존성.",
+      "identifies": [
+        "영향을 받는 내부 및 외부 이해관계자",
+        "역할",
+        "연락처 정보",
+        "이해관계자 간 영향을 받는 인터페이스의 정의",
+        "의사소통 주제"
+      ],
+      "includes": [
+        "의사소통 수단 및 빈도",
+        "의사소통의 문서화 요구 (예: 기록의 형태)"
+      ],
+      "examples": []
+    },
+    "page": 150
+  },
+  "08-63": {
+    "id": "08-63",
+    "name": "프로세스 모니터링 방법",
+    "nameEn": "Process monitoring method",
+    "aliases": [
+      "프로세스 모니터링 방법"
+    ],
+    "characteristics": {
+      "summary": "프로세스 경계를 측정하고 통제하기 위한 작업 흐름의 문서화.",
+      "identifies": [
+        "분석 방법",
+        "측정",
+        "모니터링 기준",
+        "측정의 경계 및 한계"
+      ],
+      "includes": [
+        "측정 빈도 및 기술"
+      ],
+      "examples": []
+    },
+    "page": 150
+  },
+  "08-64": {
+    "id": "08-64",
+    "name": "ML 테스트 접근법",
+    "nameEn": "ML test approach",
+    "aliases": [
+      "ml 테스트 접근",
+      "ml test approach",
+      "ML 테스트 접근법"
+    ],
+    "characteristics": {
+      "summary": "ML 모델을 테스트하기 위한 기준 및 활동을 설명하는 접근법.",
+      "identifies": [
+        "ML 테스트 시나리오",
+        "데이터 특징의 분포 (예: 사람의 성별, 기상 조건)",
+        "관련 ML 요구사항",
+        "합격/불합격 기준",
+        "진입 및 종료 기준",
+        "환경 설정 및 구성"
+      ],
+      "includes": [
+        "참조 (예: 테스트 데이터 집합)"
+      ],
+      "examples": []
+    },
+    "page": 151
+  },
+  "08-65": {
+    "id": "08-65",
+    "name": "ML 훈련 및 밸리데이션 접근법",
+    "nameEn": "ML training and validation approach",
+    "aliases": [
+      "ml 학습 검증 접근",
+      "ml training and validation approach",
+      "ML 훈련 및 밸리데이션 접근법"
+    ],
+    "characteristics": {
+      "summary": "훈련된 ML 모델의 정확성과 의도된 업무를 확인하기 위해 데이터를 사용하여 평가하는 방법을 설명하는 접근법.",
+      "identifies": [
+        "진입 및 종료 기준",
+        "하이퍼파라미터 튜닝 및 최적화 접근법",
+        "데이터 집합의 생성 및 수정 접근법"
+      ],
+      "includes": [
+        "훈련 환경의 설정 및 구성",
+        "자원",
+        "입력 데이터 제공",
+        "출력 데이터 저장",
+        "강건성 제어 방법 (예: 랜덤 드롭아웃)"
+      ],
+      "examples": []
+    },
+    "page": 151
+  },
+  "08-66": {
+    "id": "08-66",
+    "name": "정량적 프로세스 분석 편차에 대한 방안",
+    "nameEn": "Measures against deviations in quantitative process analysis",
+    "aliases": [
+      "정량적 프로세스 분석 편차에 대한 방안"
+    ],
+    "characteristics": {
+      "summary": "정량적 프로세스 통제를 위한 시정 방안의 정의.",
+      "identifies": [
+        "시정 방안",
+        "구현 경계",
+        "변동 원인",
+        "시간적 요구사항",
+        "평가 요구사항 (예: 데이터 필터링)"
+      ],
+      "includes": [],
+      "examples": []
+    },
+    "page": 151
+  },
+  "10-00": {
+    "id": "10-00",
+    "name": "프로세스 설명",
+    "nameEn": "Process description",
+    "aliases": [
+      "프로세스 설명"
+    ],
+    "characteristics": {
+      "summary": "표준 프로세스 또는 정의된 프로세스의 설명.",
+      "identifies": [
+        "범위, 목적 및 의도된 사용",
+        "활동(들) 및 설명과 의존성",
+        "활동에 필요한 입력 정보 및 예상 산출물과 같으 진입 및 종료 기준",
+        "템플릿",
+        "지침서 (예: 가이드라인, 작업 지침, 표준 또는 방법 설명)"
+      ],
+      "includes": [
+        "RASIC 와 같은 프로세스 활동 또는 작업 산출물에 할당된 역할",
+        "프로세스 내 활동의 순서 및 상호작용",
+        "다른 프로세스와의 순서 및 상호작용",
+        "테일러링 지침"
+      ],
+      "examples": []
+    },
+    "page": 151
+  },
+  "10-50": {
+    "id": "10-50",
+    "name": "역할 설명",
+    "nameEn": "Role description",
+    "aliases": [
+      "역할 설명"
+    ],
+    "characteristics": {
+      "summary": "프로세스 역할의 정의.",
+      "identifies": [
+        "이름/식별자",
+        "베정된 활동 (예: RASIC)",
+        "책임",
+        "권한",
+        "요구되는 역량, 기술 및 경험"
+      ],
+      "includes": [
+        "적격화 방법에 대한 참조"
+      ],
+      "examples": []
+    },
+    "page": 152
+  },
+  "10-51": {
+    "id": "10-51",
+    "name": "적격화 방법 설명",
+    "nameEn": "Qualification method description",
+    "aliases": [
+      "적격화 방법 설명"
+    ],
+    "characteristics": {
+      "summary": "인적 자원을 위한 적격화 방법의 설명.",
+      "identifies": [
+        "역량 분류 (예: 제품, 프로세스 또는 도구)",
+        "관리 수준 및 직책",
+        "주제별 요구",
+        "명칭",
+        "표준 및 규범 등에 대한 요구 지식 수준",
+        "방법 유형 (예: 공식 교육, 현장 교육, 멘토링 또는 코칭)"
+      ],
+      "includes": [
+        "과정 및 교재에 대한 참조"
+      ],
+      "examples": []
+    },
+    "page": 152
+  },
+  "10-52": {
+    "id": "10-52",
+    "name": "프로세스 자원 및 인프라 설명",
+    "nameEn": "Process resource and • Required facilities",
+    "aliases": [
+      "프로세스 자원 및 인프라 설명"
+    ],
+    "characteristics": {
+      "summary": "인적이 아닌 자원에 대한 설명.",
+      "identifies": [
+        "시설",
+        "도구 및 라이선스",
+        "네트워크",
+        "서비스 (예: 내부 또는 외부 제공자에 의한)",
+        "샘플"
+      ],
+      "includes": [
+        "해당하는 경우 도구 적격성 증거(예: 안전 필수 사용인 경우)"
+      ],
+      "examples": []
+    },
+    "page": 152
+  },
+  "11-03": {
+    "id": "11-03",
+    "name": "출시 노트",
+    "nameEn": "Release note",
+    "aliases": [
+      "릴리스 노트",
+      "릴리즈 노트",
+      "release note",
+      "출시 노트"
+    ],
+    "characteristics": {
+      "summary": "출시 속에 제공되는 내용에 대한 문서화.",
+      "identifies": [
+        "출시 속에 제공되는 기능의 집합",
+        "확약 범위와 관련된 제한사항",
+        "알려진 부적합 사항",
+        "적용 매개변수",
+        "구성 및 배리언트",
+        "출시의 고유 명칭 및 버전",
+        "추가되거나 제거된 기능",
+        "변경되거나 개선된 기능",
+        "해결된 부적합 사항의 문서화"
+      ],
+      "includes": [
+        "의도된 사용 영역 및 환경",
+        "출시와 링크된 다른 컴포넌트에 대한 영향",
+        "납품된 출시의 상류 또는 하류 호환성",
+        "저작권 및 라이선스 정보",
+        "검증 및 벨리데이션 방안의 결과",
+        "출시 납품에 대한 책임 역할의 승인",
+        "링크된 다른 제품과의 의존성 (예: 하드웨어 리비전)"
+      ],
+      "examples": []
+    },
+    "page": 153
+  },
+  "11-04": {
+    "id": "11-04",
+    "name": "제품 출시 패키지",
+    "nameEn": "Product release package",
+    "aliases": [
+      "제품 릴리스 패키지",
+      "release package",
+      "제품 출시 패키지"
+    ],
+    "characteristics": {
+      "summary": "제품 출시에 납품되는 요소의 집합.",
+      "identifies": [
+        "물리적 컴포넌트",
+        "의도된 사용에 필요한 요소",
+        "경고 및 주의",
+        "적용 매개변수"
+      ],
+      "includes": [
+        "제품의 유지보수 또는 서비스를 위한 문서",
+        "사용자를 위한 정보(예: 매뉴얼 내 설치 및 설정 지침)"
+      ],
+      "examples": []
+    },
+    "page": 153
+  },
+  "11-05": {
+    "id": "11-05",
+    "name": "소프트웨어 유닛",
+    "nameEn": "Software Unit",
+    "aliases": [
+      "소프트웨어 유닛",
+      "sw 유닛",
+      "software unit"
+    ],
+    "characteristics": {
+      "summary": "더 낮은 수준으로 분해되지 않은 소프트웨어 엘리먼트.",
+      "identifies": [
+        "단일 함수",
+        "함수 집합"
+      ],
+      "includes": [
+        "의도된 사용 및 정의된 기능 (예: 명세서 또는 합의서에 포함)"
+      ],
+      "examples": [
+        "개념 모델에서 최하위 수준 소프트웨어 엘리먼트의 표현"
+      ]
+    },
+    "page": 153
+  },
+  "11-06": {
+    "id": "11-06",
+    "name": "통합된 시스템",
+    "nameEn": "Integrated System",
+    "aliases": [
+      "통합 시스템",
+      "integrated system",
+      "통합된 시스템"
+    ],
+    "characteristics": {
+      "summary": "여러 유닛 또는 통합된 하위 시스템으로 구성된 엘리먼트의 집합.",
+      "identifies": [
+        "의도된 사용",
+        "경계 (예: 적용 매개변수)"
+      ],
+      "includes": [
+        "모든 형상 요소 (예: 요구사항 명세서에 대한 참조)"
+      ],
+      "examples": []
+    },
+    "page": 154
+  },
+  "11-50": {
+    "id": "11-50",
+    "name": "전개된 ML 모델",
+    "nameEn": "Deployed ML model",
+    "aliases": [
+      "배포된 ml 모델",
+      "deployed ml model",
+      "전개된 ML 모델"
+    ],
+    "characteristics": {
+      "summary": "전개된 ML 모델.",
+      "identifies": [
+        "대상 시스템에서 실행될, 훈련된 ML 모델에서 도출된 소스 코드"
+      ],
+      "includes": [],
+      "examples": [
+        "많은 경우에 강력한 하드웨어가 필요하고 인터프리터 언어를 사용하는 훈련된 ML 모델과는 다를 수 있다.",
+        "전개된 ML 모델은 일반적으로 C/C++와 같은 프로그래밍 언어로 작성된다."
+      ]
+    },
+    "page": 154
+  },
+  "12-03": {
+    "id": "12-03",
+    "name": "재사용 후보",
+    "nameEn": "Reuse candidate",
+    "aliases": [
+      "재사용 후보"
+    ],
+    "characteristics": {
+      "summary": "재사용할 수 있는 제품의 설명.",
+      "identifies": [
+        "제품 명칭",
+        "제품 책임자",
+        "재사용 목표 및 목적",
+        "재사용 자산 목록",
+        "제품 재사용의 이슈 및 위험",
+        "재사용 대상 제품의 적격성 평가 책임자",
+        "제품 제공 유형 (예: 저장 위치 또는 납품 상세)"
+      ],
+      "includes": [
+        "특정 요구사항"
+      ],
+      "examples": []
+    },
+    "page": 154
+  },
+  "13-06": {
+    "id": "13-06",
+    "name": "납품 증거",
+    "nameEn": "Delivery evidence",
+    "aliases": [
+      "인도 증거",
+      "납품 증거",
+      "delivery evidence"
+    ],
+    "characteristics": {
+      "summary": "고객에게 납품되거나 전자적으로 전달된 항목의 증거.",
+      "identifies": [
+        "수령인",
+        "납품 주소",
+        "납품일",
+        "수령 확인"
+      ],
+      "includes": [
+        "식별 정보"
+      ],
+      "examples": []
+    },
+    "page": 154
+  },
+  "13-07": {
+    "id": "13-07",
+    "name": "문제",
+    "nameEn": "Problem",
+    "aliases": [
+      "문제",
+      "이슈",
+      "결함",
+      "problem report"
+    ],
+    "characteristics": {
+      "summary": "이슈의 설명.",
+      "identifies": [
+        "제출자",
+        "이슈가 식별된 버전",
+        "분류 (예: 중요도, 긴급도 또는 관련성)",
+        "문제가 기록된 프로젝트 단계",
+        "책임자",
+        "상태",
+        "기술적 근본 원인",
+        "다른 시스템에 대한 잠재적 영향",
+        "계획 종료일"
+      ],
+      "includes": [
+        "식별 정보",
+        "영향을 받는 다른 도메인, 하위 프로젝트 또는 프로그램에 대한 참조",
+        "변경, 예방 방안 또는 다른 문제와 같은 의존성 관계"
+      ],
+      "examples": []
+    },
+    "page": 154
+  },
+  "13-08": {
+    "id": "13-08",
+    "name": "베이스라인",
+    "nameEn": "Baseline",
+    "aliases": [
+      "베이스라인",
+      "기준선",
+      "baseline"
+    ],
+    "characteristics": {
+      "summary": "일관되고 완전하며, 후속 프로세스 단계 및/또는 납품의 기초가 될 수 있는 작업 산출물의 일관된 집합. 베이스라인은 고유해야 되며, 더 이상 변경되어서는 안 됨.",
+      "identifies": [
+        "베이스라인에 속하는 모든 작업 산출물",
+        "형상 항목 특성을 사용한 참조"
+      ],
+      "includes": [
+        "명칭",
+        "버전",
+        "상태"
+      ],
+      "examples": []
+    },
+    "page": 155
   },
   "13-09": {
     "id": "13-09",
-    "name": "Meeting support evidence",
+    "name": "회의 지원 증거",
+    "nameEn": "Meeting support evidence",
     "aliases": [
       "회의록",
       "회의 자료",
       "meeting minute",
-      "meeting support evidence"
-    ]
+      "meeting support evidence",
+      "회의 지원 증거"
+    ],
+    "characteristics": {
+      "summary": "의제 및 회의록.",
+      "identifies": [
+        "명칭",
+        "목적",
+        "개최일 및 장소",
+        "참석자",
+        "결과, 의사결정"
+      ],
+      "includes": [
+        "이전 회의록에 대한 참조",
+        "미해결 이슈",
+        "책임자 및 기한을 포함한 조치 항목",
+        "다음 회의"
+      ],
+      "examples": []
+    },
+    "page": 155
+  },
+  "13-13": {
+    "id": "13-13",
+    "name": "제품 출시 승인",
+    "nameEn": "Product release approval",
+    "aliases": [
+      "릴리스 승인",
+      "출하 승인",
+      "product release approval",
+      "제품 출시 승인"
+    ],
+    "characteristics": {
+      "summary": "제품 출시에 대한 승인 증거.",
+      "identifies": [
+        "출시 날짜",
+        "승인자명 및 역할",
+        "의도된 고객",
+        "사용상 제약 및 제한"
+      ],
+      "includes": [
+        "납품 / 출하 주소",
+        "출하 또는 납품물의 출시 정보",
+        "해당하는 경우, 공급업체 승인 증거"
+      ],
+      "examples": []
+    },
+    "page": 155
   },
   "13-14": {
     "id": "13-14",
-    "name": "Progress status",
+    "name": "진척 상태",
+    "nameEn": "Progress status",
     "aliases": [
       "진척 현황",
       "진척 보고",
-      "progress status"
-    ]
+      "progress status",
+      "진척 상태"
+    ],
+    "characteristics": {
+      "summary": "이전 단계에서 확약된 작업에 따라 프로세스 활동을 수행함으로써 이루어진 달성을 문서화하기 위한 지표 집합.",
+      "identifies": [
+        "작업 활동의 상태(예: 계획 대비)",
+        "확약된 성과 증거",
+        "상태 모델 내 기준의 충족",
+        "확약된 목표 대비 성과 또는 달성의 제한 (예: 수행된 검증의 편차)"
+      ],
+      "includes": [
+        "일정 및 마일스톤과 관련된 일시에 대한 참조",
+        "공수"
+      ],
+      "examples": [
+        "계획된 품질 대비 실제 품질의 상태"
+      ]
+    },
+    "page": 156
   },
   "13-16": {
     "id": "13-16",
-    "name": "Change request",
+    "name": "변경 요청",
+    "nameEn": "Change request",
     "aliases": [
       "변경 요청",
       "변경 요구서",
       "change request"
-    ]
+    ],
+    "characteristics": {
+      "summary": "계획된 활동이나 성과에 대한 범위 변경 요청 혹은 영향.",
+      "identifies": [
+        "변경 활동의 범위 및 목적",
+        "변경 생성자",
+        "영향을 받는 운용 환경",
+        "프로세스 수행",
+        "프로세스 성과의 사용 환경",
+        "인프라 또는 자원",
+        "문서화 요구"
+      ],
+      "includes": [
+        "영향을 받는 성과 및 달성",
+        "프로세스 목표",
+        "변경 구현에 대한 승인",
+        "고려 해야 할 제한",
+        "구현 충족의 검증 기준"
+      ],
+      "examples": []
+    },
+    "page": 156
+  },
+  "13-18": {
+    "id": "13-18",
+    "name": "품질 적합성 증거",
+    "nameEn": "Quality conformance evidence",
+    "aliases": [
+      "품질 적합성 증거",
+      "quality conformance evidence"
+    ],
+    "characteristics": {
+      "summary": "품질 관련 기준에 대한 충족의 문서화.",
+      "identifies": [
+        "프로세스 수행",
+        "작업 산출물의 적합성",
+        "검증 기준",
+        "프로세스 성과",
+        "달성",
+        "성공 요인",
+        "수행 목표"
+      ],
+      "includes": [
+        "품질 활동에 대한 참조",
+        "수집된 데이터",
+        "측정 및 계산"
+      ],
+      "examples": []
+    },
+    "page": 156
   },
   "13-19": {
     "id": "13-19",
-    "name": "Review evidence",
+    "name": "검토 증거",
+    "nameEn": "Review evidence",
     "aliases": [
       "리뷰 증거",
       "검토 증거",
       "리뷰 결과",
       "검토 결과",
       "review evidence"
-    ]
+    ],
+    "characteristics": {
+      "summary": "작업 산출물 또는 프로세스에 대한 체계적인 검토가 수행되었음을 입증하는 증빙.",
+      "identifies": [
+        "검토 대상의 명칭 및 버전",
+        "검토 수행자명 및 역할",
+        "날짜",
+        "상태",
+        "검토 기준 (예: 검토 방법, 커버리지 및 정당화)",
+        "발견된 부적합 사항",
+        "개선 제안"
+      ],
+      "includes": [
+        "고려된 문서 (예: 체크리스트, 가이드라인, 작업 지침)",
+        "소요 시간",
+        "적용 가능한 표준"
+      ],
+      "examples": []
+    },
+    "page": 157
+  },
+  "13-24": {
+    "id": "13-24",
+    "name": "밸리데이션 결과",
+    "nameEn": "Validation Results",
+    "aliases": [
+      "확인 결과",
+      "validation result",
+      "validation results",
+      "밸리데이션 결과"
+    ],
+    "characteristics": {
+      "summary": "최종 제품이 의도된 사용 기대를 충족하는지를 확인하는 문서화된 증거.",
+      "identifies": [
+        "데이터, 로그, 피드백 또는 문서",
+        "통과된 방안",
+        "통과되지 못한 방안",
+        "실행되지 않은 방안",
+        "근거 (예: 보안 주장)",
+        "실행 관련 정보 (날짜, 참여자 등)",
+        "결과의 초록 또는 요약"
+      ],
+      "includes": [],
+      "examples": []
+    },
+    "page": 157
+  },
+  "13-25": {
+    "id": "13-25",
+    "name": "Verification results • Verification data and logs",
+    "nameEn": "Verification results • Verification data and logs",
+    "aliases": [
+      "검증 결과",
+      "검증 데이터",
+      "검증 로그",
+      "테스트 결과",
+      "테스트 로그",
+      "verification result",
+      "verification results",
+      "verification data and logs"
+    ],
+    "retired": true
+  },
+  "13-50": {
+    "id": "13-50",
+    "name": "ML 테스트 결과",
+    "nameEn": "ML test results",
+    "aliases": [
+      "ml 테스트 결과",
+      "ml test result",
+      "ML 테스트 결과"
+    ],
+    "characteristics": {
+      "summary": "ML 테스트 활동의 결과.",
+      "identifies": [
+        "테스트 데이터 및 로그",
+        "올바른 결과의 테스트 데이터",
+        "올바르지 않은 결과의 테스트 데이터",
+        "실행되지 않은 테스트 데이터 및 그 근거"
+      ],
+      "includes": [
+        "테스트 실행에 관한 정보(날짜, 참가자, 모델 버전 등)",
+        "ML 테스트 결과의 초록 또는 요약"
+      ],
+      "examples": []
+    },
+    "page": 157
+  },
+  "13-51": {
+    "id": "13-51",
+    "name": "일관성 증거",
+    "nameEn": "Consistency Evidence",
+    "aliases": [
+      "일관성 증거",
+      "일관성 점검",
+      "일관성 평가",
+      "추적성 매트릭스",
+      "consistency evidence",
+      "traceability matrix"
+    ],
+    "characteristics": {
+      "summary": "관련 산출물들이 전체 수명주기를 통해 프로세스, 업무 및 제품의 완전성, 목적 및 성숙도를 보장하면서 의미적 일관성을 유지한다는 정보의 증거.",
+      "identifies": [
+        "추적성 정보 (예: 하이퍼링크, 저장소 위치 또는 편집상 참조)",
+        "명명 규칙",
+        "관련 결과물",
+        "리비전 및 리비전 이력 정보",
+        "변경 문서화 및 분석 정보"
+      ],
+      "includes": [
+        "메타정보 (예: 데이터베이스 식별자, Git 커밋 코멘트 주석)"
+      ],
+      "examples": [
+        "완료 정의(Definition of Done, DoD) 준수의 증빙"
+      ]
+    },
+    "page": 158
+  },
+  "13-52": {
+    "id": "13-52",
+    "name": "의사소통 증거",
+    "nameEn": "Communication evidence",
+    "aliases": [
+      "의사소통 증거",
+      "커뮤니케이션 증거",
+      "공지 메일",
+      "배포 메일",
+      "communication evidence"
+    ],
+    "characteristics": {
+      "summary": "대인 간 의사소통의 증거.",
+      "identifies": [
+        "정보 범위",
+        "피드백 요구 (예: 확인 기한 1 주일)",
+        "메타데이터 (예: 의사소통 시점 또는 정보 배포 방식)"
+      ],
+      "includes": [
+        "인원 정보",
+        "워크플로 (예: 도구 내부)"
+      ],
+      "examples": [
+        "이메일 및 기타 형태의 메모",
+        "구두 진술",
+        "회의록 (예: 스탠드업)",
+        "전자 매체 (예: 웹캐스트, 블로그 게시물, 인트라넷 포럼)",
+        "채팅 기록",
+        "위키 페이지",
+        "사진 기록"
+      ]
+    },
+    "page": 158
+  },
+  "13-53": {
+    "id": "13-53",
+    "name": "적격성 증거",
+    "nameEn": "Qualification evidence",
+    "aliases": [
+      "적격성 증거",
+      "qualification evidence"
+    ],
+    "characteristics": {
+      "summary": "재사용 대상 제품이 납품물의 의도된 용도에 적격하다는 증거.",
+      "identifies": [
+        "적격성 체크리스트",
+        "통과 항목",
+        "실패 항목",
+        "보류 항목",
+        "적격성 평가 중 식별된 문제",
+        "권장 조치",
+        "적격성 결론"
+      ],
+      "includes": [
+        "위험 분석",
+        "승인",
+        "적용 가능한 표준"
+      ],
+      "examples": []
+    },
+    "page": 158
+  },
+  "13-55": {
+    "id": "13-55",
+    "name": "프로세스 자원 및 인프라 문서화",
+    "nameEn": "Process resource and infrastructure documentation",
+    "aliases": [
+      "프로세스 자원 및 인프라 문서화"
+    ],
+    "characteristics": {
+      "summary": "정의된 프로세스를 수행하는 데 필요한 자원이 가용해지고 할당되며, 사용 및 유지보수되고 있음을 문서화한 자료.",
+      "identifies": [
+        "자원의 가용성, 할당 및 사용에 관한 정보",
+        "시설",
+        "도구 및 해당 라이선스",
+        "네트워크",
+        "서비스",
+        "샘플을 위한 요구 (예: 프로토타입 보호)"
+      ],
+      "includes": [
+        "해당하는 경우 유지보수 정보"
+      ],
+      "examples": []
+    },
+    "page": 159
+  },
+  "14-01": {
+    "id": "14-01",
+    "name": "변경 이력",
+    "nameEn": "Change history",
+    "aliases": [
+      "변경 이력"
+    ],
+    "characteristics": {
+      "summary": "수명주기 동안 객체(문서, 파일, 소프트웨어 구성 요소 등)에 수행된 수정에 대한 구조화된 시간순 기록.",
+      "identifies": [
+        "변경된 객체에 관한 버전 정보",
+        "변경일",
+        "변경 설명",
+        "생성자"
+      ],
+      "includes": [],
+      "examples": []
+    },
+    "page": 159
   },
   "14-02": {
     "id": "14-02",
-    "name": "Corrective action",
-    "aliases": []
+    "name": "시정 조치",
+    "nameEn": "Corrective action",
+    "aliases": [
+      "시정 조치"
+    ],
+    "characteristics": {
+      "summary": "문제를 해결하기 위해 요구되는 활동.",
+      "identifies": [
+        "초기 문제 설명",
+        "활동의 책임자",
+        "해결책의 정의",
+        "일련의 조치"
+      ],
+      "includes": [
+        "시간적 요구 (예: 완료 기한 또는 분석 기한)",
+        "상태 지표",
+        "후속 감사 등 추가로 필요한 활동"
+      ],
+      "examples": []
+    },
+    "page": 159
+  },
+  "14-10": {
+    "id": "14-10",
+    "name": "작업 패키지",
+    "nameEn": "Work package",
+    "aliases": [
+      "작업 패키지"
+    ],
+    "characteristics": {
+      "summary": "일련의 작업을 완료하기 위해 수행이 요구되는 활동.",
+      "identifies": [
+        "수행될 활동",
+        "책임자 (예: 검증과 같은 특정 도메인)",
+        "다른 활동 및 작업 산출물과의 의존성",
+        "입력 및 출력 작업 산출물",
+        "요구되는 정보"
+      ],
+      "includes": [
+        "공수 및 기간 추정"
+      ],
+      "examples": [
+        "작업 패키지는 작업 명세서로 작성될 수 있음 (예: 엔지니어링 서비스에 활동을 아웃소싱하기 위하여)"
+      ]
+    },
+    "page": 160
+  },
+  "14-50": {
+    "id": "14-50",
+    "name": "이해관계자 그룹 목록",
+    "nameEn": "Stakeholder groups list",
+    "aliases": [
+      "이해관계자 그룹 목록"
+    ],
+    "characteristics": {
+      "summary": "특정 목적 또는 도메인과 관련된 인원들의 집단.",
+      "identifies": [
+        "개인 및 그룹",
+        "담당자의 책임",
+        "대표자 및 역할"
+      ],
+      "includes": [
+        "정보 요구 (예: 보고 내용 및 빈도)"
+      ],
+      "examples": [
+        "안전 등 특정 도메인에 대한 전문가 그룹",
+        "집행 위원회"
+      ]
+    },
+    "page": 160
+  },
+  "14-53": {
+    "id": "14-53",
+    "name": "역할 배정",
+    "nameEn": "Role assignment",
+    "aliases": [
+      "역할 배정"
+    ],
+    "characteristics": {
+      "summary": "역할에 대한 인원 배정.",
+      "identifies": [
+        "요구되는 역량",
+        "보유 역량",
+        "경험",
+        "역할과 관련된 훈련"
+      ],
+      "includes": [
+        "격차 식별 및 지도",
+        "승인자"
+      ],
+      "examples": []
+    },
+    "page": 160
+  },
+  "14-54": {
+    "id": "14-54",
+    "name": "하드웨어 BOM",
+    "nameEn": "Hardware Bill of Materials",
+    "aliases": [
+      "하드웨어 BOM"
+    ],
+    "characteristics": {
+      "summary": "하드웨어 제품에 포함된 하위 컴포넌트, 재료 및 조립품에 대한 설명.",
+      "identifies": [
+        "컴포넌트 유형",
+        "하드웨어 부품 수량",
+        "공급업체 명칭",
+        "리비전 정보"
+      ],
+      "includes": [
+        "구조 및 계층 정보"
+      ],
+      "examples": []
+    },
+    "page": 160
+  },
+  "15-06": {
+    "id": "15-06",
+    "name": "프로젝트 상태",
+    "nameEn": "Project status",
+    "aliases": [
+      "프로젝트 현황",
+      "project status",
+      "프로젝트 상태"
+    ],
+    "characteristics": {
+      "summary": "프로젝트의 현재 상태에 대한 평가 결과.",
+      "identifies": [
+        "계획 및 일정 대비 진척과 일관성",
+        "완료된 업무",
+        "프로젝트 의도와의 연관",
+        "자원 사용 (예: 하드웨어, 자재, 인적 자원)"
+      ],
+      "includes": [
+        "편차 및 정당화",
+        "계획된 진척 및 합의에 대한 위험과 기회",
+        "이슈 및 조치"
+      ],
+      "examples": []
+    },
+    "page": 161
+  },
+  "15-07": {
+    "id": "15-07",
+    "name": "재사용 분석 증거",
+    "nameEn": "Reuse analysis evidence",
+    "aliases": [
+      "재사용 분석",
+      "재사용 검토",
+      "reuse analysis",
+      "재사용 분석 증거"
+    ],
+    "characteristics": {
+      "summary": "기존 컴포넌트, 요구사항, 설계 요소 또는 프로세스를 새로운 프로젝트에 재사용하기 위한 적합성 평가.",
+      "identifies": [
+        "재사용에 대한 제약사항 (예: 알려진 결함 및 취약점)",
+        "인프라 및 환경 관련 변경",
+        "기능적 적합성",
+        "호환성",
+        "의존성",
+        "성숙도"
+      ],
+      "includes": [
+        "규제 및 표준의 차이점",
+        "도메인별 아키텍처 특징"
+      ],
+      "examples": [
+        "다른 제품군에서의 기성품(COTS) 컴포넌트 재사용"
+      ]
+    },
+    "page": 161
+  },
+  "15-09": {
+    "id": "15-09",
+    "name": "위험 상태",
+    "nameEn": "Risk status",
+    "aliases": [
+      "리스크 현황",
+      "위험 현황",
+      "risk status",
+      "위험 상태"
+    ],
+    "characteristics": {
+      "summary": "식별된 위험의 상태 또는 변경.",
+      "identifies": [
+        "위험 설명",
+        "위험 출처",
+        "영향 (예: 심각도 및 가능성 관련)",
+        "책임자"
+      ],
+      "includes": [
+        "범주",
+        "임계값",
+        "위험 대응 활동 및 진척"
+      ],
+      "examples": []
+    },
+    "page": 161
+  },
+  "15-12": {
+    "id": "15-12",
+    "name": "문제 상태",
+    "nameEn": "Problem status",
+    "aliases": [
+      "문제 현황",
+      "이슈 현황",
+      "problem status",
+      "문제 상태"
+    ],
+    "characteristics": {
+      "summary": "문제 해결의 진척.",
+      "identifies": [
+        "봉쇄 및 예방 활동",
+        "의존성 상태",
+        "상태 모델에 대한 참조"
+      ],
+      "includes": [
+        "문제 범주 및 분류"
+      ],
+      "examples": []
+    },
+    "page": 162
+  },
+  "15-13": {
+    "id": "15-13",
+    "name": "심사/감사 보고",
+    "nameEn": "Assessment/audit report",
+    "aliases": [
+      "평가 보고서",
+      "심사 보고서",
+      "assessment report",
+      "audit report",
+      "심사/감사 보고"
+    ],
+    "characteristics": {
+      "summary": "감사 또는 심사 활동 결과의 문서화.",
+      "identifies": [
+        "시정 조치가 필요한 격차, 잠재 과제, 약점 또는 부적합사항",
+        "범위 및 목적",
+        "평가의 맥락",
+        "결과 (예: 백분율 또는 신호등 방식 등급)",
+        "활동 수행일",
+        "사용된 요구사항"
+      ],
+      "includes": [
+        "사용된 방법",
+        "증거에 대한 참조",
+        "가정 및 제한",
+        "조직 단위",
+        "후원자 정보",
+        "심사팀",
+        "참석자"
+      ],
+      "examples": []
+    },
+    "page": 162
+  },
+  "15-16": {
+    "id": "15-16",
+    "name": "개선 기회",
+    "nameEn": "Improvement opportunity",
+    "aliases": [
+      "개선 기회",
+      "improvement opportunity"
+    ],
+    "characteristics": {
+      "summary": "약점 또는 능력 향상과 관련된 개선 제안 혹은 아이디어.",
+      "identifies": [
+        "관련 문제 및 원인",
+        "이점(예: 사업 기회 또는 효율성 향상)에 대해 기대되는 가치",
+        "개선 미실행으로 인한 손실에 대한 불이익"
+      ],
+      "includes": [
+        "책임자",
+        "의사결정자 및 승인자",
+        "개선에 대한 평가"
+      ],
+      "examples": []
+    },
+    "page": 162
   },
   "15-51": {
     "id": "15-51",
-    "name": "Analysis results",
+    "name": "분석 결과",
+    "nameEn": "Analysis results",
     "aliases": [
       "분석 결과",
       "analysis result",
       "analysis results"
-    ]
+    ],
+    "characteristics": {
+      "summary": "객체 또는 업무에 대한 분석 결과.",
+      "identifies": [
+        "분석 대상 객체",
+        "분석 기준",
+        "선택 기준 또는 우선순위 체계",
+        "의사결정 기준",
+        "품질 기준"
+      ],
+      "includes": [
+        "수행된 의사결정 및 선택",
+        "가정 및 제약사항",
+        "평가 기준 (예: 작업 산출물의 정확성, 완전성 또는 일관성)"
+      ],
+      "examples": [
+        "검증 가능성 분석 결과 (예: 테스트 기기에 결함이 발생한 경우)",
+        "실현가능성 분석 결과"
+      ]
+    },
+    "page": 162
   },
-  "11-03": {
-    "id": "11-03",
-    "name": "Release note",
+  "15-52": {
+    "id": "15-52",
+    "name": "검증 결과",
+    "nameEn": "Verification Results",
     "aliases": [
-      "릴리스 노트",
-      "릴리즈 노트",
-      "release note"
-    ]
+      "검증 결과 보고서",
+      "검증 보고서",
+      "verification result report",
+      "검증 결과"
+    ],
+    "characteristics": {
+      "summary": "검증 활동의 결과.",
+      "identifies": [
+        "식별 정보",
+        "로그 데이터",
+        "통과 및 실패 결과",
+        "미실행 / 차단된 검증 활동",
+        "테스트 실행 상세 (예: 테스트 수행자 이름 및 역할)",
+        "일시 정보"
+      ],
+      "includes": [
+        "검증 결과 요약",
+        "참조 (예: 문제 해결 조치)"
+      ],
+      "examples": []
+    },
+    "page": 163
   },
-  "11-04": {
-    "id": "11-04",
-    "name": "Product release package",
+  "15-54": {
+    "id": "15-54",
+    "name": "테일러링 문서화",
+    "nameEn": "Tailoring documentation",
     "aliases": [
-      "제품 릴리스 패키지",
-      "release package"
-    ]
+      "테일러링 문서화"
+    ],
+    "characteristics": {
+      "summary": "맥락에 따른 사용에 대한 평가 결과와 표준 프로세스에 따른 조정.",
+      "identifies": [
+        "적용된 테일러링 기준",
+        "표준 프로세스에 따른 조정 (예: 회의 운영 방식 변경)",
+        "표준 프로세스 및 버전에 대한 참조 (예: 수명주기 조정)"
+      ],
+      "includes": [
+        "추적성 정보",
+        "방법, 도구 및 기법",
+        "규제 준수 및 적합을 위한 공식 절차"
+      ],
+      "examples": [
+        "애자일 접근법에 따른 개발을 위한 프로젝트 관리 프로세스의 테일러링"
+      ]
+    },
+    "page": 163
   },
-  "13-06": {
-    "id": "13-06",
-    "name": "Delivery evidence",
+  "15-55": {
+    "id": "15-55",
+    "name": "문제 분석 증거",
+    "nameEn": "Problem analysis evidence",
     "aliases": [
-      "인도 증거",
-      "납품 증거",
-      "delivery evidence"
-    ]
+      "문제 분석 증거",
+      "problem analysis evidence"
+    ],
+    "characteristics": {
+      "summary": "문제 분석이 수행되었음을 증명하는 요소 및 문서.",
+      "identifies": [
+        "분석자 및 책임자",
+        "영향을 받는 당사자 및 관련 당사자",
+        "문제의 맥락 및 근본 원인",
+        "분석 결과 및 요약",
+        "잠재적 영향(예: 심각도 또는 비용 산정)"
+      ],
+      "includes": [
+        "분석일",
+        "잠재적 해결책"
+      ],
+      "examples": []
+    },
+    "page": 163
   },
-  "13-13": {
-    "id": "13-13",
-    "name": "Product release approval",
+  "15-56": {
+    "id": "15-56",
+    "name": "형상 상태",
+    "nameEn": "Configuration status",
     "aliases": [
-      "릴리스 승인",
-      "출하 승인",
-      "product release approval"
-    ]
+      "형상 상태"
+    ],
+    "characteristics": {
+      "summary": "형상 관리 기록 및 상태의 요약.",
+      "identifies": [
+        "버전 및 변경 이력 정보",
+        "베이스라인 식별",
+        "형상 항목(CI)의 무결성 및 일관성 상태",
+        "식별된 편차 (예: 누락된 형상 항목, 수행 메트릭의 편차)"
+      ],
+      "includes": [],
+      "examples": []
+    },
+    "page": 164
   },
-  "18-06": {
-    "id": "18-06",
-    "name": "Product release criteria",
+  "15-57": {
+    "id": "15-57",
+    "name": "정량적 프로세스 분석 결과",
+    "nameEn": "Quantitative process analysis results",
     "aliases": [
-      "릴리스 기준",
-      "출하 기준",
-      "product release criteria"
-    ]
+      "정량적 프로세스 분석 결과"
+    ],
+    "characteristics": {
+      "summary": "프로세스에 대한 정량적 분석 결과.",
+      "identifies": [
+        "정의된 측정 가능한 산출물에 대한 출력 (예: 주기, 결함 밀도, 프로세스 수율)",
+        "분포 결과"
+      ],
+      "includes": [
+        "경향 분석",
+        "통계적 통제 평가",
+        "정량적 통제 한계"
+      ],
+      "examples": [
+        "공정 능력 지수(Cpk) 평가를 수반한 린 식스 시그마(Lean Six Sigma) 분석"
+      ]
+    },
+    "page": 164
+  },
+  "15-58": {
+    "id": "15-58",
+    "name": "변동의 공통 원인 분석 결과",
+    "nameEn": "Common cause of variation analysis results",
+    "aliases": [
+      "변동의 공통 원인 분석 결과"
+    ],
+    "characteristics": {
+      "summary": "공통 원인별 변동 분석 결과.",
+      "identifies": [
+        "공통 원인에 대한 참조",
+        "프로세스 인스턴스의 정량적 수행 편차",
+        "프로세스 인스턴스의 정량적 수행 분포"
+      ],
+      "includes": [
+        "정량적 통제 한계"
+      ],
+      "examples": []
+    },
+    "page": 164
+  },
+  "16-00": {
+    "id": "16-00",
+    "name": "Repository",
+    "nameEn": "Repository",
+    "aliases": [],
+    "retired": true
+  },
+  "16-03": {
+    "id": "16-03",
+    "name": "형상 관리 시스템",
+    "nameEn": "Configuration management system",
+    "aliases": [
+      "형상 관리 시스템"
+    ],
+    "characteristics": {
+      "summary": "프로젝트 또는 제품의 수명주기 전반에 걸쳐 무결성, 일관성 및 통제를 제공하면서 형상을 관리하기 위한 시스템.",
+      "identifies": [
+        "통제 대상 형상 항목 (예: 문서, 하드웨어 또는 도구)",
+        "형상 정보 (예: 상태 모델)",
+        "저장소",
+        "베이스라인",
+        "변경 및 변경 상태"
+      ],
+      "includes": [
+        "보고 요구사항",
+        "복구 및 기타 봉쇄 활동의 워크플로 (예: 보안 및 소방 훈련)"
+      ],
+      "examples": [
+        "NASA는 형상 관리 시스템을 제품의 성능적·기능적·물리적 특징을 가시화하고 통제하여, 부정확하거나 안전하지 않은 형상이 출시되는 것을 방지하는 기술적 관리 체계로 정의한다."
+      ]
+    },
+    "page": 164
+  },
+  "16-06": {
+    "id": "16-06",
+    "name": "프로세스 저장소",
+    "nameEn": "Process repository",
+    "aliases": [
+      "프로세스 저장소"
+    ],
+    "characteristics": {
+      "summary": "프로세스의 형상 관련 결과물을 위한 통제된 저장 위치.",
+      "identifies": [
+        "결과물 (예: 프로세스 설명)",
+        "프로세스 자산",
+        "접근 통제",
+        "결과물 변경",
+        "버전 정보",
+        "메타데이터 (예: 명칭, 속성, 참조 링크)"
+      ],
+      "includes": [
+        "저장 및 검색 특징 (예: 아카이빙 프로세스)",
+        "상태 정보"
+      ],
+      "examples": []
+    },
+    "page": 165
+  },
+  "16-50": {
+    "id": "16-50",
+    "name": "조직 구조",
+    "nameEn": "Organizational structure",
+    "aliases": [
+      "조직 구조"
+    ],
+    "characteristics": {
+      "summary": "특정 활동을 위해 서로 상호작용하는 그룹 및 개인의 집합에 대한 계층적 개요 및 구조.",
+      "identifies": [
+        "계층적 보고 체계 및 기능별 보고 경로",
+        "담당 및 책임",
+        "조직 단위"
+      ],
+      "includes": [
+        "인터페이스",
+        "위치",
+        "의사소통 상세"
+      ],
+      "examples": []
+    },
+    "page": 165
+  },
+  "16-52": {
+    "id": "16-52",
+    "name": "ML 데이터 관리 시스템",
+    "nameEn": "ML data management system",
+    "aliases": [
+      "ML 데이터 관리 시스템"
+    ],
+    "characteristics": {
+      "summary": "머신러닝 엔지니어링(MLE)을 지원하는 데이터 관리 시스템.",
+      "identifies": [
+        "데이터 관리 활동",
+        "데이터 수집 워크플로",
+        "라벨링, 주석 및 설명",
+        "적재",
+        "탐색 및 프로파일링 워크플로",
+        "구조화 및 정제 절차",
+        "ML 훈련 등 관련 엔지니어링 단계"
+      ],
+      "includes": [
+        "형상 관리에 대한 참조 정보",
+        "데이터 출처 정보"
+      ],
+      "examples": [
+        "ML 데이터 관련 출처를 지원한다"
+      ]
+    },
+    "page": 165
   },
   "17-00": {
     "id": "17-00",
-    "name": "Requirement",
+    "name": "요구사항",
+    "nameEn": "Requirement",
     "aliases": [
       "요구사항 명세서",
       "요구사항 정의서",
@@ -125,11 +2520,65 @@
       "syrs",
       "srs",
       "swrs"
-    ]
+    ],
+    "characteristics": {
+      "summary": "모호하지 않고 테스트 가능성 및 측정 가능성을 지니며, 제품 또는 프로세스의 수용 가능성을 위해 필요한, 운용적, 기능적 또는 설계 특징을 식별한 진술.",
+      "identifies": [
+        "기능 및 능력에 대한 기대 (예: 비기능 요구사항)",
+        "요구사항의 책임자 및 출처",
+        "식별 정보",
+        "경계 (예: 목표 가격 범위)"
+      ],
+      "includes": [
+        "이해관계자 시각 (예: 블랙박스 관점)",
+        "설계 제약사항 (예: 사전에 정의되어 필요한 구현 상세)",
+        "허용 오차",
+        "도메인별 상세 (예: 안전 및 개인정보 보호 표준)"
+      ],
+      "examples": [
+        "ISO/IEC 지침의 인용: “문서의 내용에 포함된 표현으로서, 충족해야 할 객관적으로 검증 가능한 기준을 제시하며, 해당 문서에 대한 적합성을 주장하려면 그 기준에 대한 어떠한 예외도 허용되지 않는 것”",
+        "ISO/IEC 42010:2007",
+        "하드웨어 수준의 요구사항 (예: 미션 프로파일, 환경 테스트 시 환경 경계 정의의 저장 요구사항)",
+        "운용상 기대 (예: 전력 소비량, 크랭크 동작, 방열 경계)",
+        "자원 제약상항 (예: 성능 및 메모리 공간 정의)"
+      ]
+    },
+    "page": 166
+  },
+  "17-05": {
+    "id": "17-05",
+    "name": "작업 산출물에 대한 요구사항",
+    "nameEn": "Requirements for work products",
+    "aliases": [
+      "산출물 요구사항",
+      "work product requirement",
+      "작업 산출물에 대한 요구사항"
+    ],
+    "characteristics": {
+      "summary": "작업 산출물에 필요한 텍스트, 기능적 또는 설계 특징을 식별하는 진술.",
+      "identifies": [
+        "내용 및 구조에 대한 기대",
+        "요구사항의 책임자 및 출처",
+        "통제 및 승인 체계",
+        "식별 정보",
+        "접근 권한",
+        "상태 모델에 대한 참조 (예: 유지보수 및 폐기 요구사항)"
+      ],
+      "includes": [
+        "문서화 템플릿에 대한 참조",
+        "목차 또는 기타 개요 문서화",
+        "설계 제약사항 (예: 사전에 정의되어 필요한 구현 상세)",
+        "허용오차",
+        "도메인별 상세 (예: 안전 및 개인정보 보호 표준)"
+      ],
+      "examples": []
+    },
+    "page": 166
   },
   "17-54": {
     "id": "17-54",
-    "name": "Requirement Attribute",
+    "name": "요구사항 속성",
+    "nameEn": "Requirement Attribute",
     "aliases": [
       "요구사항 속성",
       "요구사항 특성",
@@ -137,34 +2586,53 @@
       "요구사항 식별자",
       "requirement attribute",
       "requirement attributes"
-    ]
+    ],
+    "characteristics": {
+      "summary": "특정 맥락 또는 의도를 위한 요구사항 구조화를 지원하는 정보.",
+      "identifies": [
+        "요구사항의 맥락 및 의도"
+      ],
+      "includes": [
+        "메타 속성",
+        "해결책의 의도"
+      ],
+      "examples": []
+    },
+    "page": 167
   },
-  "13-51": {
-    "id": "13-51",
-    "name": "Consistency Evidence",
+  "17-55": {
+    "id": "17-55",
+    "name": "자원 요구",
+    "nameEn": "Resource needs",
     "aliases": [
-      "일관성 증거",
-      "일관성 점검",
-      "일관성 평가",
-      "추적성 매트릭스",
-      "consistency evidence",
-      "traceability matrix"
-    ]
-  },
-  "04-06": {
-    "id": "04-06",
-    "name": "System Architecture",
-    "aliases": [
-      "시스템 아키텍처",
-      "시스템 구조",
-      "syad",
-      "system architectural design",
-      "system architecture"
-    ]
+      "자원 필요사항",
+      "리소스 필요사항",
+      "resource needs",
+      "자원 요구"
+    ],
+    "characteristics": {
+      "summary": "프로세스 수행에 필요한 자원의 식별.",
+      "identifies": [
+        "인적 자원",
+        "역량",
+        "스킬 및 권한",
+        "자재",
+        "인프라 및 장비",
+        "도구",
+        "시간",
+        "예산"
+      ],
+      "includes": [
+        "작업 분할 구조 및 계획 정보와의 관계"
+      ],
+      "examples": []
+    },
+    "page": 167
   },
   "17-57": {
     "id": "17-57",
-    "name": "Special Characteristics",
+    "name": "특별 특성",
+    "nameEn": "Special Characteristics",
     "aliases": [
       "특별 특성",
       "특수 특성",
@@ -173,730 +2641,351 @@
       "special characteristic",
       "special characteristics",
       "safety characteristic"
-    ]
-  },
-  "08-60": {
-    "id": "08-60",
-    "name": "Verification Measure",
-    "aliases": [
-      "검증 측정",
-      "검증 절차",
-      "검증 계획",
-      "테스트 계획",
-      "테스트 명세",
-      "verification measure",
-      "verification plan",
-      "test plan",
-      "test specification"
-    ]
-  },
-  "06-50": {
-    "id": "06-50",
-    "name": "Integration Sequence Instruction",
-    "aliases": []
-  },
-  "03-50": {
-    "id": "03-50",
-    "name": "Verification Measure Data",
-    "aliases": [
-      "검증 데이터",
-      "테스트 데이터",
-      "verification measure data"
-    ]
-  },
-  "08-58": {
-    "id": "08-58",
-    "name": "Verification Measure Selection Set",
-    "aliases": [
-      "검증 케이스 선정",
-      "검증 항목 선정",
-      "검증 측정 선정",
-      "verification measure selection",
-      "verification measure selection set"
-    ]
-  },
-  "15-52": {
-    "id": "15-52",
-    "name": "Verification Results",
-    "aliases": [
-      "검증 결과 보고서",
-      "검증 보고서",
-      "verification result report"
-    ]
-  },
-  "11-06": {
-    "id": "11-06",
-    "name": "Integrated System",
-    "aliases": [
-      "통합 시스템",
-      "integrated system"
-    ]
-  },
-  "04-04": {
-    "id": "04-04",
-    "name": "Software Architecture",
-    "aliases": [
-      "소프트웨어 아키텍처",
-      "sw 아키텍처",
-      "소프트웨어 구조",
-      "아키텍처 설계서",
-      "아키텍처 설계",
-      "swad",
-      "software architectural design"
-    ]
-  },
-  "04-05": {
-    "id": "04-05",
-    "name": "Software Detailed Design",
-    "aliases": [
-      "소프트웨어 상세설계",
-      "sw 상세설계",
-      "상세설계서",
-      "상세 설계",
-      "swdd",
-      "software detailed design"
-    ]
-  },
-  "11-05": {
-    "id": "11-05",
-    "name": "Software Unit",
-    "aliases": [
-      "소프트웨어 유닛",
-      "sw 유닛",
-      "software unit"
-    ]
-  },
-  "01-03": {
-    "id": "01-03",
-    "name": "Software Component",
-    "aliases": [
-      "소프트웨어 컴포넌트",
-      "sw 컴포넌트",
-      "software component"
-    ]
-  },
-  "01-50": {
-    "id": "01-50",
-    "name": "Integrated Software",
-    "aliases": [
-      "통합 소프트웨어",
-      "통합 sw",
-      "integrated software"
-    ]
-  },
-  "08-59": {
-    "id": "08-59",
-    "name": "Validation Measure",
-    "aliases": [
-      "확인 측정",
-      "확인 절차",
-      "validation measure"
-    ]
-  },
-  "08-57": {
-    "id": "08-57",
-    "name": "Validation Measure Selection Set",
-    "aliases": [
-      "확인 측정 선정",
-      "validation measure selection"
-    ]
-  },
-  "13-24": {
-    "id": "13-24",
-    "name": "Validation Results",
-    "aliases": [
-      "확인 결과",
-      "validation result",
-      "validation results"
-    ]
-  },
-  "04-51": {
-    "id": "04-51",
-    "name": "ML architecture",
-    "aliases": [
-      "ml 아키텍처",
-      "머신러닝 아키텍처",
-      "ml architecture"
-    ]
-  },
-  "01-54": {
-    "id": "01-54",
-    "name": "Hyperparameter",
-    "aliases": [
-      "하이퍼파라미터",
-      "hyperparameter"
-    ]
-  },
-  "08-65": {
-    "id": "08-65",
-    "name": "ML training and validation approach",
-    "aliases": [
-      "ml 학습 검증 접근",
-      "ml training and validation approach"
-    ]
-  },
-  "03-51": {
-    "id": "03-51",
-    "name": "ML data set",
-    "aliases": [
-      "ml 데이터셋",
-      "ml data set",
-      "ml dataset"
-    ]
-  },
-  "01-53": {
-    "id": "01-53",
-    "name": "Trained ML model",
-    "aliases": [
-      "학습된 ml 모델",
-      "trained ml model"
-    ]
-  },
-  "08-64": {
-    "id": "08-64",
-    "name": "ML test approach",
-    "aliases": [
-      "ml 테스트 접근",
-      "ml test approach"
-    ]
-  },
-  "13-50": {
-    "id": "13-50",
-    "name": "ML test results",
-    "aliases": [
-      "ml 테스트 결과",
-      "ml test result"
-    ]
-  },
-  "11-50": {
-    "id": "11-50",
-    "name": "Deployed ML model",
-    "aliases": [
-      "배포된 ml 모델",
-      "deployed ml model"
-    ]
-  },
-  "04-52": {
-    "id": "04-52",
-    "name": "Hardware Architecture",
-    "aliases": [
-      "하드웨어 아키텍처",
-      "hw 아키텍처",
-      "hwad",
-      "hardware architecture"
-    ]
-  },
-  "04-53": {
-    "id": "04-53",
-    "name": "Hardware Detailed Design",
-    "aliases": [
-      "하드웨어 상세설계",
-      "hw 상세설계",
-      "hwdd",
-      "hardware detailed design"
-    ]
-  },
-  "04-54": {
-    "id": "04-54",
-    "name": "Hardware Schematics",
-    "aliases": [
-      "하드웨어 회로도",
-      "hw 회로도",
-      "hardware schematic"
-    ]
-  },
-  "14-54": {
-    "id": "14-54",
-    "name": "Hardware Bill of Materials",
-    "aliases": []
-  },
-  "04-55": {
-    "id": "04-55",
-    "name": "Hardware Layout",
-    "aliases": [
-      "하드웨어 레이아웃",
-      "hw 레이아웃",
-      "hardware layout"
-    ]
-  },
-  "03-54": {
-    "id": "03-54",
-    "name": "Hardware Production Data",
-    "aliases": []
-  },
-  "04-56": {
-    "id": "04-56",
-    "name": "Hardware Element Interface",
-    "aliases": [
-      "하드웨어 인터페이스",
-      "hw 인터페이스",
-      "hardware element interface"
-    ]
-  },
-  "16-50": {
-    "id": "16-50",
-    "name": "Organizational structure",
-    "aliases": []
-  },
-  "18-52": {
-    "id": "18-52",
-    "name": "Escalation path",
-    "aliases": [
-      "에스컬레이션 경로",
-      "escalation path"
-    ]
-  },
-  "18-07": {
-    "id": "18-07",
-    "name": "Quality criteria",
-    "aliases": [
-      "품질 기준",
-      "quality criteria"
-    ]
-  },
-  "13-18": {
-    "id": "13-18",
-    "name": "Quality conformance evidence",
-    "aliases": [
-      "품질 적합성 증거",
-      "quality conformance evidence"
-    ]
-  },
-  "18-53": {
-    "id": "18-53",
-    "name": "Configuration item selection criteria",
-    "aliases": [
-      "형상 항목 선정 기준",
-      "configuration item selection criteria"
-    ]
-  },
-  "01-52": {
-    "id": "01-52",
-    "name": "Configuration item list",
-    "aliases": [
-      "형상 항목 목록",
-      "형상 식별 목록",
-      "configuration item list"
-    ]
-  },
-  "16-03": {
-    "id": "16-03",
-    "name": "Configuration management system",
-    "aliases": []
-  },
-  "13-08": {
-    "id": "13-08",
-    "name": "Baseline",
-    "aliases": [
-      "베이스라인",
-      "기준선",
-      "baseline"
-    ]
-  },
-  "14-01": {
-    "id": "14-01",
-    "name": "Change history",
-    "aliases": []
-  },
-  "15-56": {
-    "id": "15-56",
-    "name": "Configuration status",
-    "aliases": []
-  },
-  "06-52": {
-    "id": "06-52",
-    "name": "Backup and recovery mechanism information",
-    "aliases": []
-  },
-  "13-07": {
-    "id": "13-07",
-    "name": "Problem",
-    "aliases": [
-      "문제",
-      "이슈",
-      "결함",
-      "problem report"
-    ]
-  },
-  "15-55": {
-    "id": "15-55",
-    "name": "Problem analysis evidence",
-    "aliases": [
-      "문제 분석 증거",
-      "problem analysis evidence"
-    ]
-  },
-  "15-12": {
-    "id": "15-12",
-    "name": "Problem status",
-    "aliases": [
-      "문제 현황",
-      "이슈 현황",
-      "problem status"
-    ]
-  },
-  "18-57": {
-    "id": "18-57",
-    "name": "Change analysis criteria",
-    "aliases": [
-      "변경 분석 기준",
-      "change analysis criteria"
-    ]
-  },
-  "16-52": {
-    "id": "16-52",
-    "name": "ML data management system",
-    "aliases": []
-  },
-  "19-50": {
-    "id": "19-50",
-    "name": "ML data quality approach",
-    "aliases": [
-      "ml 데이터 품질 접근",
-      "ml data quality approach"
-    ]
-  },
-  "03-53": {
-    "id": "03-53",
-    "name": "ML data",
-    "aliases": [
-      "ml 데이터",
-      "ml data"
-    ]
-  },
-  "08-53": {
-    "id": "08-53",
-    "name": "Scope of work",
-    "aliases": [
-      "작업 범위",
-      "scope of work"
-    ]
-  },
-  "08-54": {
-    "id": "08-54",
-    "name": "Feasibility analysis",
-    "aliases": [
-      "타당성 분석",
-      "feasibility analysis"
-    ]
-  },
-  "14-10": {
-    "id": "14-10",
-    "name": "Work package",
-    "aliases": []
-  },
-  "08-56": {
-    "id": "08-56",
-    "name": "Schedule",
-    "aliases": [
-      "일정",
-      "프로젝트 일정",
-      "마스터 일정",
-      "schedule"
-    ]
-  },
-  "14-50": {
-    "id": "14-50",
-    "name": "Stakeholder groups list",
-    "aliases": []
-  },
-  "15-06": {
-    "id": "15-06",
-    "name": "Project status",
-    "aliases": [
-      "프로젝트 현황",
-      "project status"
-    ]
-  },
-  "15-09": {
-    "id": "15-09",
-    "name": "Risk status",
-    "aliases": [
-      "리스크 현황",
-      "위험 현황",
-      "risk status"
-    ]
-  },
-  "08-55": {
-    "id": "08-55",
-    "name": "Risk measure",
-    "aliases": [
-      "리스크 측정",
-      "위험 측정",
-      "risk measure"
-    ]
-  },
-  "03-03": {
-    "id": "03-03",
-    "name": "Benchmarking data",
-    "aliases": []
-  },
-  "03-04": {
-    "id": "03-04",
-    "name": "Customer satisfaction data",
-    "aliases": []
-  },
-  "03-06": {
-    "id": "03-06",
-    "name": "Process performance information",
-    "aliases": []
-  },
-  "07-51": {
-    "id": "07-51",
-    "name": "Measurement result",
-    "aliases": []
-  },
-  "06-04": {
-    "id": "06-04",
-    "name": "Training material",
-    "aliases": []
-  },
-  "07-04": {
-    "id": "07-04",
-    "name": "Process metric",
-    "aliases": []
-  },
-  "10-00": {
-    "id": "10-00",
-    "name": "Process description",
-    "aliases": []
-  },
-  "15-13": {
-    "id": "15-13",
-    "name": "Assessment/audit report",
-    "aliases": [
-      "평가 보고서",
-      "심사 보고서",
-      "assessment report",
-      "audit report"
-    ]
-  },
-  "15-16": {
-    "id": "15-16",
-    "name": "Improvement opportunity",
-    "aliases": [
-      "개선 기회",
-      "improvement opportunity"
-    ]
-  },
-  "16-06": {
-    "id": "16-06",
-    "name": "Process repository",
-    "aliases": []
-  },
-  "04-02": {
-    "id": "04-02",
-    "name": "Domain architecture",
-    "aliases": [
-      "도메인 아키텍처",
-      "domain architecture"
-    ]
-  },
-  "12-03": {
-    "id": "12-03",
-    "name": "Reuse candidate",
-    "aliases": []
-  },
-  "15-07": {
-    "id": "15-07",
-    "name": "Reuse analysis evidence",
-    "aliases": [
-      "재사용 분석",
-      "재사용 검토",
-      "reuse analysis"
-    ]
-  },
-  "13-53": {
-    "id": "13-53",
-    "name": "Qualification evidence",
-    "aliases": [
-      "적격성 증거",
-      "qualification evidence"
-    ]
-  },
-  "19-01": {
-    "id": "19-01",
-    "name": "Process performance strategy",
-    "aliases": []
-  },
-  "18-58": {
-    "id": "18-58",
-    "name": "Process performance objectives",
-    "aliases": [
-      "프로세스 성과 목표",
-      "process performance objective"
-    ]
-  },
-  "17-55": {
-    "id": "17-55",
-    "name": "Resource needs",
-    "aliases": [
-      "자원 필요사항",
-      "리소스 필요사항",
-      "resource needs"
-    ]
-  },
-  "08-61": {
-    "id": "08-61",
-    "name": "Resource allocation",
-    "aliases": [
-      "자원 할당",
-      "리소스 할당",
-      "resource allocation"
-    ]
-  },
-  "08-62": {
-    "id": "08-62",
-    "name": "Communication matrix",
-    "aliases": [
-      "커뮤니케이션 매트릭스",
-      "의사소통 매트릭스",
-      "communication matrix"
-    ]
-  },
-  "17-05": {
-    "id": "17-05",
-    "name": "Requirements for work products",
-    "aliases": [
-      "산출물 요구사항",
-      "work product requirement"
-    ]
-  },
-  "18-59": {
-    "id": "18-59",
-    "name": "Review and approval criteria for work products",
-    "aliases": [
-      "리뷰 승인 기준",
-      "review and approval criteria"
-    ]
-  },
-  "16-00": {
-    "id": "16-00",
-    "name": "Repository",
-    "aliases": []
-  },
-  "06-51": {
-    "id": "06-51",
-    "name": "Tailoring guideline",
-    "aliases": []
-  },
-  "08-63": {
-    "id": "08-63",
-    "name": "Process monitoring method",
-    "aliases": []
-  },
-  "10-50": {
-    "id": "10-50",
-    "name": "Role description",
-    "aliases": []
-  },
-  "10-51": {
-    "id": "10-51",
-    "name": "Qualification method description",
-    "aliases": []
-  },
-  "10-52": {
-    "id": "10-52",
-    "name": "Process resource and • Required facilities",
-    "aliases": []
-  },
-  "15-54": {
-    "id": "15-54",
-    "name": "Tailoring documentation",
-    "aliases": []
-  },
-  "14-53": {
-    "id": "14-53",
-    "name": "Role assignment",
-    "aliases": []
-  },
-  "13-55": {
-    "id": "13-55",
-    "name": "Process resource and infrastructure documentation",
-    "aliases": []
-  },
-  "18-70": {
-    "id": "18-70",
-    "name": "Business goals",
-    "aliases": []
-  },
-  "07-61": {
-    "id": "07-61",
-    "name": "Quantitative process metric",
-    "aliases": []
-  },
-  "07-62": {
-    "id": "07-62",
-    "name": "Process analysis techniques",
-    "aliases": []
-  },
-  "07-63": {
-    "id": "07-63",
-    "name": "Process control limits",
-    "aliases": []
-  },
-  "07-64": {
-    "id": "07-64",
-    "name": "Process measurement data",
-    "aliases": []
-  },
-  "15-57": {
-    "id": "15-57",
-    "name": "Quantitative process analysis results",
-    "aliases": []
-  },
-  "08-66": {
-    "id": "08-66",
-    "name": "Measures against deviations in quantitative process analysis",
-    "aliases": []
-  },
-  "18-80": {
-    "id": "18-80",
-    "name": "Improvement opportunity",
-    "aliases": []
-  },
-  "15-58": {
-    "id": "15-58",
-    "name": "Common cause of variation analysis results",
-    "aliases": []
-  },
-  "18-81": {
-    "id": "18-81",
-    "name": "Improvement evaluation results",
-    "aliases": []
-  },
-  "07-05": {
-    "id": "07-05",
-    "name": "Project metric",
-    "aliases": []
-  },
-  "07-06": {
-    "id": "07-06",
-    "name": "Quality metric",
-    "aliases": []
-  },
-  "07-08": {
-    "id": "07-08",
-    "name": "Service level metric",
-    "aliases": []
-  },
-  "13-25": {
-    "id": "13-25",
-    "name": "Verification results • Verification data and logs",
-    "aliases": [
-      "검증 결과",
-      "검증 데이터",
-      "검증 로그",
-      "테스트 결과",
-      "테스트 로그",
-      "verification result",
-      "verification results",
-      "verification data and logs"
-    ]
+    ],
+    "characteristics": {
+      "summary": "안전, 규정 준수, 적합성, 기능, 성능 또는 후속 공정에 영향을 미치므로 특별한 취급을 요구하는 제품 또는 프로세스의 특성.",
+      "identifies": [
+        "제품 특징",
+        "생산 프로세스 파라미터",
+        "보안 등 도메인 영향에 대한 참조",
+        "규정(준수)에 대한 참조",
+        "적합성 요구사항"
+      ],
+      "includes": [
+        "처리 및 성능 요구사항"
+      ],
+      "examples": [
+        "IATF 16949, VDA 6.x 가이드라인, ISO 26262, ISO/SAE 21434",
+        "FMEA에서 등급 산정 시 특별 특성을 고려할 수 있다."
+      ]
+    },
+    "page": 167
   },
   "18-00": {
     "id": "18-00",
     "name": "Standard • Identification of to whom/what they apply",
-    "aliases": []
+    "nameEn": "Standard • Identification of to whom/what they apply",
+    "aliases": [],
+    "retired": true
+  },
+  "18-06": {
+    "id": "18-06",
+    "name": "제품 출시 기준",
+    "nameEn": "Product release criteria",
+    "aliases": [
+      "릴리스 기준",
+      "출하 기준",
+      "product release criteria",
+      "제품 출시 기준"
+    ],
+    "characteristics": {
+      "summary": "제품의 납품을 승인하기 전에 충족해야 하는 조건.",
+      "identifies": [
+        "출시 유형 및 상태",
+        "출시 요소",
+        "완전성 조건",
+        "문서화 요구"
+      ],
+      "includes": [
+        "적절성에 대한 고려사항",
+        "커버리지",
+        "한계 (예: 제품 내 잔존 위험의 최대수)"
+      ],
+      "examples": [
+        "특정 마일스톤에서 엔지니어링 서비스 제품의 수용 조건"
+      ]
+    },
+    "page": 167
+  },
+  "18-07": {
+    "id": "18-07",
+    "name": "품질 기준",
+    "nameEn": "Quality criteria",
+    "aliases": [
+      "품질 기준",
+      "quality criteria"
+    ],
+    "characteristics": {
+      "summary": "제품, 프로세스 또는 서비스가 품질 목표에 적합한지 결정하기 위해 명세된 요구사항.",
+      "identifies": [
+        "측정 요구",
+        "일시",
+        "요구되는 요소",
+        "완전성에 대한 요구",
+        "정확성",
+        "성능 요구"
+      ],
+      "includes": [
+        "임계값",
+        "허용 오차 수준",
+        "속성",
+        "준수 및 적합 관련 참조"
+      ],
+      "examples": [
+        "정의된 범위 내에 있어야 하는 특정 값의 집합을 명세하는 적합성 요구사항"
+      ]
+    },
+    "page": 168
+  },
+  "18-52": {
+    "id": "18-52",
+    "name": "에스컬레이션 경로",
+    "nameEn": "Escalation path",
+    "aliases": [
+      "에스컬레이션 경로",
+      "escalation path"
+    ],
+    "characteristics": {
+      "summary": "미해결 이슈, 편차 또는 위험에 대해 의사결정을 내릴 수 있도록 전달해야 하는 조직 수준 또는 책임 역할의 순서.",
+      "identifies": [
+        "개시 조건",
+        "이해관계자 및 역할",
+        "에스컬레이션 방법",
+        "의사결정 권한"
+      ],
+      "includes": [
+        "에스컬레이션 수준별 조건",
+        "의사소통 및 문서화 요구사항"
+      ],
+      "examples": [
+        "고객이 요청한 태스크포스 그룹은 에스컬레이션 경로를 포함한다."
+      ]
+    },
+    "page": 168
+  },
+  "18-53": {
+    "id": "18-53",
+    "name": "형상 항목 선택 기준",
+    "nameEn": "Configuration item selection criteria",
+    "aliases": [
+      "형상 항목 선정 기준",
+      "configuration item selection criteria",
+      "형상 항목 선택 기준"
+    ],
+    "characteristics": {
+      "summary": "시스템 엘리먼트를 형상 통제하에 포함할 것을 결정하기 위한 규칙 또는 파라미터.",
+      "identifies": [
+        "이해관계자 요구",
+        "규제 요구",
+        "형상 항목 식별 요구사항"
+      ],
+      "includes": [
+        "작업 산출물의 유형",
+        "분류 특징"
+      ],
+      "examples": [
+        "소프트웨어 평가 작업 산출물의 유지보수성 요구사항",
+        "공급업체 품목의 추적성 요구사항"
+      ]
+    },
+    "page": 169
+  },
+  "18-57": {
+    "id": "18-57",
+    "name": "변경 분석 기준",
+    "nameEn": "Change analysis criteria",
+    "aliases": [
+      "변경 분석 기준",
+      "change analysis criteria"
+    ],
+    "characteristics": {
+      "summary": "변경 분석에 포함할 기준의 정의.",
+      "identifies": [
+        "자원 요구사항",
+        "시간적 요구 (예: 프로젝트 일정 관련)",
+        "위험 및 기회"
+      ],
+      "includes": [],
+      "examples": []
+    },
+    "page": 169
+  },
+  "18-58": {
+    "id": "18-58",
+    "name": "프로세스 수행 목표",
+    "nameEn": "Process performance objectives",
+    "aliases": [
+      "프로세스 성과 목표",
+      "process performance objective",
+      "프로세스 수행 목표"
+    ],
+    "characteristics": {
+      "summary": "프로세스가 달성해야 할 수해 목표 및 목표치에 대한 설명.",
+      "identifies": [
+        "평가 기준",
+        "메트릭 (예: 변경 요청 건수)",
+        "일시 정의(예: 변경 요청 분석 기한)",
+        "이벤트 (예: 시연 마일스톤)"
+      ],
+      "includes": [
+        "가정 및 제약사항"
+      ],
+      "examples": [
+        "공수 또는 비용 목표",
+        "예산 제한",
+        "업무 빈도",
+        "1인당 병렬 작업 항목 한계"
+      ]
+    },
+    "page": 169
+  },
+  "18-59": {
+    "id": "18-59",
+    "name": "작업 산출물에 대한 검토 및 승인 기준",
+    "nameEn": "Review and approval criteria for work products",
+    "aliases": [
+      "리뷰 승인 기준",
+      "review and approval criteria",
+      "작업 산출물에 대한 검토 및 승인 기준"
+    ],
+    "characteristics": {
+      "summary": "작업 산출물에 대한 검토 및 승인 기준의 명세.",
+      "identifies": [
+        "검토 조건",
+        "시간적 요구 (예: 특정 마일스톤)",
+        "검토 방법 (예: 인스펙션 또는 동료 검토)"
+      ],
+      "includes": [
+        "승인에 대한 정의"
+      ],
+      "examples": [
+        "워크스루 회의를 언제, 어떻게 수행할지에 대한 정의"
+      ]
+    },
+    "page": 169
+  },
+  "18-70": {
+    "id": "18-70",
+    "name": "비즈니스 목표",
+    "nameEn": "Business goals",
+    "aliases": [
+      "비즈니스 목표"
+    ],
+    "characteristics": {
+      "summary": "비즈니스 목표에 대한 설명.",
+      "identifies": [
+        "비즈니스 요구에 대한 요구사항",
+        "다른 목표와의 연관성",
+        "목표의 이유 및 근거",
+        "승인 수준",
+        "목표 기간"
+      ],
+      "includes": [
+        "요구의 정도",
+        "비즈니스에 대한 영향 (예: 지연 발생 시)",
+        "가정 및 제약사항"
+      ],
+      "examples": [
+        "생산에 신규 기술 능력을 실현하는 프로그램",
+        "비즈니스 목표에 대한 평가 및 피드백을 위하여 고객 대상 프로토타입 시연을 사용할 수 있다."
+      ]
+    },
+    "page": 170
+  },
+  "18-80": {
+    "id": "18-80",
+    "name": "프로세스 개선 기회",
+    "nameEn": "Improvement opportunity",
+    "aliases": [
+      "프로세스 개선 기회"
+    ],
+    "characteristics": {
+      "summary": "개선 요구의 명분.",
+      "identifies": [
+        "개선 목표 (예: 특정 비즈니스 목표)",
+        "조직적 범위",
+        "프로세스 범위",
+        "정성적 평가",
+        "정량적 평가"
+      ],
+      "includes": [
+        "활동",
+        "이해관계자",
+        "우선순위"
+      ],
+      "examples": [
+        "모범 사례 분석",
+        "최신 기술에 대한 관찰",
+        "시장 조사"
+      ]
+    },
+    "page": 170
+  },
+  "18-81": {
+    "id": "18-81",
+    "name": "개선 평가 결과",
+    "nameEn": "Improvement evaluation results",
+    "aliases": [
+      "개선 평가 결과"
+    ],
+    "characteristics": {
+      "summary": "개선을 위해 추진된 변경 사항의 실행 효과에 대한 평가 결과.",
+      "identifies": [
+        "기대 효과",
+        "조건 (예: 평가 주기)",
+        "제약사항 및 가정"
+      ],
+      "includes": [
+        "전술적 수준 영향",
+        "전략적 수준 영향",
+        "운영적 수준 영향"
+      ],
+      "examples": [
+        "광학 하드웨어 검사를 위한 변경된 문제 해결 프로세스의 주기",
+        "프로세스 개선 가이드 ISO/IEC TR 33014"
+      ]
+    },
+    "page": 170
+  },
+  "19-01": {
+    "id": "19-01",
+    "name": "프로세스 수행 전략",
+    "nameEn": "Process performance strategy",
+    "aliases": [
+      "프로세스 수행 전략"
+    ],
+    "characteristics": {
+      "summary": "프로세스의 성과 목표를 달성하기 위한 접근법에 대한 설명.",
+      "identifies": [
+        "절차",
+        "방법론",
+        "전략의 범위"
+      ],
+      "includes": [
+        "모니터링 요구사항 (예: 수행)",
+        "도메인별 참조",
+        "사회문화적 차이"
+      ],
+      "examples": [
+        "개발 사이트별 수행",
+        "소프트웨어 대상 형상 관리 접근법"
+      ]
+    },
+    "page": 171
+  },
+  "19-50": {
+    "id": "19-50",
+    "name": "ML 데이터 품질 접근법",
+    "nameEn": "ML data quality approach",
+    "aliases": [
+      "ml 데이터 품질 접근",
+      "ml data quality approach",
+      "ML 데이터 품질 접근법"
+    ],
+    "characteristics": {
+      "summary": "ML 데이터 품질 목표를 충족하기 위한 기준 및 활동을 설명하는 접근법.",
+      "identifies": [
+        "품질 기준 (예: 관련 데이터 출처)",
+        "데이터 분석 활동"
+      ],
+      "includes": [
+        "라벨링의 신뢰성 및 일관성",
+        "ML 데이터 요구사항 대비 완전성"
+      ],
+      "examples": [
+        "데이터 편향을 피하기 위한 품질 기준"
+      ]
+    },
+    "page": 171
   }
 }

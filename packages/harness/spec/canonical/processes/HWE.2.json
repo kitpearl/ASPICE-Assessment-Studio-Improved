@@ -1,143 +1,213 @@
 {
   "id": "HWE.2",
-  "name": "Hardware Design",
+  "name": "하드웨어 설계",
+  "nameEn": "Hardware Design",
+  "pamVersion": "4.1",
   "category": "HWE",
   "pamSection": "4.7.2",
-  "purpose": "The purpose is to provide an analyzed design, including dynamic aspects, that is consistent with the hardware requirements and suitable for manufacturing, and to derive production-relevant data.",
+  "page": 81,
+  "purpose": "프로세스 목적은 하드웨어 요구사항과 일관되고 제조에 적합한, 동적 측면을 포함하는, 분석된 설계를 제공하며, 생산 관련 데이터를 도출하는 것이다.",
   "outcomes": [
     {
       "id": 1,
-      "text": "A hardware architecture and hardware detailed design is developed that identifies the elements of the hardware and describes their behavior as well as their interfaces, and the dynamic interactions of the hardware elements."
+      "text": "하드웨어 아키텍처 및 하드웨어 상세 설계가 하드웨어 엘리먼트를 식별하고, 해당 동작 및 인터페이스, 하드웨어 엘리먼트의 동적 상호작용을 설명하도록 개발된다."
     },
     {
       "id": 2,
-      "text": "The hardware architecture and the hardware detailed design is analyzed, and special characteristics are identified."
+      "text": "하드웨어 아키텍처와 하드웨어 상세 설계가 분석되고 특별 특성이 식별된다."
     },
     {
       "id": 3,
-      "text": "Consistency and bidirectional traceability are established between hardware requirements and hardware design."
+      "text": "하드웨어 요구사항과 하드웨어 설계 간의 일관성 및 양방향 추적성이 수립된다."
     },
     {
       "id": 4,
-      "text": "Hardware production data is derived from the hardware detailed design and communicated to all affected parties."
+      "text": "하드웨어 생산 데이터가 하드웨어 상세 설계에서 도출되며 영향받는 모든 당사자에게 의사소통된다."
     },
     {
       "id": 5,
-      "text": "Information for production test is derived from the hardware detailed design and communicated to all affected parties."
-    },
-    {
-      "id": 6,
-      "text": "The hardware architecture and hardware detailed design and the special characteristics are agreed and communicated to all affected parties."
+      "text": "하드웨어 아키텍처, 하드웨어 상세 설계, 특별 특성이 합의되고 영향받는 모든 당사자에게 의사소통된다."
     }
   ],
   "basePractices": [
     {
       "id": "BP1",
-      "title": "Specify the hardware architecture",
-      "description": "Develop the hardware architecture that identifies the hardware components. Document the rationale for the defined hardware architecture. concept, EMC concept. platform, or product line, respectively, or by a make-or-buy decision, or found in an evolutionary way.",
-      "pamCitation": "PAM §HWE.2 BP1"
+      "title": "하드웨어 아키텍처를 명세한다",
+      "description": "하드웨어 컴포넌트를 식별하는 하드웨어 아키텍처를 개발한다. 정의된 하드웨어 아키텍처에 대한 근거를 문서화한다.",
+      "notes": [
+        "비고 1: 하드웨어 아키텍처에 반영된 측면의 예로는 접지 개념, 공급 개념, EMC 개념이 있다.",
+        "비고 2: 설계 근거의 예는 표준 하드웨어, 플랫폼 또는 제품 라인 각각의 재사용 또는 제작/구매(make-or- buy) 결정에 의해, 또는 진화적 방식으로 도출된 경우일 수 있다."
+      ],
+      "page": 81,
+      "pamCitation": "PAM 4.1 §4.7.2 HWE.2.BP1",
+      "titleEn": "Specify the hardware architecture",
+      "descriptionEn": "Develop the hardware architecture that identifies the hardware components. Document the rationale for the defined hardware architecture.",
+      "notesEn": [
+        "Examples for aspects reflected in the hardware architecture are ground concept, supply concept, EMC concept.",
+        "Examples for a design rationale can be implied by the reuse of a standard hardware, platform, or product line, respectively, or by a make-or-buy decision, or found in an evolutionary way."
+      ]
     },
     {
       "id": "BP2",
-      "title": "Specify the hardware detailed design",
-      "description": "Based on components identified in the hardware architecture, specify the detailed design description and the schematics for the intended hardware variants, including the interfaces between the hardware elements. Derive the hardware layout, the hardware bill of materials, and the production data. be subject to a pre-defined repository (see also IATF 16949:2016, clause 8.4.1.2.). parts on the market, hardware design rules, layout rules, creepage and clearance distances, compliance of HW parts with industry standards such as AEC-Q, REACH.",
-      "pamCitation": "PAM §HWE.2 BP2"
+      "title": "하드웨어 상세 설계를 명세한다",
+      "description": "하드웨어 아키텍처에서 식별된 컴포넌트를 기반으로, 하드웨어 엘리먼트 간의 인터페이스를 포함하여 의도된 하드웨어 배리언트에 대한 상세 설계 설명과 스키매틱을 명세한다. 하드웨어 레이아웃, 하드웨어 BOM(자재 명세서), 생산 데이터를 도출한다.",
+      "notes": [
+        "비고 3: 하드웨어 BOM 에 명세된 하드웨어 부품과 공급업체의 식별에는 사전 정의된 저장소 시스템이 적용될 수 있다(IATF 16949:2016 의 8.4.1.2 항 참조).",
+        "비고 4: 하드웨어 상세 설계에는 시장에서의 하드웨어 부품의 가용성, 하드웨어 설계 규칙, 레이아웃 규칙, 연면 거리 및 이격 거리, AEC-Q, REACH 등 산업 표준 준수와 같은 제약 사항이 적용될 수 있다."
+      ],
+      "page": 82,
+      "pamCitation": "PAM 4.1 §4.7.2 HWE.2.BP2",
+      "titleEn": "Specify the hardware detailed design",
+      "descriptionEn": "Based on the components identified in the hardware architecture, specify the detailed design description and the schematics for the intended hardware variants, including the interfaces between the hardware elements. Derive the hardware layout, the hardware bill of materials, and the production data.",
+      "notesEn": [
+        "The identification of the hardware parts and their suppliers in the hardware bill of materials may be subject to a pre-defined repository (see also IATF 16949:2016, clause 8.4.1.2.).",
+        "The hardware detailed design may be subject to constraints such as availability of hardware parts on the market, hardware design rules, layout rules, creepage and clearance distances, compliance of HW parts with industry standards such as AEC-Q, REACH."
+      ]
     },
     {
       "id": "BP3",
-      "title": "Specify dynamic aspects",
-      "description": "Evaluate and document the dynamic behavior of the relevant hardware elements and the interaction between them.",
-      "pamCitation": "PAM §HWE.2 BP3"
+      "title": "하드웨어 아키텍처와 하드웨어 상세 설계의 동적 측면을 명세한다",
+      "description": "관련 하드웨어 엘리먼트의 동적 동작 및 그 상호작용을 평가하고 문서화한다.",
+      "notes": [
+        "비고 5: 모든 하드웨어 엘리먼트에 대해 설명해야 할 필요가 있는 동적 동작이 있는 것은 아니다."
+      ],
+      "page": 82,
+      "pamCitation": "PAM 4.1 §4.7.2 HWE.2.BP3",
+      "titleEn": "Specify the dynamic aspects of the hardware architecture and the hardware detailed design",
+      "descriptionEn": "Evaluate and document the dynamic behavior of the relevant hardware elements and the interaction between them.",
+      "notesEn": [
+        "Not all hardware elements have dynamic behavior that needs to be described."
+      ]
     },
     {
       "id": "BP4",
-      "title": "Analyze the hardware architecture and the hardware detailed design",
-      "description": "Analyze the hardware architecture and hardware detailed design regarding relevant technical aspects, and support project management regarding project estimates. Identify special characteristics. hardware components to be reused, or availability of hardware elements. quantitative or qualitative analyses such as FMEA.",
-      "pamCitation": "PAM §HWE.2 BP4"
+      "title": "하드웨어 아키텍처와 하드웨어 상세 설계를 분석한다",
+      "description": "하드웨어 아키텍처 및 하드웨어 상세 설계의 관련 기술적 측면을 분석하고, 프로젝트 추정과 관련 프로젝트 관리를 지원한다. 특별 특성을 식별한다.",
+      "notes": [
+        "비고 6: 기술적 측면의 예로는 생산을 위한 제조 가능성, 재사용하기 위한 기존 하드웨어 컴포넌트의 적합성, 또는 하드웨어 엘리먼트의 가용성이 있다.",
+        "비고 7: 적합한 기술적 측면 분석 방법의 예로는 시뮬레이션, 계산, FMEA 와 같은 정량적 또는 정성적 분석이 있다."
+      ],
+      "page": 82,
+      "pamCitation": "PAM 4.1 §4.7.2 HWE.2.BP4",
+      "titleEn": "Analyze the hardware architecture and the hardware detailed design",
+      "descriptionEn": "Analyze the hardware architecture and the hardware detailed design regarding relevant technical aspects, and support project management regarding project estimates. Identify the special characteristics.",
+      "notesEn": [
+        "Examples for technical aspects are manufacturability for production, suitability of pre-existing hardware components to be reused, or availability of hardware elements.",
+        "Examples of methods suitable for analyzing technical aspects are simulations, calculations, quantitative or qualitative analyses such as FMEA."
+      ]
     },
     {
       "id": "BP5",
-      "title": "Ensure consistency and establish bidirectional traceability",
-      "description": "Ensure consistency and establish traceability between hardware elements and hardware requirements. Ensure consistency and establish traceability between the hardware detailed design and components of the hardware architecture. trace to. Examples are development process requirements. Such requirements are still subject to verification. change requests, and demonstration of verification coverage. Traceability alone, e.g, the existence of links, does not necessarily mean that the information is consistent with each other.",
-      "pamCitation": "PAM §HWE.2 BP5"
+      "title": "일관성을 보장하고 양방향 추적성을 수립한다",
+      "description": "하드웨어 엘리먼트와 하드웨어 요구사항 간의 일관성을 보장하고 양방향 추적성을 수립한다. 하드웨어 상세 설계와 하드웨어 아키텍처 컴포넌트 간의 일관성을 보장하고 추적성을 수립한다.",
+      "notes": [
+        "비고 8: 하드웨어 설계가 추적하지 않는 비기능적 하드웨어 요구사항이 존재할 수 있다. 이에 대한 예로는 개발 프로세스 요구사항이 있다. 이러한 요구사항도 여전히 검증 대상이다.",
+        "비고 9: 양방향 추적성은 일관성을 한층 더 지원하고, 변경 요청의 영향 분석 및 커버리지 입증을 용이하게 한다. 예를 들어, 링크의 존재와 같은 추적성 자체만으로는 정보에 일관성이 있다는 것을 의미하지는 않는다."
+      ],
+      "page": 82,
+      "pamCitation": "PAM 4.1 §4.7.2 HWE.2.BP5",
+      "titleEn": "Ensure consistency and establish bidirectional traceability",
+      "descriptionEn": "Ensure consistency and establish traceability between the hardware elements and the hardware requirements. Ensure consistency and establish traceability between the hardware detailed design and the components of the hardware architecture.",
+      "notesEn": [
+        "There may be non-functional hardware requirements that the hardware design does not trace to. Examples are development process requirements. Such requirements are still subject to verification.",
+        "Bidirectional traceability further supports consistency, and facilitates impact analysis of change requests, and demonstration of coverage. Traceability alone, e.g., the existence of links, does not necessarily mean that the information is consistent."
+      ]
     },
     {
       "id": "BP6",
-      "title": "Communicate agreed hardware architecture and hardware detailed design",
-      "description": "Communicate the agreed hardware architecture and the hardware detailed design, including the special characteristics and relevant production data, to all affected parties. identifies the hardware components. Document the rationale for the defined hardware architecture. concept, EMC concept. platform, or product line, respectively, or by a make-or-buy decision, or found in an evolutionary way. | | | hardware architecture, specify the detailed design description and the schematics for the intended hardware variants, including the interfaces between the hardware elements. Derive the hardware layout, the hardware bill of materials, and the production data. be subject to a pre-defined repository (see also IATF 16949:2016, clause 8.4.1.2.). parts on the market, hardware design rules, layout rules, creepage and clearance distances, compliance of HW parts with industry standards such as AEC-Q, REACH. | | | relevant hardware elements and the interaction between them. the hardware architecture and hardware detailed design regarding relevant technical aspects, and support project management regarding project estimates. Identify special characteristics. hardware components to be reused, or availability of hardware elements. quantitative or qualitative analyses such as FMEA. | | | consistency and establish traceability between hardware elements and hardware requirements. Ensure consistency and establish traceability between the hardware detailed design and components of the hardware architecture. trace to. Examples are development process requirements. Such requirements are still subject to verification. change requests, and demonstration of verification coverage. Traceability alone, e.g, the existence of links, does not necessarily mean that the information is consistent with each other. | | | Communicate the agreed hardware architecture and the hardware detailed design, including the special characteristics and relevant production data, to all affected parties. | | | HWE.2 Hardware Design 1 emoctuO 2 emoctuO 3 emoctuO 4 emoctuO 5 emoctuO 6 emoctuO",
-      "pamCitation": "PAM §HWE.2 BP6"
+      "title": "합의된 하드웨어 아키텍처 및 하드웨어 상세 설계를 의사소통한다",
+      "description": "특별 특성과 관련 생산 데이터를 포함하여, 합의된 하드웨어 아키텍처 및 하드웨어 상세 설계를 영향받는 모든 당사자에게 의사소통한다.",
+      "notes": [],
+      "page": 82,
+      "pamCitation": "PAM 4.1 §4.7.2 HWE.2.BP6",
+      "titleEn": "Communicate the agreed hardware architecture and hardware detailed design",
+      "descriptionEn": "Communicate the agreed hardware architecture and the hardware detailed design, including the special characteristics and relevant production data, to all affected parties."
     }
   ],
   "outputWorkProducts": [
     {
       "id": "04-52",
-      "name": "Hardware Architecture"
+      "name": "하드웨어 아키텍처",
+      "nameEn": "Hardware Architecture"
     },
     {
       "id": "04-53",
-      "name": "Hardware Detailed Design"
+      "name": "하드웨어 상세 설계",
+      "nameEn": "Hardware Detailed Design"
     },
     {
       "id": "15-51",
-      "name": "Analysis Results"
+      "name": "분석 결과",
+      "nameEn": "Analysis results"
     },
     {
       "id": "13-51",
-      "name": "Consistency Evidence"
+      "name": "일관성 증거",
+      "nameEn": "Consistency Evidence"
     },
     {
       "id": "17-57",
-      "name": "Special Characteristics"
+      "name": "특별 특성",
+      "nameEn": "Special Characteristics"
     },
     {
       "id": "13-52",
-      "name": "Communication Evidence"
+      "name": "의사소통 증거",
+      "nameEn": "Communication evidence"
     },
     {
       "id": "04-54",
-      "name": "Hardware Schematics"
+      "name": "하드웨어 스키매틱",
+      "nameEn": "Hardware Schematics"
     },
     {
       "id": "14-54",
-      "name": "Hardware Bill of Materials"
+      "name": "하드웨어 BOM",
+      "nameEn": "Hardware Bill of Materials"
     },
     {
       "id": "04-55",
-      "name": "Hardware Layout"
+      "name": "하드웨어 레이아웃",
+      "nameEn": "Hardware Layout"
     },
     {
       "id": "03-54",
-      "name": "Hardware Production Data"
+      "name": "하드웨어 생산 데이터",
+      "nameEn": "Hardware Production Data"
     },
     {
       "id": "04-56",
-      "name": "Hardware Element Interface"
+      "name": "하드웨어 엘리먼트 인터페이스",
+      "nameEn": "Hardware Element Interface"
     }
   ],
   "inputWorkProducts": [
     {
       "id": "08-56",
-      "name": "Schedule",
+      "name": "일정",
+      "nameEn": "Schedule",
       "fromProcess": "MAN.3"
     },
     {
       "id": "13-16",
-      "name": "Change request",
+      "name": "변경 요청",
+      "nameEn": "Change request",
       "fromProcess": "SUP.10"
     },
     {
       "id": "13-19",
-      "name": "Review evidence",
+      "name": "검토 증거",
+      "nameEn": "Review evidence",
       "fromProcess": "SUP.1"
     },
     {
       "id": "17-00",
-      "name": "Requirement",
+      "name": "요구사항",
+      "nameEn": "Requirement",
       "fromProcess": "HWE.1"
     }
   ],
   "traceBPs": [
-    "BP5",
-    "BP6"
+    "BP5"
   ]
 }

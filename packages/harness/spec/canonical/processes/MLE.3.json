@@ -1,103 +1,154 @@
 {
   "id": "MLE.3",
-  "name": "Machine Learning Training",
+  "name": "머신 러닝 훈련",
+  "nameEn": "Machine Learning Training",
+  "pamVersion": "4.1",
   "category": "MLE",
   "pamSection": "4.6.3",
-  "purpose": "consistency and establish bidirectional traceability between the ML architectural elements and the ML requirements. Note 4: Bidirectional traceability supports consistency, and facilitates impact analyses of change requests, and verification coverage demonstration. Traceability alone, e.g., the existence of links, does not necessarily mean that the information is consistent with each other. Note 5: The bidirectional traceability should be established on a reasonable level of abstraction to the ML architectural elements. | agreed ML architecture including the details of the ML model and the initial hyperparameter values. | emoctuO | | 2 emoctuO | | 3 emoctuO | | 4 emoctuO | | 5 emoctuO | | 6 emoctuO | | 7 emoctuO | | architectural elements | | | | | | | | | | X | | | | | | | The purpose is to optimize the ML model to meet the defined ML requirements.",
+  "page": 71,
+  "purpose": "프로세스 목적은 정의된 ML 요구사항을 충족하도록 ML 모델을 최적화하는 것이다.",
   "outcomes": [
     {
       "id": 1,
-      "text": "A ML training and validation approach is specified."
+      "text": "ML 훈련 및 밸리데이션 접근법이 명세된다."
     },
     {
       "id": 2,
-      "text": "The data set for ML training and ML validation is created."
+      "text": "ML 훈련 및 ML 밸리데이션을 위한 데이터 집합이 생성된다."
     },
     {
       "id": 3,
-      "text": "The ML model, including hyperparameter values, is optimized to meet the defined ML requirements."
+      "text": "하이퍼파라미터 값을 포함하는 ML 모델이 정의된 ML 요구사항을 충족하도록 최적화된다."
     },
     {
       "id": 4,
-      "text": "Consistency and bidirectional traceability are established between the ML training and validation data set and the ML data requirements."
+      "text": "ML 훈련 및 밸리데이션 데이터 집합과 ML 데이터 요구사항 간의 일관성 및 양방향 추적성이 수립된다."
     },
     {
       "id": 5,
-      "text": "Results of optimization are summarized, and the trained ML model is agreed and communicated to all affected parties."
+      "text": "최적화 결과가 요약되고, 훈련된 ML 모델이 합의되고 영향받는 모든 당사자에게 의사소통된다."
     }
   ],
   "basePractices": [
     {
       "id": "BP1",
-      "title": "Specify ML training and validation approach",
-      "description": "Specify an approach which supports the training and validation of the ML model to meet the defined ML requirements. The ML training and validation approach includes • entry and exit criteria of the training and validation, • approaches for hyperparameter tuning / optimization, • approach for data set creation and modification, and • training and validation environment robustification methods. (MLE.3). The term “validation” has a different meaning than VAL.1.",
-      "pamCitation": "PAM §MLE.3 BP1"
+      "title": "ML 훈련 및 밸리데이션 접근법을 명세한다",
+      "description": "ML 모델의 훈련 및 밸리데이션을 지원하는 접근법이 정의된 ML 요구사항을 충족하도록 명세된다. ML 훈련 및 밸리데이션 접근법은 다음을 포함한다. • 훈련 및 밸리데이션의 진입 및 종료 기준 • 하이퍼파라미터 튜닝/최적화 접근법 • 데이터 집합 생성과 수정을 위한 접근법 • 훈련 및 밸리데이션 환경",
+      "notes": [
+        "비고 1: ML 훈련과 밸리데이션 접근법은 랜덤 드롭아웃 및 기타 강건화 방법을 포함할 수 있다.",
+        "비고 2: ML 밸리데이션은 모델을 최적화하기 위한 하나의 단계이다. 모델의 성능이 기대를 충족하지 않는 경우, 하이퍼파라미터 값이나 훈련 및 벨리데이션 데이터를 변경할 수 있다. ‘밸리데이션’이라는 용어는 VAL.1 의 의미와 다르다."
+      ],
+      "page": 72,
+      "pamCitation": "PAM 4.1 §4.6.3 MLE.3.BP1",
+      "titleEn": "Specify the ML training and validation approach",
+      "descriptionEn": "Specify an approach which supports the training and validation of the ML model to meet the defined ML requirements. The ML training and validation approach includes • entry and exit criteria of the training and validation, • approaches for the hyperparameter tuning / optimization, • approach for the data set creation and modification, and • the training and validation environment",
+      "notesEn": [
+        "The ML training and validation approach may include random dropout and other robustification methods.",
+        "ML validation is one step of optimizing the model. If the model performance does not meet expectations, hyperparameter values or training and validation data may be changed. The term “validation” has a different meaning than VAL.1."
+      ]
     },
     {
       "id": "BP2",
-      "title": "Create ML training and validation data set",
-      "description": "Select data from the ML data collection provided by SUP.11 and assign them to the data set for training and validation of the ML model according to the specified ML training and validation approach. normal cases depending on the ML requirements. fold cross validation, no optimization of hyperparameters).",
-      "pamCitation": "PAM §MLE.3 BP2"
+      "title": "ML 훈련 및 밸리데이션 데이터 집합을 생성한다",
+      "description": "SUP.11 에서 제공하는 ML 데이터 집합에서 데이터를 선택하여, 명세된 ML 훈련 및 밸리데이션 접근법에 따라 ML 모델의 훈련 및 밸리데이션을 위한 데이터 집합에 할당한다.",
+      "notes": [
+        "비고 4: ML 훈련 및 밸리데이션 데이터 집합은 ML 요구사항에 따라 코너 케이스, 예상치 못한 케이스, 정상 케이스를 포함할 수 있다.",
+        "비고 5: 훈련과 밸리데이션을 위한 분리된 데이터 집합은 일부 경우(예: K 폴드 교차 밸리데이션, 하이퍼파라미터의 최적화를 수행하지 않는 경우)에는 요구되지 않을 수 있다."
+      ],
+      "page": 72,
+      "pamCitation": "PAM 4.1 §4.6.3 MLE.3.BP2",
+      "titleEn": "Create the ML training and validation data set",
+      "descriptionEn": "Select data from the ML data collection provided by SUP.11 and assign them to the data set for training and validation of the ML model according to the specified ML training and validation approach.",
+      "notesEn": [
+        "The ML training and validation data set may include corner cases, unexpected cases, and normal cases depending on the ML requirements.",
+        "A separated data set for training and validation might not be required in some cases (e.g., k-fold cross validation, no optimization of hyperparameters)."
+      ]
     },
     {
       "id": "BP3",
-      "title": "Create and optimize ML model",
-      "description": "Create the ML model according to the ML architecture and train it, using the identified ML training and validation data set according to the ML training and validation approach to meet the defined ML requirements, and training and validation exit criteria.",
-      "pamCitation": "PAM §MLE.3 BP3"
+      "title": "ML 모델을 생성하고 최적화한다",
+      "description": "ML 아키텍처에 따라 ML 모델을 생성하고, 정의된 ML 요구사항과 훈련 및 밸리데이션 종료 기준을 충족하기 위해 ML 훈련 및 밸리데이션 접근법에 따라 식별된 ML 훈련 및 밸리데이션 데이터 집합을 사용하여 훈련시킨다.",
+      "notes": [],
+      "page": 72,
+      "pamCitation": "PAM 4.1 §4.6.3 MLE.3.BP3",
+      "titleEn": "Create and optimize the ML model",
+      "descriptionEn": "Create the ML model according to the ML architecture and train it, using the identified ML training and validation data set according to the ML training and validation approach to meet the defined ML requirements, and training and validation exit criteria."
     },
     {
       "id": "BP4",
-      "title": "Ensure consistency and establish bidirectional traceability",
-      "description": "Ensure consistency and establish bidirectional traceability between the ML training and validation data set and the ML data requirements. requests. Traceability alone, e.g., the existence of links, does not necessarily mean that the 2) The data set for ML training and ML validation is created. 3) The ML model, including hyperparameter values, is optimized to meet the defined ML requirements. 4) Consistency and bidirectional traceability are established between the ML training and validation data set and the ML data requirements. 5) Results of optimization are summarized, and the trained ML model is agreed and communicated to all affected parties. | | | supports the training and validation of the ML model to meet the defined ML requirements. The ML training and validation approach includes • entry and exit criteria of the training and validation, • approaches for hyperparameter tuning / optimization, • approach for data set creation and modification, and • training and validation environment robustification methods. (MLE.3). The term “validation” has a different meaning than VAL.1. collection provided by SUP.11 and assign them to the data set for training and validation of the ML model according to the specified ML training and validation approach. normal cases depending on the ML requirements. fold cross validation, no optimization of hyperparameters). | | | architecture and train it, using the identified ML training and validation data set according to the ML training and validation approach to meet the defined ML requirements, and training and validation exit criteria. | | | consistency and establish bidirectional traceability between the ML training and validation data set and the ML data requirements. requests. Traceability alone, e.g., the existence of links, does not necessarily mean that the | | | information is consistent with each other.",
-      "pamCitation": "PAM §MLE.3 BP4"
+      "title": "일관성을 보장하고 양방향 추적성을 수립한다",
+      "description": "ML 훈련 및 밸리데이션 데이터 집합과 ML 데이터 요구사항 간의 일관성이 보장되고 양방향 추적성이 수립된다.",
+      "notes": [
+        "비고 6: 양방향 추적성은 일관성을 지원하고, 변경 요청의 영향 분석을 용이하게 한다. 예를 들어, 링크의 존재와 같은 추적성 자체만으로는 정보에 일관성이 있다는 것을 의미하지는 않는다."
+      ],
+      "page": 72,
+      "pamCitation": "PAM 4.1 §4.6.3 MLE.3.BP4",
+      "titleEn": "Ensure consistency and establish bidirectional traceability",
+      "descriptionEn": "Ensure consistency and establish bidirectional traceability between the ML training and validation data set and the ML data requirements.",
+      "notesEn": [
+        "Bidirectional traceability supports consistency and facilitates impact analyses of change requests. Traceability alone, e.g., the existence of links, does not necessarily mean that the information is consistent."
+      ]
     },
     {
       "id": "BP5",
-      "title": "Summarize and communicate agreed trained ML model",
-      "description": "Summarize the results of the optimization and inform all affected parties about the agreed trained ML model. MLE.3 Machine Learning Training 1 emoctuO 2 emoctuO 3 emoctuO 4 emoctuO 5 emoctuO",
-      "pamCitation": "PAM §MLE.3 BP5"
+      "title": "합의된 훈련된 ML 모델을 요약하고 의사소통한다",
+      "description": "최적화 결과를 요약하고, 합의된 훈련된 ML 모델을 영향받는 모든 당사자에게 통지한다.",
+      "notes": [],
+      "page": 73,
+      "pamCitation": "PAM 4.1 §4.6.3 MLE.3.BP5",
+      "titleEn": "Summarize and communicate the agreed trained ML model",
+      "descriptionEn": "Summarize the results of the optimization and inform all affected parties about the agreed trained ML model."
     }
   ],
   "outputWorkProducts": [
     {
       "id": "08-65",
-      "name": "ML training and validation approach"
+      "name": "ML 훈련 및 밸리데이션 접근법",
+      "nameEn": "ML training and validation approach"
     },
     {
       "id": "03-51",
-      "name": "ML data set"
+      "name": "ML 데이터 집합",
+      "nameEn": "ML data set"
     },
     {
       "id": "01-53",
-      "name": "Trained ML model"
+      "name": "훈련된 ML 모델",
+      "nameEn": "Trained ML model"
     },
     {
       "id": "01-54",
-      "name": "Hyperparameter"
+      "name": "하이퍼파라미터",
+      "nameEn": "Hyperparameter"
     },
     {
       "id": "13-51",
-      "name": "Consistency evidence"
+      "name": "일관성 증거",
+      "nameEn": "Consistency Evidence"
     },
     {
       "id": "13-52",
-      "name": "Communication evidence"
+      "name": "의사소통 증거",
+      "nameEn": "Communication evidence"
     }
   ],
   "inputWorkProducts": [
     {
       "id": "03-53",
-      "name": "ML data",
+      "name": "ML 데이터",
+      "nameEn": "ML data",
       "fromProcess": "SUP.11"
     },
     {
       "id": "04-51",
-      "name": "ML architecture",
+      "name": "ML 아키텍처",
+      "nameEn": "ML architecture",
       "fromProcess": "MLE.2"
     },
     {
       "id": "19-50",
-      "name": "ML data quality approach",
+      "name": "ML 데이터 품질 접근법",
+      "nameEn": "ML data quality approach",
       "fromProcess": "SUP.11"
     }
   ],

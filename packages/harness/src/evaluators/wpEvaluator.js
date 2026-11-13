@@ -15,7 +15,7 @@ export async function evaluateWPs(processSpec, artifacts, scorer, options = {}) 
   // bounded by the LLM client wrapper (see _harnessService.limitConcurrency).
   return Promise.all(
     processSpec.outputWorkProducts.map(async (wp) => {
-      const { scorePercent, evidence, gaps, contextConsistency } = await scorer.scoreWP({
+      const { scorePercent, evidence, gaps, contextConsistency, references, appliedRules } = await scorer.scoreWP({
         process: processSpec,
         wp,
         artifacts,
@@ -29,6 +29,9 @@ export async function evaluateWPs(processSpec, artifacts, scorer, options = {}) 
         evidence,
         gaps,
         contextConsistency: contextConsistency ?? { status: "unknown", note: "" },
+        appliedRules: appliedRules ?? [],
+        ...(references?.pam?.citation ? { pamCitation: references.pam.citation } : {}),
+        ...(references !== undefined ? { references } : {}),
       };
     })
   );

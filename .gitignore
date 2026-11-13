@@ -28,3 +28,6 @@ dist-ssr
 
 # Claude Code 세션별 로컬 권한 설정 (개인 환경)
 .claude/settings.local.json
+packages/harness/spec/sources/*
+!packages/harness/spec/sources/README.md
+!packages/harness/spec/sources/.gitkeep
