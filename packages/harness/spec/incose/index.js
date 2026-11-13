@@ -172,7 +172,7 @@ export function buildIncoseGuidance(bpFullId) {
     `## INCOSE 평가 출력 규약`,
     `  - 위반/충족이 확인된 경우 해당 Finding 의 standardReferences.incose 에 인용을 기록하라 (예: "INCOSE GtWR C7", "INCOSE GtWR R18").`,
     `  - 검증가능성(C7) 과 검증 기준 내재 여부는 PAM 의 "verification criteria being inherent in the requirements text" 요건과 함께 판단하라.`,
-    `  - INCOSE 인용은 PAM·BGB 인용을 대체하지 않는다. pamCitation 은 반드시 유지하라.`
+    `  - INCOSE 인용은 PAM·가이드라인 2026 인용을 대체하지 않는다. pamCitation 은 반드시 유지하라.`
   );
 
   return sections.join("\n");

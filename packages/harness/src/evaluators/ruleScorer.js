@@ -280,17 +280,17 @@ const ruleScorerCore = {
 export const ruleScorer = {
   async scoreBP(args) {
     const r = await ruleScorerCore.scoreBP(args);
-    return withKnowledge(r, safeKnowledge(() => getBpKnowledge(args.process?.id, args.bp?.id)));
+    return withKnowledge(r, safeKnowledge(`bp ${args.process?.id}.${args.bp?.id}`, () => getBpKnowledge(args.process?.id, args.bp?.id)));
   },
 
   async scoreWP(args) {
     const r = await ruleScorerCore.scoreWP(args);
-    return withKnowledge(r, safeKnowledge(() => getWpKnowledge(args.process?.id, args.wp?.id)));
+    return withKnowledge(r, safeKnowledge(`wp ${args.process?.id}.${args.wp?.id}`, () => getWpKnowledge(args.process?.id, args.wp?.id)));
   },
 
   async scoreGP(args) {
     const r = await ruleScorerCore.scoreGP(args);
-    return withKnowledge(r, safeKnowledge(() => getGpKnowledge(args.paSpec?.id, args.gp?.id, args.process?.id)));
+    return withKnowledge(r, safeKnowledge(`gp ${args.process?.id}/${args.gp?.id}`, () => getGpKnowledge(args.paSpec?.id, args.gp?.id, args.process?.id)));
   },
 };
 
@@ -300,10 +300,11 @@ const HINT_SCORE_THRESHOLD = 51;
 const MAX_HINTS = 2;
 const HINT_CHARS = 80;
 
-function safeKnowledge(fn) {
+function safeKnowledge(what, fn) {
   try {
     return fn() ?? null;
-  } catch {
+  } catch (err) {
+    console.warn(`[aspice/rule] knowledge lookup failed for ${what}: ${err?.message ?? err} (falling back to no references)`);
     return null;
   }
 }
