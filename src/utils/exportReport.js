@@ -6,7 +6,8 @@ import { RATING_META, RATING_ORDER, countRatings, isCl1Pass } from "../data/rati
 import { FINDING_TYPE_LABEL, flattenStandardRefs, buildFindingNarrative } from "./findings";
 
 // 표준 인용 리스트({kind,text}[]) 를 "PAM xxx, BGB yyy" 형태의 한 줄로 만든다.
-const formatRefs = (refs) => refs.map((r) => `${r.kind} ${r.text}`).join(", ");
+const formatRefs = (refs) =>
+  refs.map((r) => (String(r.text).startsWith(r.kind) ? String(r.text) : `${r.kind} ${r.text}`)).join(", ");
 
 // 텍스트 결과물은 PDF(=VerdictCard 캡처) 와 동일한 내용을 담아야 한다.
 // 따라서 VerdictCard 의 렌더 구조 — 헤더 판정 / 등급 분포 / 강점·Finding /
@@ -192,7 +193,29 @@ const PRINT_STYLE = `
   #pdf-export-root [data-finding-card] > div { margin-top:5px !important; }
   #pdf-export-root [data-finding-card] > div > div:first-child { font-size:6.5px !important; margin-bottom:2px !important; }
   #pdf-export-root [data-finding-card] > div > div:last-child { font-size:9px !important; line-height:1.4 !important; }
+  /* ── 가독성 보정(뒤에 오므로 위 규칙을 덮어쓴다): 캡처 폭을 줄인 만큼 종이에서 글자가 커지고, 최소 글자 크기를 올린다. ── */
+  #pdf-export-root p { font-size:11px !important; line-height:1.55 !important; }
+  #pdf-export-root h3 > span { font-size:12px !important; }
+  #pdf-export-root div[style*="repeat(3, 1fr)"] > div > div:nth-child(1) { font-size:9.5px !important; }
+  #pdf-export-root div[style*="repeat(3, 1fr)"] > div > div:nth-child(3) { font-size:9.5px !important; }
+  #pdf-export-root div[style*="1fr 1fr"] > div > div:nth-child(1) { font-size:9.5px !important; }
+  #pdf-export-root div[style*="1fr 1fr"] > div > div:nth-child(2) { font-size:11px !important; line-height:1.55 !important; }
+  #pdf-export-root div[style*="60px minmax(0, 1fr)"] > div:nth-child(1) > div:nth-child(2) { font-size:8.5px !important; }
+  #pdf-export-root [data-finding-card] { background:#FFFFFF !important; border:1px solid #A1A1AA !important; border-left:3px solid #0A0A0C !important; padding:9px 12px 10px !important; }
+  #pdf-export-root [data-finding-card] > div:first-child > span { font-size:9px !important; }
+  #pdf-export-root [data-finding-card] > div > div:first-child { font-size:8.5px !important; font-weight:700 !important; margin-bottom:3px !important; }
+  #pdf-export-root [data-finding-card] > div > div:last-child { font-size:10.5px !important; line-height:1.6 !important; }
+  #pdf-export-root [data-finding-card] > div:last-child { font-size:9.5px !important; line-height:1.55 !important; }
+  #pdf-export-root [data-reference-chips] span, #pdf-export-root [data-reference-chips] button { font-size:9px !important; }
+  /* 근거 칩(PAM·BGB): 어두운 바탕 + 회색 글자(읽을 수 없음) → 밝은 바탕 + 진한 글자 */
+  #pdf-export-root [data-ref-chips] > span { background:#F4F4F5 !important; border:1px solid #A1A1AA !important; font-size:9px !important; padding:2px 7px !important; opacity:1 !important; }
+  #pdf-export-root [data-ref-chips] > span, #pdf-export-root [data-ref-chips] > span * { color:#18181B !important; opacity:1 !important; font-weight:600 !important; }
 `;
+
+const CAPTURE_WIDTH_PX = 820;
+
+// onclone 에서 측정한 "여기서 끊어도 글줄이 잘리지 않는" 세로 위치(CSS px).
+let breakPointsCss = [];
 
 const attachPrintStyle = (clonedDoc, clonedElement) => {
   // VerdictCard always renders the section with data-pdf-export-root. Prefer the
@@ -213,7 +236,34 @@ const attachPrintStyle = (clonedDoc, clonedElement) => {
   // Belt-and-braces: also mutate inline styles directly so the print look
   // applies even if the injected <style> doesn't reach html2canvas's renderer
   // (selector specificity, attribute mismatch, etc.).
+  target.style.setProperty("width", `${CAPTURE_WIDTH_PX}px`, "important");
+  target.style.setProperty("max-width", `${CAPTURE_WIDTH_PX}px`, "important");
+  target.style.setProperty("box-sizing", "border-box", "important");
   applyInlinePdfStyle(target);
+  breakPointsCss = collectBreakPoints(target);
+};
+
+// BP 행·Finding 카드·인사이트 박스의 하단 위치를 모아, 페이지를 그 사이에서만 자른다.
+const collectBreakPoints = (root) => {
+  const top = root.getBoundingClientRect().top;
+  const pts = [];
+  root
+    .querySelectorAll('div[style*="60px"][style*="minmax"], [data-finding-card], div[style*="1fr 1fr"], div[style*="repeat(3, 1fr)"]')
+    .forEach((el) => {
+      const b = el.getBoundingClientRect().bottom - top;
+      if (b > 0) pts.push(Math.round(b));
+    });
+  return pts.sort((a, b) => a - b);
+};
+
+// [start, maxEnd] 구간에서 가장 아래의 끊을 수 있는 위치를 고른다. 없으면(한 카드가 페이지보다 큼) maxEnd 그대로.
+const snapBreak = (start, maxEnd, scale, minFill) => {
+  let best = null;
+  for (const cssY of breakPointsCss) {
+    const y = Math.round(cssY * scale);
+    if (y > start + minFill && y <= maxEnd) best = y;
+  }
+  return best ?? maxEnd;
 };
 
 const setStyle = (el, patch) => {
@@ -408,14 +458,21 @@ const formatHeaderDate = (d) => {
   return `${y}. ${m}. ${day}. ${hh}:${mi}`;
 };
 
-const renderHeader = (pdf, proc, pageWidth, headerH, headerPad, cont) => {
+const renderHeader = (pdf, proc, pageWidth, headerH, headerPad, cont, titleImg = null) => {
   const pageHeight = pdf.internal.pageSize.getHeight();
   pdf.setFillColor(255, 255, 255); pdf.rect(0, 0, pageWidth, pageHeight, "F");
   pdf.setFillColor(248, 248, 250); pdf.rect(0, 0, pageWidth, headerH, "F");
   pdf.setDrawColor(180, 180, 188); pdf.setLineWidth(0.3);
   pdf.line(0, headerH, pageWidth, headerH);
   pdf.setTextColor(10, 10, 12); pdf.setFontSize(10);
-  pdf.text(`ASPICE PAM 4.1 · ${proc.id} ${proc.name}${cont ? " (cont.)" : ""}`, headerPad, 10);
+  if (titleImg) {
+    // 한글 프로세스명은 jsPDF 기본 폰트로 못 그려 깨지므로 이미지로 넣는다.
+    const hMm = 5.2;
+    const wMm = (titleImg.width * hMm) / titleImg.height;
+    pdf.addImage(titleImg.dataUrl, "PNG", headerPad, 10 - 4, wMm, hMm);
+  } else {
+    pdf.text(`ASPICE PAM 4.1 · ${proc.id}${cont ? " (cont.)" : ""}`, headerPad, 10);
+  }
   pdf.setFontSize(7.5); pdf.setTextColor(100, 100, 110);
   pdf.text(formatHeaderDate(new Date()), pageWidth - headerPad, 10, { align: "right" });
 };
@@ -458,11 +515,32 @@ const captureDisclaimerImage = async () => {
   }
 };
 
+// 헤더 제목(한글 프로세스명 포함)을 이미지로 만든다.
+const captureHeaderTitleImage = async (text) => {
+  const stage = document.createElement("div");
+  stage.style.cssText = `
+    position: fixed; left: -99999px; top: 0; display: inline-block; white-space: nowrap;
+    padding: 2px 4px; background: #F8F8FA; color: #0A0A0C; font-weight: 700;
+    font-family: 'Inter', 'Noto Sans KR', 'Malgun Gothic', system-ui, sans-serif;
+    font-size: 20px; line-height: 1.3; letter-spacing: 0.02em;
+  `;
+  stage.textContent = text;
+  document.body.appendChild(stage);
+  try {
+    const c = await captureToPngCanvas(stage, { backgroundColor: "#F8F8FA" });
+    return { dataUrl: c.toDataURL("image/png"), width: c.width, height: c.height };
+  } finally {
+    stage.remove();
+  }
+};
+
 export const exportReportAsPdf = async ({ proc, node }) => {
+  breakPointsCss = [];
   const canvas = await captureToPngCanvas(node, {
-    windowWidth: node.scrollWidth,
+    windowWidth: CAPTURE_WIDTH_PX + 80,
     onclone: attachPrintStyle,
   });
+  const CANVAS_SCALE = canvas.width / CAPTURE_WIDTH_PX;
 
   const disclaimerCanvas = await captureDisclaimerImage();
   const imgData = canvas.toDataURL("image/png");
@@ -478,7 +556,9 @@ export const exportReportAsPdf = async ({ proc, node }) => {
   const imgH = (canvas.height * scaledImgW) / canvas.width;
   const imgX = sideMargin;
 
-  renderHeader(pdf, proc, pageWidth, headerH, headerPad, false);
+  const titleFirst = await captureHeaderTitleImage(`ASPICE PAM 4.1 · ${proc.id} ${proc.name}`);
+  const titleCont = await captureHeaderTitleImage(`ASPICE PAM 4.1 · ${proc.id} ${proc.name} (cont.)`);
+  renderHeader(pdf, proc, pageWidth, headerH, headerPad, false, titleFirst);
   const positionY = headerH + 4;
   const pxPerMm = canvas.width / scaledImgW;
 
@@ -487,14 +567,17 @@ export const exportReportAsPdf = async ({ proc, node }) => {
   } else {
     const firstMm = pageHeight - positionY - marginY;
     const otherMm = pageHeight - headerH - 4 - marginY;
-    const fp = Math.min(canvas.height, Math.floor(firstMm * pxPerMm));
+    const firstMax = Math.min(canvas.height, Math.floor(firstMm * pxPerMm));
+    const fp = firstMax >= canvas.height ? firstMax : snapBreak(0, firstMax, CANVAS_SCALE, Math.floor(firstMm * pxPerMm * 0.4));
     sliceCanvasToPdf(pdf, canvas, imgX, positionY, fp / pxPerMm, 0, fp, scaledImgW);
     let sy = fp;
     let rem = canvas.height - fp;
     while (rem > 0) {
       pdf.addPage();
-      renderHeader(pdf, proc, pageWidth, headerH, headerPad, true);
-      const sp = Math.min(rem, Math.floor(otherMm * pxPerMm));
+      renderHeader(pdf, proc, pageWidth, headerH, headerPad, true, titleCont);
+      const maxEnd = Math.min(canvas.height, sy + Math.floor(otherMm * pxPerMm));
+      const end = maxEnd >= canvas.height ? canvas.height : snapBreak(sy, maxEnd, CANVAS_SCALE, Math.floor(otherMm * pxPerMm * 0.4));
+      const sp = end - sy;
       sliceCanvasToPdf(pdf, canvas, imgX, positionY, sp / pxPerMm, sy, sp, scaledImgW);
       sy += sp;
       rem -= sp;

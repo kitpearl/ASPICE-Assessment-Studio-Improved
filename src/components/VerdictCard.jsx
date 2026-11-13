@@ -342,7 +342,7 @@ const StandardRefChips = ({ refs, processId }) => {
   const all = flattenStandardRefs(refs, processId);
   if (all.length === 0) return null;
   return (
-    <div style={{ display: "flex", flexWrap: "wrap", gap: 4, marginTop: 8 }}>
+    <div data-ref-chips style={{ display: "flex", flexWrap: "wrap", gap: 4, marginTop: 8 }}>
       {all.map((r, i) => (
         <span
           key={`${r.kind}-${i}-${r.text}`}
@@ -364,7 +364,7 @@ const StandardRefChips = ({ refs, processId }) => {
             whiteSpace: "normal",
           }}
         >
-          <span style={{ opacity: 0.7 }}>{r.kind}</span>
+          {!String(r.text).startsWith(r.kind) && <span style={{ opacity: 0.7 }}>{r.kind}</span>}
           <span>{r.text}</span>
         </span>
       ))}
