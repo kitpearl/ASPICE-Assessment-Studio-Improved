@@ -25,6 +25,28 @@ export const findCappedRule = (ruleId, appliedRules) =>
     (r) => r && r.ruleId === ruleId && r.capped && r.applied !== false,
   );
 
+// 화면용 상한 라벨(효과 → "상한 N"). 칩 라벨(EFFECT_LABEL)과 어순이 달라 별도로 둔다.
+const CAP_LABEL = { "cap:N": "상한 N", "cap:P": "상한 P", "cap:L": "상한 L", "must-downrate": "상한 L", "cap-source": "출처 등급 상한" };
+
+// capped 된 appliedRules 를 화면용으로 정리한다. 반환: [{ id, capLabel, source, note }]
+// source: 룰 엔진(후처리) 또는 LLM 판단. 보류된 항목(applied=false)과 capped 아닌 항목은 제외한다.
+export const cappedRules = (references, appliedRules) => {
+  const effects = new Map(guidelineList(references).map((g) => [g.id, g.effect]));
+  const seen = new Set();
+  const out = [];
+  for (const r of Array.isArray(appliedRules) ? appliedRules : []) {
+    if (!r || !r.ruleId || !r.capped || r.applied === false || seen.has(r.ruleId)) continue;
+    seen.add(r.ruleId);
+    out.push({
+      id: r.ruleId,
+      capLabel: CAP_LABEL[effects.get(r.ruleId)] || "등급 상한",
+      source: r.source === "rule-engine" ? "규칙 엔진" : "LLM 판단",
+      note: typeof r.note === "string" ? r.note : "",
+    });
+  }
+  return out;
+};
+
 // 가이드라인 칩 문자열: "[SWE.1.RL.4] N 상한 (MBD)"
 export const formatGuideline = (g) => {
   if (!g?.id) return "";

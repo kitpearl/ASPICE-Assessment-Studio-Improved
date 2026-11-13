@@ -8,6 +8,7 @@ import { RATING_META, RATING_ORDER, countRatings, isCl1Pass } from "../data/rati
 import { normalizeEvidence } from "../utils/evidence";
 import { FINDING_TYPE_LABEL, flattenStandardRefs, buildFindingNarrative } from "../utils/findings";
 import { ReferenceChips } from "./ReferenceChips";
+import { cappedRules } from "../utils/references";
 
 const VerdictHeader = ({ proc, results, fileName, date, cl1Pass, counts, totalBps, viewingHistory, exporting, onExportPdf, onExportTxt }) => (
   <div style={{
@@ -467,6 +468,49 @@ const FindingCard = ({ finding, processId }) => {
 };
 
 
+// 등급 상한이 걸린 BP 의 사유 블록: 규칙 ID, 상한, 판단 주체(룰 엔진/LLM), § 절·쪽, LLM 의 판단 근거(note).
+// 규칙 본문(유료 가이드라인 원문)은 담지 않는다. 보류된 규칙(applied=false)은 나오지 않는다.
+const CapReason = ({ references, appliedRules }) => {
+  const capped = cappedRules(references, appliedRules);
+  if (!capped.length) return null;
+  const guideMeta = Array.isArray(references?.guideline) ? references.guideline : [];
+  return (
+    <div data-cap-reason style={{
+      marginBottom: 10,
+      padding: "8px 12px",
+      background: "#FEF2F2",
+      border: `1px solid ${T.err}55`,
+      borderRadius: 3,
+      minWidth: 0,
+    }}>
+      <div style={{ fontSize: 12, fontWeight: 700, color: T.err }}>등급 상한 적용</div>
+      {capped.map((c) => {
+        const g = guideMeta.find((x) => x?.id === c.id);
+        const hasPage = g?.page != null && g.page !== "";
+        const where = g?.section ? `${g.section}${hasPage ? ` · p.${g.page}` : ""}` : hasPage ? `p.${g.page}` : "";
+        return (
+          <div key={c.id} style={{ marginTop: 6 }}>
+            <div style={{ fontSize: 12, color: T.textHi, wordBreak: "break-word", overflowWrap: "anywhere" }}>
+              <span style={{ fontFamily: FONTS.mono, fontWeight: 700 }}>[{c.id}]</span>{" "}
+              <span style={{ fontWeight: 700, color: T.err }}>{c.capLabel}</span>
+              <span style={{ color: T.textMd }}> · {c.source}</span>
+              {where && <span style={{ color: T.textLo, fontSize: 10.5 }}> {where}</span>}
+            </div>
+            {c.note && (
+              <div style={{ fontSize: 12, lineHeight: 1.6, color: T.textHi, marginTop: 2, wordBreak: "break-word", overflowWrap: "anywhere" }}>
+                {c.note}
+              </div>
+            )}
+          </div>
+        );
+      })}
+      <div style={{ fontSize: 10.5, lineHeight: 1.5, color: T.textLo, marginTop: 6 }}>
+        가이드라인 3판(2026) 규칙 조건이 성립해 등급이 제한되었습니다. 조건을 해소하면 상한이 풀립니다.
+      </div>
+    </div>
+  );
+};
+
 const BpRatingRow = ({ proc, bp, rating }) => {
   const m = RATING_META[rating.rating] || RATING_META.N;
   const findings = Array.isArray(rating.findings) ? rating.findings : [];
@@ -514,20 +558,20 @@ const BpRatingRow = ({ proc, bp, rating }) => {
             {bp.title}
           </span>
         </div>
+        <ReferenceChips references={rating.references} appliedRules={rating.appliedRules} />
+        <CapReason references={rating.references} appliedRules={rating.appliedRules} />
         {hasFindings ? (
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             {findings.map((f, i) => (
               <FindingCard key={f.id || `${bp.id}-f-${i}`} finding={f} processId={proc.id} />
             ))}
             <StandardRefChips refs={rating.standardReferences} processId={proc.id} />
-            <ReferenceChips references={rating.references} appliedRules={rating.appliedRules} />
           </div>
         ) : (
           <>
             <div style={{ fontSize: 12.5, color: T.textMd, lineHeight: 1.6, marginBottom: 10, wordBreak: "break-word", overflowWrap: "anywhere", minWidth: 0 }}>
               <strong style={{ color: T.err, fontWeight: 600 }}>약점 · </strong>{rating.rationale}
             </div>
-            <ReferenceChips references={rating.references} appliedRules={rating.appliedRules} />
             <div style={{
               fontFamily: FONTS.mono,
               fontSize: 9,

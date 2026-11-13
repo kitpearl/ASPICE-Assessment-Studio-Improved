@@ -1,6 +1,6 @@
 import jsPDF from "jspdf";
 import { normalizeEvidence } from "./evidence";
-import { referencesToText } from "./references";
+import { referencesToText, cappedRules } from "./references";
 import { captureToPngCanvas, sliceCanvasToPdfPage } from "./pdfPaginator";
 import { RATING_META, RATING_ORDER, countRatings, isCl1Pass } from "../data/ratingMeta";
 import { FINDING_TYPE_LABEL, flattenStandardRefs, buildFindingNarrative } from "./findings";
@@ -80,6 +80,9 @@ export const exportReportAsText = ({ proc, results, fileName, date }) => {
     push(`  판정: [${rating.rating}] (${m.range})`);
     const refText = referencesToText(rating.references, rating.appliedRules, { pamSep: " / " });
     if (refText) push(`  근거: ${refText}`);
+    cappedRules(rating.references, rating.appliedRules).forEach((c) => {
+      push(`  등급 상한 적용: [${c.id}] ${c.capLabel} · ${c.source}${c.note ? ` — ${c.note}` : ""}`);
+    });
 
     const findings = Array.isArray(rating.findings) ? rating.findings : [];
     if (findings.length > 0) {
@@ -318,17 +321,25 @@ const applyInlinePdfStyle = (root) => {
     // (legacy) rationale + evidence list. Detect findings mode and skip the
     // legacy mutation so the new card layout flows untouched.
     setStyle(bodyCell, { padding: "7px 11px" });
-    if (bodyCell.querySelector("[data-finding-card]")) {
-      applyInlineFindingStyle(bodyCell);
-      return;
-    }
-    // 근거 칩(ReferenceChips)은 references 유무에 따라 끼어들기 때문에 위치 계산에서 빼고 따로 줄인다.
+    // 근거 칩(ReferenceChips)·상한 사유 블록은 references/appliedRules 유무에 따라 끼어들기 때문에
+    // 위치 계산에서 빼고 따로 줄인다(Finding 모드·레거시 모드 공통).
     const chips = bodyCell.querySelector("[data-reference-chips]");
     if (chips) {
       setStyle(chips, { "margin-bottom": "4px" });
       chips.querySelectorAll("span, button").forEach((el) => setStyle(el, { "font-size": "7px", padding: "0 4px" }));
     }
-    const body = Array.from(bodyCell.children).filter((c) => !c.hasAttribute("data-reference-chips"));
+    const capReason = bodyCell.querySelector("[data-cap-reason]");
+    if (capReason) {
+      setStyle(capReason, { padding: "4px 8px", "margin-bottom": "4px", "font-size": "8px", "line-height": "1.4" });
+      capReason.querySelectorAll("div").forEach((el) => setStyle(el, { "font-size": "8px", "line-height": "1.4" }));
+    }
+    if (bodyCell.querySelector("[data-finding-card]")) {
+      applyInlineFindingStyle(bodyCell);
+      return;
+    }
+    const body = Array.from(bodyCell.children).filter(
+      (c) => !c.hasAttribute("data-reference-chips") && !c.hasAttribute("data-cap-reason"),
+    );
     if (body[1]) setStyle(body[1], { "font-size": "9px", color: "#3F3F46", "line-height": "1.4", "margin-bottom": "5px" });
     if (body[2]) setStyle(body[2], { "font-size": "7px", color: "#52525C", "letter-spacing": "0.12em", "font-weight": "700", "margin-bottom": "3px" });
     const evidenceList = body[3];
