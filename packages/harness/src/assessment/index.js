@@ -13,3 +13,4 @@ export * from "./referenceTable.js";
 export * from "./qualityMetrics.js";
 export * from "./prompt.js";
 export * from "./fromVerdict.js";
+export * from "./consensus.js";
