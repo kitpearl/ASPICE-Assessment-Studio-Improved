@@ -347,3 +347,15 @@ test("정량 지표: 심사자 확정 참조 집합이 없으면 계산하지 �
   assert.equal(c.validRecall.value, 1);
   assert.match(c.scope, /일반화하지 않는다/);
 });
+
+test("[synthetic] 문서에 BP 번호 참조가 없으면 BP 구성 불일치 경고를 내지 않는다", () => {
+  const r = compareBpMapping([{ text: "변경 요청을 식별하고 기록한다" }], "SUP.10", sup10.basePractices.map((b) => b.id));
+  assert.equal(r.documentBpCount, 0);
+  assert.equal(r.mismatch, false);
+  assert.equal(r.note, "");
+  const a = buildAssessment({ processSpec: sup10, manifest: MANIFEST, blocks: [{ documentId: "DOC-SUP10-PLAN", text: "변경 요청을 식별하고 기록한다", locator: { paragraph: 1 } }] });
+  const c = a.consistencyChecks.find((x) => x.checkId === "DOC-BP-MAPPING");
+  assert.equal(c.status, "PASS");
+  assert.match(c.detail, /BP 번호 참조가 없어/);
+  assert.ok(!deriveSummary(a).openIssues.some((o) => o.ref === "DOC-BP-MAPPING"));
+});

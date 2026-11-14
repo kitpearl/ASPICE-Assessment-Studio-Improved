@@ -195,7 +195,7 @@ export function buildAssessment(input) {
     consistencyChecks.push({
       checkId: "DOC-BP-MAPPING",
       status: map.mismatch ? "REVIEW" : "PASS",
-      detail: map.mismatch ? `문서 자체 BP ${map.documentBpCount}개 vs 공식 PAM ${map.officialBpCount}개 — 의미 기반 대응 필요` : "문서 BP 구성이 공식 구성과 같다",
+      detail: map.mismatch ? `문서 자체 BP ${map.documentBpCount}개 vs 공식 PAM ${map.officialBpCount}개 — 의미 기반 대응 필요` : map.documentBpCount === 0 ? "문서에 BP 번호 참조가 없어 비교하지 않았다" : "문서 BP 구성이 공식 구성과 같다",
       items: [map],
     });
   }

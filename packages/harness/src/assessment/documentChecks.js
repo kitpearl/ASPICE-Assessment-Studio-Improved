@@ -122,7 +122,8 @@ export function compareBpMapping(blocks, processId, officialBpIds) {
     officialBpCount: official.size,
     documentBps: [...docBps].sort(),
     notInOfficial: extra,
-    mismatch: docBps.size !== official.size,
+    // 문서가 BP 번호를 한 번도 참조하지 않으면 비교할 대상이 없다(번호 체계가 다르다는 뜻이 아님).
+    mismatch: docBps.size > 0 && docBps.size !== official.size,
     note: docBps.size && docBps.size !== official.size
       ? "문서 자체 BP 번호 체계가 공식 PAM 과 다르다. BP 번호가 아니라 의미 기반으로 대응시켜야 한다."
       : "",
