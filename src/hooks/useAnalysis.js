@@ -88,6 +88,8 @@ export const useAnalysis = () => {
         strengths: data.strengths || "",
         gaps: data.gaps || "",
         _verdict: data._verdict || null,
+        _assessment: data._assessment || null,
+        _assessmentSummary: data._assessmentSummary || null,
       };
 
       setPhase("결과 집계 중");

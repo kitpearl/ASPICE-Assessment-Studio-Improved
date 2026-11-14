@@ -29,7 +29,7 @@ export const exportReportAsText = ({ proc, results, fileName, date }) => {
   push("§ 03 · NPLF 평가 결과");
   push("Capability Level 1 · 평가 결과");
   rule("=");
-  push(`판정: ${cl1Pass ? "적합 (Conformant)" : "갭 발견 (Gap Detected)"} · ${aboveL}/${totalBps} BP가 L 이상`);
+  push(`판정: ${cl1Pass ? "문서 적합 (잠정)" : "갭 발견 (Gap Detected)"} · ${aboveL}/${totalBps} BP가 L 이상 · 문서 적절성 검토 결과이며 실제 수행에 따른 PA/CL 달성을 확정하지 않음`);
   push(`프로세스: ${proc.id} ${proc.name}`);
   push(`문서: ${fileName || "—"}`);
   push(`일시: ${date.toLocaleString("ko-KR")}`);
@@ -62,6 +62,19 @@ export const exportReportAsText = ({ proc, results, fileName, date }) => {
       push(`  ${results.gaps}`);
       push();
     }
+  }
+
+  // ── 구조화 평가 (서버가 만든 요약 그대로) ──
+  const sa = results._assessmentSummary;
+  if (sa) {
+    push("구조화 평가 (Assessment)");
+    rule();
+    push(`  범위: ${sa.scope === "DOCUMENT_ADEQUACY" ? "문서 적절성 검토" : "프로세스 수행 평가"}`);
+    push(`  ${sa.conclusion}`);
+    push(`  공식 등급 분포: N ${sa.distribution.N} · P ${sa.distribution.P} · L ${sa.distribution.L} · F ${sa.distribution.F} · 미확정 ${sa.distribution.UNRATED}`);
+    push(`  약점 ${sa.findingCount}건 · 미해결·검토 대기 ${sa.openIssues.length}건${sa.noFindingStatement ? ` · ${sa.noFindingStatement}` : ""}`);
+    sa.openIssues.slice(0, 20).forEach((o) => push(`    - [${o.ref}] ${o.text}`));
+    push();
   }
 
   // ── BP별 평가 (BpRatingRow) ──
