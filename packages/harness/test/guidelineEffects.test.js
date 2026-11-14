@@ -169,3 +169,25 @@ test("guardLlmCitations: a held entry no longer caps in applyAppliedRules", () =
   assert.equal(result.scorePercent, 80);
   assert.deepEqual(result.gaps, []);
 });
+
+// ── 사유 판정 규칙(due to)은 출처 지표 등급을 볼 수 없는 LLM 의 주장만으로 상한을 걸지 않는다 ──
+import { getGuidelineRulesById as _rulesById } from "../src/evaluators/guidelineRules.js";
+import { applyAppliedRules as _apply } from "../src/evaluators/guidelineEffects.js";
+
+test("LLM 이 인용한 사유 판정 등급 규칙(SUP.10.RL.2/9/11)은 상한을 걸지 않는다", () => {
+  // 근거: RL.2 는 "BP1 이 내용 불충분으로 P/N 이면 BP2 하향". LLM 은 BP2 만 보고 BP1 등급을 모른다.
+  // 이 규칙들은 결정적 후처리(ratingConditions)가 출처 등급을 확인해 다루며, 사유 때문에 거기서도 자동 적용하지 않는다.
+  for (const id of ["SUP.10.RL.2", "SUP.10.RL.9", "SUP.10.RL.11"]) {
+    const r = { scorePercent: 96, gaps: [], appliedRules: [{ ruleId: id, applied: true, note: "근거 문장" }] };
+    _apply(r, _rulesById());
+    assert.equal(r.scorePercent, 96, id);
+    assert.equal(r.appliedRules[0].capped, undefined, id);
+    assert.equal(r.appliedRules[0].scoreBefore, undefined, id);
+  }
+});
+
+test("reasonQualified 플래그 규칙(SUP.10.RL.6)은 기존대로 LLM 적용을 허용한다", () => {
+  const r = { scorePercent: 96, gaps: [], appliedRules: [{ ruleId: "SUP.10.RL.6", applied: true, note: "CR 과 영향 산출물 간 의존성 누락" }] };
+  _apply(r, _rulesById());
+  assert.equal(r.scorePercent, 85);
+});

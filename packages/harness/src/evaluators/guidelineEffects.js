@@ -62,7 +62,9 @@ export function applyAppliedRules(result, rulesById) {
     if (!rule) continue;
     // 타 프로세스 조건 규칙은 표시 전용, 사유 한정이 아닌 등급 조건 규칙은 결정론적 후처리기 담당
     if (rule.condition?.crossProcess) continue;
-    if (rule.condition?.kind === "rating" && !rule.condition.reasonQualified && !requiresReasonJudgment(rule)) continue;
+    // 출처 지표 등급을 볼 수 없는 LLM 의 주장만으로 등급 조건 규칙의 상한을 걸지 않는다(reasonQualified 플래그 규칙만 허용).
+    // 사유 판정 규칙(due to)은 결정적 후처리(ratingConditions)가 출처 등급 확인 후 검토 대기로 다룬다.
+    if (rule.condition?.kind === "rating" && !rule.condition.reasonQualified) continue;
     const cap = capForEffect(rule.effect);
     if (cap === null || !(result.scorePercent > cap)) continue;
     // 깎이기 전 점수를 항목에 남긴다(검증되지 않은 LLM 규칙 주장이 점수에 먼저 반영돼도 원래 값을 복원할 수 있도록).
