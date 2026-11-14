@@ -147,7 +147,13 @@ export function buildAssessment(input) {
       dispositionReason: f.dispositionReason ?? "",
     };
     if (f.absenceClaim && workBlocks.length) {
-      const r = reconcileAbsenceClaim(f.absenceClaim, workBlocks.map((b) => ({ ...b, evidenceId: ensureBlockEvidence(b, b._i) })), { unreadable });
+      // 증거 항목은 반대 증거로 실제 인용된 블록만 만든다(문서 줄 수만큼 증거가 늘어 이력이 커지는 것을 막는다).
+      const planned = workBlocks.map((b) => ({ ...b, evidenceId: b.evidenceId ?? evidenceIdFor(b.documentId ?? manifest[0]?.documentId ?? "DOC-UNKNOWN", b._i) }));
+      const r = reconcileAbsenceClaim(f.absenceClaim, planned, { unreadable });
+      for (const c of r.counterEvidence) {
+        const blk = workBlocks.find((b, i) => planned[i].evidenceId === c.evidenceId);
+        if (blk) ensureBlockEvidence(blk, blk._i);
+      }
       out.disposition = r.disposition;
       out.dispositionReason = r.reason;
       if (f.conservativeAbsence && r.disposition === "REJECTED") {

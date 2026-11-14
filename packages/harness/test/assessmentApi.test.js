@@ -102,6 +102,16 @@ test("[real excerpt] 실제 흐름 2: LLM 의 '개시자 없음' 약점은 반�
   assert.equal(s.noFindingStatement, null, "보류 사항이 있으면 'Finding 없음'이라고 하지 않는다");
 });
 
+test("[real excerpt] 증거 항목은 반대 증거로 인용된 블록만 만든다(문서 줄 수만큼 늘지 않는다)", () => {
+  const a = assessmentFromVerdict(hybridLikeVerdict(), { artifacts: [{ name: "plan.docx", text }], engines: ["hybrid"] });
+  const lineCount = text.split(/\r?\n/).filter((l) => l.trim()).length;
+  const cited = new Set(a.findings.flatMap((f) => f.evidenceIds));
+  assert.ok(a.evidence.length > 0, "반대 증거가 있으면 증거 항목이 생긴다");
+  assert.ok(a.evidence.length < lineCount / 2, `증거 ${a.evidence.length}건은 문서 줄 ${lineCount}개보다 훨씬 적어야 한다`);
+  for (const e of a.evidence) assert.ok(cited.has(e.evidenceId), `${e.evidenceId} 는 인용되지 않았다`);
+  assert.deepEqual(validateAssessment(a).violations, []);
+});
+
 test("[synthetic] 실제 흐름 3: 같은 기대사항에 대한 강점·약점 충돌을 탐지하고, 의미 판정이 없으면 둘 다 보류한다", () => {
   const verdict = {
     processId: "SUP.10",
