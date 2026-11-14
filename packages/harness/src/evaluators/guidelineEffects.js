@@ -5,6 +5,17 @@
  */
 import { truncate, SUMMARY_CHARS } from "../knowledge/select.js";
 
+/**
+ * 등급 조건 규칙이 "…때문에/…로 인해 P·N 이라면" 처럼 하향 "사유"까지 요구하는지(영문 원문 due to/because 기준).
+ * 가이드라인 추출기의 reasonQualified 플래그는 "하향 평가된다면"(등급 수준 미명시)에만 붙고,
+ * "N 또는 P로 등급 평가된다면 …"에 사유가 함께 있는 규칙(SUP.10.RL.2/9/11, SUP.9.RL.1)에는 빠져 있다.
+ * 사유는 출처 지표의 점수만으로 검증할 수 없다.
+ * @param {{textEn?: string}} rule
+ */
+export function requiresReasonJudgment(rule) {
+  return /\b(due to|because of|because|caused by)\b/i.test(rule?.textEn ?? "");
+}
+
 export const RATING_CAP_PERCENT = { N: 15, P: 50, L: 85 };
 
 /**
@@ -51,9 +62,11 @@ export function applyAppliedRules(result, rulesById) {
     if (!rule) continue;
     // 타 프로세스 조건 규칙은 표시 전용, 사유 한정이 아닌 등급 조건 규칙은 결정론적 후처리기 담당
     if (rule.condition?.crossProcess) continue;
-    if (rule.condition?.kind === "rating" && !rule.condition.reasonQualified) continue;
+    if (rule.condition?.kind === "rating" && !rule.condition.reasonQualified && !requiresReasonJudgment(rule)) continue;
     const cap = capForEffect(rule.effect);
     if (cap === null || !(result.scorePercent > cap)) continue;
+    // 깎이기 전 점수를 항목에 남긴다(검증되지 않은 LLM 규칙 주장이 점수에 먼저 반영돼도 원래 값을 복원할 수 있도록).
+    entry.scoreBefore = result.scorePercent;
     result.scorePercent = cap;
     const summary = truncate(rule.text, SUMMARY_CHARS);
     if (!Array.isArray(result.gaps)) result.gaps = [];
@@ -100,7 +113,17 @@ function holdReason(llmRawScore, entry, rulesById) {
     if (max !== null && llmRawScore > max) return `LLM 점수 ${llmRawScore}% 와 불일치`;
   }
   if (typeof entry.note !== "string" || entry.note.trim() === "") return "근거 없음";
+  if (rule.condition?.kind === "evidence" && noteNegatesTrigger(entry.note)) return "적용 사유가 규칙 조건의 불성립을 서술함";
   return null;
+}
+
+/**
+ * 증거형 조건 규칙(예: "모든 관련자가 대표되지 않는다면 F 불가")을 적용했다고 하면서 note 는 조건이 성립하지 않음
+ * ("모든 … 대표되어 있음", "충족됨")을 서술하는 자기모순을 찾는다. 적용 후보로만 남기고 확정하지 않는다.
+ */
+export function noteNegatesTrigger(note) {
+  const t = String(note ?? "");
+  return /(모든|전체|전원).{0,30}(대표|포함|반영|정의|수행)(되어|돼)\s*있(?!\s*지\s*않)/.test(t) || /(규칙|조건).{0,12}(충족됨|충족된다|충족되어|불성립)/.test(t);
 }
 
 function hold(entry, reason) {

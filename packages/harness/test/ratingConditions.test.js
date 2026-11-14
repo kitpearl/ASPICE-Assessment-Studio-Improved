@@ -91,6 +91,37 @@ test("GP-sourced rule caps the target GP and refreshes PA rating", () => {
   assert.equal(pas[0].collapsed, "P");
 });
 
+test("reason-qualified rules (SUP.10.RL.2/6/9/11 'due to …') are not applied from the source rating alone", () => {
+  // 근거: 규칙 원문이 "…때문에 P/N 이라면" 이다. 출처가 P 여도 그 사유를 검증하지 않고 하향하면 오적용이다.
+  // 시나리오 A: BP1=P, BP4=P → RL.2(BP1→BP2), RL.6(BP4→BP2), RL.11(BP1→BP6) 후보. 대상 BP2·BP6 는 높은 점수.
+  const a = [
+    { id: "BP1", scorePercent: 40, rating: "P+", gaps: [] },
+    { id: "BP2", scorePercent: 95, rating: "F", gaps: [] },
+    { id: "BP3", scorePercent: 95, rating: "F", gaps: [] },
+    { id: "BP4", scorePercent: 40, rating: "P+", gaps: [] },
+    { id: "BP5", scorePercent: 95, rating: "F", gaps: [] },
+    { id: "BP6", scorePercent: 95, rating: "F", gaps: [] },
+  ];
+  const ra = applyRatingConditionRules({ processId: "SUP.10", bps: a, pas: [], rules });
+  for (const id of ["SUP.10.RL.2", "SUP.10.RL.6", "SUP.10.RL.11"]) {
+    assert.ok(!ra.applied.some((x) => x.ruleId === id), id + " must not be applied without a verified reason");
+    assert.ok(ra.unverifiedReason.some((u) => u.ruleId === id), id + " must be reported as pending review");
+  }
+  assert.equal(a[1].scorePercent, 95);
+  assert.equal(a[5].scorePercent, 95);
+  // 시나리오 B: BP2=P → RL.9(BP2→BP5)는 사유 한정, RL.5(BP2→BP3)는 사유 없음.
+  const b = [
+    { id: "BP2", scorePercent: 40, rating: "P+", gaps: [] },
+    { id: "BP3", scorePercent: 95, rating: "F", gaps: [] },
+    { id: "BP5", scorePercent: 95, rating: "F", gaps: [] },
+  ];
+  const rb = applyRatingConditionRules({ processId: "SUP.10", bps: b, pas: [], rules });
+  assert.ok(rb.applied.some((x) => x.ruleId === "SUP.10.RL.5"));
+  assert.ok(!rb.applied.some((x) => x.ruleId === "SUP.10.RL.9"));
+  assert.ok(rb.unverifiedReason.some((u) => u.ruleId === "SUP.10.RL.9"));
+  assert.equal(b[2].scorePercent, 95);
+});
+
 test("idempotent: second run applies nothing new", () => {
   const bps = [{ id: "BP2", scorePercent: 40, rating: "P+", gaps: [] }, { id: "BP3", scorePercent: 90, rating: "F", gaps: [] }];
   const first = applyRatingConditionRules({ processId: "SUP.10", bps, pas: [], rules });

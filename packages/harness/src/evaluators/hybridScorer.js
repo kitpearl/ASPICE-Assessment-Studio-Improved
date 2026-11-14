@@ -86,10 +86,14 @@ function merge(method, rule, llm, weights) {
       standardReferences,
       findings,
     };
+    // 가이드라인 상한이 적용되기 전의 융합 점수(검증되지 않은 LLM 규칙 주장이 점수에 반영되기 전 값)
+    const llmUncapped = llmRes.scoreBeforeGuidelineCaps ?? llmRes.scorePercent;
+    const uncappedFused = ruleOk && llmOk ? Math.round(ruleRes.scorePercent * weights.rule + llmUncapped * weights.llm) : ruleOk ? ruleRes.scorePercent : llmOk ? llmUncapped : 0;
     // 가이드라인 상한은 LLM 이 적용 판단한 규칙 기준. 융합 후 재적용해 rule 점수가
     // 상한을 끌어올리지 못하게 한다 (상한 gap 은 이미 [llm] 쪽에 있으므로 복사본에 적용).
     // 반환하는 appliedRules 는 capped 표시를 합친 복사본 (LLM 단계 또는 융합 단계에서 상한 적용).
     result.appliedRules = recapAppliedRules(result, llmRes.appliedRules);
+    if (uncappedFused > result.scorePercent) result.scoreBeforeGuidelineCaps = uncappedFused;
     const references = llmRes.references ?? ruleRes.references;
     if (references) result.references = references;
     return result;

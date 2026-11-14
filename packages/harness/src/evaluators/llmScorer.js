@@ -113,6 +113,9 @@ export function createLlmScorer({ client, knowledge = defaultKnowledge }) {
       appliedRules: citations,
     };
     applyAppliedRules(result, rulesById);
+    // LLM 이 적용했다고 주장한 규칙의 상한으로 점수가 깎였다면 깎이기 전 점수를 함께 돌려준다.
+    const before = citations.filter((e) => e?.capped === true && typeof e.scoreBefore === "number").map((e) => e.scoreBefore);
+    if (before.length) result.scoreBeforeGuidelineCaps = Math.max(...before);
     if (references) result.references = references;
     return result;
   }

@@ -9,6 +9,7 @@ import { normalizeEvidence } from "../utils/evidence";
 import { FINDING_TYPE_LABEL, flattenStandardRefs, buildFindingNarrative } from "../utils/findings";
 import { ReferenceChips } from "./ReferenceChips";
 import { cappedRules } from "../utils/references";
+import { AssessmentPanel } from "./AssessmentPanel";
 
 const VerdictHeader = ({ proc, results, fileName, date, cl1Pass, counts, totalBps, viewingHistory, exporting, onExportPdf, onExportTxt }) => (
   <div style={{
@@ -38,7 +39,7 @@ const VerdictHeader = ({ proc, results, fileName, date, cl1Pass, counts, totalBp
         lineHeight: 1.05,
         color: cl1Pass ? T.ok : T.err,
       }}>
-        {cl1Pass ? "적합 (Conformant)" : "갭 발견 (Gap Detected)"}
+        {cl1Pass ? "문서 적합 (잠정)" : "갭 발견 (Gap Detected)"}
         <span style={{
           fontSize: 18,
           marginLeft: 12,
@@ -680,6 +681,8 @@ export const VerdictCard = forwardRef(function VerdictCard(
       <RatingCountsGrid counts={counts} totalBps={totalBps} />
 
       <HarnessVerdictBlock verdict={results._verdict} />
+
+      <AssessmentPanel assessment={results._assessment} summary={results._assessmentSummary} />
 
       <InsightsPair strengths={results.strengths} gaps={results.gaps} />
 

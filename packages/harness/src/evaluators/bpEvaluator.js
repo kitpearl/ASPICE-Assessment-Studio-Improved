@@ -36,6 +36,7 @@ export async function evaluateBPs(processSpec, artifacts, scorer, options = {}) 
       findings,
       references,
       appliedRules,
+      scoreBeforeGuidelineCaps,
     } = await scorer.scoreBP({
       process: processSpec,
       bp,
@@ -90,6 +91,7 @@ export async function evaluateBPs(processSpec, artifacts, scorer, options = {}) 
       standardReferences: mergedRefs,
       findings: enrichedFindings,
       appliedRules: appliedRules ?? [],
+      ...(typeof scoreBeforeGuidelineCaps === "number" ? { scoreBeforeGuidelineCaps } : {}),
       ...(references !== undefined ? { references } : {}),
     };
     })

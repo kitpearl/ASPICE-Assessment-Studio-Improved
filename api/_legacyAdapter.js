@@ -48,19 +48,28 @@ function condenseGap(raw) {
   if (firstSentence) s = firstSentence;
   s = s.replace(/(에 대한 추가적?인? 설명이 필요합니다|이 (부족|필요)합니다|합니다)\.?$/u, "");
   s = s.replace(/\.+$/u, "").trim();
-  if (s.length > 60) s = s.slice(0, 58) + "…";
+  // 예전에는 60자에서 잘라 약점 설명이 문장 중간에서 끊겼다(예: "…관련 이해관…"). 전체 서술은 findings 에 그대로 있다.
+  if (s.length > 220) s = s.slice(0, 218) + "…";
   return s;
 }
 
 // Rating basis shown in front of every summary line.
 const BASIS_PREFIX = "기준: PAM 4.1 · Guidelines 2026 · ";
 
+function buildWeaknessText(f) {
+  if (!f) return "";
+  return [f.situation, f.gap].map((x) => (typeof x === "string" ? x.trim() : "")).filter(Boolean).join(" ");
+}
+
 /** Convert ProcessVerdict → legacy UI shape {ratings, summary, strengths, gaps}. */
 export function toLegacyShape(v, skipped = []) {
   const ratings = (v.bps || []).map((b) => {
     const gaps = (b.gaps || []).map(koreanizeGap).map(condenseGap).filter(Boolean);
-    const rationale = gaps.length
-      ? `Finding — ${gaps.slice(0, 3).join(" / ")}`
+    // 약점(weakness) Finding 은 점수와 무관하게 요약에 나타나야 한다.
+    const weaknessNotes = (b.findings || []).filter((f) => f?.type === "weakness").map((f) => condenseGap(buildWeaknessText(f))).filter(Boolean);
+    const notes = [...weaknessNotes, ...gaps];
+    const rationale = notes.length
+      ? `Finding — ${notes.slice(0, 3).join(" / ")}`
       : "특이 Finding 없음";
     return {
       bp: b.id,
@@ -88,13 +97,19 @@ export function toLegacyShape(v, skipped = []) {
       appliedRules: b.appliedRules ?? [],
     };
   });
-  const strong = (v.bps || []).filter((b) => b.scorePercent >= 68);
-  const weak = (v.bps || []).filter((b) => b.scorePercent < 51);
+  const hasType = (b, t) => (b.findings || []).some((f) => f?.type === t);
+  const anyFindings = (v.bps || []).some((b) => (b.findings || []).length > 0);
+  // 강점: 강점 Finding 이 있고 약점 Finding 이 없는 BP. 점수 ≥68% 라는 이유만으로 자동 포함하지 않는다.
+  // (Finding 을 전혀 내지 않는 스코어러의 레거시 결과만 점수 기준으로 폴백)
+  const strong = (v.bps || []).filter((b) => (anyFindings ? hasType(b, "strength") && !hasType(b, "weakness") : b.scorePercent >= 68));
+  // Finding 요약: 점수<51% 이거나 약점 Finding 이 있는 BP
+  const weak = (v.bps || []).filter((b) => b.scorePercent < 51 || hasType(b, "weakness"));
+  const reviewNeeded = (v.bps || []).filter((b) => !weak.includes(b) && (b.gaps || []).length > 0);
   const skipNote = skipped.length
     ? ` · 스킵된 파일 ${skipped.length}개: ${skipped.map((s) => s.name).join(", ")}`
     : "";
   const fpNote = summarizeProjectFingerprint(v.projectFingerprint);
-  const summary = `${BASIS_PREFIX}CL${v.capabilityLevel} — ${v.capabilityLevelReason ?? ""}${skipNote}${fpNote}`;
+  const summary = `${BASIS_PREFIX}CL${v.capabilityLevel} — ${v.capabilityLevelReason ?? ""} (제출 문서 기준 적절성 검토. 실제 수행에 따른 PA/CL 달성은 수행 증거 없이 확정하지 않음)${skipNote}${fpNote}`;
   return {
     ratings,
     summary,
@@ -104,8 +119,11 @@ export function toLegacyShape(v, skipped = []) {
         .join(", ") || "강점으로 식별된 BP 없음",
     gaps:
       weak
-        .map((b) => `${b.id}: ${koreanizeGap(b.gaps?.[0]) ?? "부족"}`)
-        .join("; ") || "특이 Finding 없음",
+        .map((b) => `${b.id}: ${condenseGap(koreanizeGap(buildWeaknessText((b.findings || []).find((f) => f?.type === "weakness")) || b.gaps?.[0])) || "부족"}`)
+        .join("; ") ||
+      (reviewNeeded.length
+        ? `확정된 약점 없음 · 검토 필요 관찰 ${reviewNeeded.length}건(${reviewNeeded.map((b) => b.id).join(", ")})`
+        : "특이 Finding 없음"),
     projectFingerprint: v.projectFingerprint,
   };
 }

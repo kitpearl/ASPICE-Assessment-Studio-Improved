@@ -2,6 +2,7 @@ import { extractBilingualKeywords, bpKeywordSources, gpKeywordSources } from "..
 import { classifyContextMatch } from "../io/projectContext.js";
 import { displayArtifactName } from "../io/artifactRouting.js";
 import { buildRuleObservationFinding } from "./findingBuilders.js";
+import { termVariants } from "../assessment/semantics.js";
 import { getBpKnowledge, getGpKnowledge, getWpKnowledge } from "../knowledge/index.js";
 
 const EMPTY_REFS = { pam: [], pamNote: [], bgbRL: [], iso: [] };
@@ -85,7 +86,7 @@ const ruleScorerCore = {
         ` 자동 1차 검토는 내용의 표면적 포함 여부만 확인하므로, 위 내용이 요구사항을 실질적으로 충족하는지와 부족한 부분의 보완 방향은 시니어 평가자의 정성 검토가 필요합니다.`,
       evidence,
       pamCitation,
-      scoreReason: `확인결과: 요구 내용 ${matchedCount}/${total} 항목 확인, 점수 ${scorePercent}% (자동 1차 검토 · 시니어 정성 검토 필요)`,
+      scoreReason: `확인결과: 요구 내용 ${matchedCount}/${total} 항목 확인, 점수 ${scorePercent}% (자동 1차 검토 · 시니어 정성 검토 필요) · 증거 후보 검색 점수(${scoreFormula(matchedCount, total)})이며 충족도·등급이 아님`,
     });
     return {
       scorePercent,
@@ -419,6 +420,12 @@ function scoreFromWeighted(weighted, total) {
   return Math.max(0, Math.min(100, Math.round(score)));
 }
 
+/** 점수 산식 설명: 50 + 50×(확인비율)^0.6 (컨텍스트 가중 전). 점수는 후보 탐색 순위이며 N/P/L/F 달성도가 아니다. */
+function scoreFormula(matched, total) {
+  if (!total) return "산식 없음";
+  return `50+50×(${matched}/${total})^${GENEROSITY_EXPONENT}`;
+}
+
 function applyContextPenalty(score, contextMatch) {
   if (contextMatch == null) return score;
   // Linear floor at 0.5 for off-context, 1.0 for fully consistent.
@@ -464,8 +471,9 @@ function matchKeywords(keywords, artifacts, matchIndex) {
     let matched = false;
     for (const a of artifacts) {
       const hay = (a.name + " " + (a.text ?? "")).toLowerCase();
-      const idx = hay.indexOf(kw);
-      if (idx >= 0) {
+      // 동의어(개시자≈제안자, 종료≈종결, 의사소통≈통보·알림 등)도 같은 개념으로 본다. 증거 후보 탐색용이다.
+      const hitTerm = termVariants(kw).find((v) => hay.indexOf(v) >= 0);
+      if (hitTerm !== undefined) {
         const ctx = matchIndex.get(a.name) ?? { score: null };
         // Unknown context (null) => weight 1.0 to preserve legacy behaviour
         // when no fingerprint is available.
@@ -473,7 +481,7 @@ function matchKeywords(keywords, artifacts, matchIndex) {
         weighted += w;
         evidence.push({
           artifactName: a.name,
-          quote: snippet(a.text ?? "", kw, 400) || kw,
+          quote: snippet(a.text ?? "", hitTerm, 400) || hitTerm,
         });
         perArtifactHits.set(a.name, (perArtifactHits.get(a.name) ?? 0) + 1);
         matched = true;

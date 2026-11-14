@@ -2,6 +2,7 @@ import { X, FileDown, Download, Loader2 } from "lucide-react";
 import { T, FONTS, SECTION_CONTAINER_STYLE } from "../theme";
 import { SectionBadge } from "./SectionBadge";
 import { ReferenceChips } from "./ReferenceChips";
+import { AssessmentPanel } from "./AssessmentPanel";
 import { RATING_META } from "../data/ratingMeta";
 import { condenseGap as condenseGapShared } from "../utils/gapText";
 import { bpTitleKo, gpTitleKo } from "../utils/titlesKo";
@@ -136,6 +137,8 @@ export function ProjectReportCard({ verdict, onClose, onExportPdf, onExportTxt, 
       )}
 
       {/* PA 1.1 rationale from BP evaluation (CL1) */}
+      <AssessmentSection verdict={verdict} />
+
       <Pa11Rationale processes={processes} />
 
       {/* PA 2.1/2.2/3.1/3.2 rationale from GP evaluation (CL2 / CL3 targets).
@@ -297,6 +300,20 @@ export function ProjectReportCard({ verdict, onClose, onExportPdf, onExportTxt, 
         </div>
       )}
     </section>
+  );
+}
+
+function AssessmentSection({ verdict }) {
+  const assessments = verdict.assessments ?? {};
+  const ids = Object.keys(assessments).filter((id) => assessments[id]);
+  if (!ids.length) return null;
+  return (
+    <>
+      <SubHeading>구조화 평가 (Assessment) · 프로세스별</SubHeading>
+      {ids.map((id) => (
+        <AssessmentPanel key={id} title={id} assessment={assessments[id]} summary={verdict.assessmentSummaries?.[id]} />
+      ))}
+    </>
   );
 }
 

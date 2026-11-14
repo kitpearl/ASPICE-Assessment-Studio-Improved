@@ -1,10 +1,11 @@
 import { extractKeywords } from "./excerpt.js";
+import { FUNCTION_WORDS } from "../assessment/semantics.js";
 
 export { extractKeywords };
 
 // Trailing particles / verb endings, longest first so "에서" wins over "에".
 const SUFFIXES = [
-  "에서는", "으로는", "에서의", "되어야", "으로", "에서", "에게", "까지", "부터", "에는", "와의", "과의",
+  "받는", "에서는", "으로는", "에서의", "되어야", "으로", "에서", "에게", "까지", "부터", "에는", "와의", "과의",
   "되고", "되며", "되어", "해야", "하게", "하고", "하며", "하여", "한다", "하는", "하기", "된다", "되는",
   "을", "를", "이", "가", "은", "는", "의", "에", "과", "와", "로", "및", "등", "도", "한", "된",
   "할", "될", "함", "됨",
@@ -37,9 +38,10 @@ export function extractKoreanKeywords(text, max = 10) {
   const freq = new Map();
   for (const raw of (text || "").toLowerCase().split(/[^\p{Script=Hangul}a-z0-9]+/u)) {
     if (!raw || !/\p{Script=Hangul}/u.test(raw)) continue;
-    if (KO_STOPWORDS.has(raw)) continue;
+    // 간의·의해·용이하도록 같은 기능어는 요구사항이 아니므로 키워드로 세지 않는다.
+    if (KO_STOPWORDS.has(raw) || FUNCTION_WORDS.has(raw)) continue;
     const t = stripSuffix(raw);
-    if (t.length < 2 || KO_STOPWORDS.has(t)) continue;
+    if (t.length < 2 || KO_STOPWORDS.has(t) || FUNCTION_WORDS.has(t)) continue;
     freq.set(t, (freq.get(t) ?? 0) + 1);
   }
   return [...freq.entries()]
