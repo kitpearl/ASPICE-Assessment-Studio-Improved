@@ -140,7 +140,8 @@ export function assessmentFromVerdict(verdict, { artifacts = [], skipped = [], e
   }
 
   // 이 프로세스에 해당하는 입력 문서가 없으면 키워드 점수에서 나온 N 등을 등급으로 싣지 않는다(문서 부재 ≠ 프로세스 미수행).
-  const noInput = manifest.length === 0;
+  // 읽지 못한 파일(FAILED)만 입력 목록에 있어도 실제로 평가에 쓰인 문서가 없으면 "입력 없음"이다.
+  const noInput = artifacts.length === 0;
   const a = buildAssessment({
     processSpec,
     scope: "DOCUMENT_ADEQUACY", // 이 제품은 제출 문서를 평가한다. 수행 기록이 없으므로 PA/CL 달성은 판정하지 않는다.

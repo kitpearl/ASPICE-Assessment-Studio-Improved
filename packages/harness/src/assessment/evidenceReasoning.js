@@ -114,6 +114,9 @@ export function conceptCoverage(requiredConcepts, quotes) {
   return { covered, uncovered, substitutionRisk };
 }
 
+/** 한 지적이 인용하는 반대 증거 상한. 이력 용량이 문서 크기에 비례해 커지지 않게 한다. */
+const MAX_COUNTERS = 6;
+
 /**
  * "X 가 없다/부족하다"는 부재 주장에 대한 반대 증거 검색(파이프라인 4단계).
  * 본문(BODY) 블록에서 같은 개념의 표현이 발견되면 주장을 기각/수정한다.
@@ -131,14 +134,14 @@ export function reconcileAbsenceClaim(absenceClaim, blocks, { unreadable = false
   if (body.length) {
     return {
       disposition: "REJECTED",
-      counterEvidence: body.map((h) => ({ evidenceId: h.block.evidenceId, locator: h.block.locator, quote: h.block.text, matchedTerm: h.term })),
+      counterEvidence: body.slice(0, MAX_COUNTERS).map((h) => ({ evidenceId: h.block.evidenceId, locator: h.block.locator, quote: h.block.text, matchedTerm: h.term })),
       reason: `본문에서 '${label}' 개념에 해당하는 표현('${body[0].term}')이 발견되어 부재 주장을 기각한다. 표현이 달라도 의미가 대응하는지 심사자가 확인한다.`,
     };
   }
   if (hits.length) {
     return {
       disposition: "MODIFIED",
-      counterEvidence: hits.map((h) => ({ evidenceId: h.block.evidenceId, locator: h.block.locator, quote: h.block.text, matchedTerm: h.term })),
+      counterEvidence: hits.slice(0, MAX_COUNTERS).map((h) => ({ evidenceId: h.block.evidenceId, locator: h.block.locator, quote: h.block.text, matchedTerm: h.term })),
       reason: `'${label}' 표현이 목차·매핑표·자기선언에만 있다. 본문 근거가 없다는 지적으로 수정한다.`,
     };
   }
@@ -153,14 +156,15 @@ export function reconcileAbsenceClaim(absenceClaim, blocks, { unreadable = false
   if (relatedHits.length) {
     return {
       disposition: "ACCEPTED",
-      counterEvidence: relatedHits.slice(0, 6).map((h) => ({ evidenceId: h.block.evidenceId, locator: h.block.locator, quote: h.block.text, matchedTerm: h.term })),
+      counterEvidence: relatedHits.slice(0, MAX_COUNTERS).map((h) => ({ evidenceId: h.block.evidenceId, locator: h.block.locator, quote: h.block.text, matchedTerm: h.term })),
       reason: `관련 개념 후보 '${CONCEPTS[relatedHits[0].cid]?.label ?? relatedHits[0].cid}' 표현('${relatedHits[0].term}')이 본문에 있다. 지적 대상과 같은 의미인지 심사자가 확인해야 한다(약점은 유지).`,
     };
   }
   // 개념 사전에는 없지만 지적 쪽(LLM)이 제시한 대체 표현이 본문에 있으면 기각하지 않고 보류한다(표현의 동등성은 사람이 확인).
   const termHits = [];
   for (const t of absenceClaim.terms ?? []) {
-    const needle = String(t).toLowerCase();
+    const needle = String(t).toLowerCase().trim();
+    if (!needle) continue; // 빈 대체 표현은 모든 줄에 일치하므로 증거가 아니다
     for (const b of blocks ?? []) {
       if ((b.blockKind ?? classifyBlock(b.text)) !== "BODY") continue;
       if (String(b.text ?? "").toLowerCase().includes(needle)) termHits.push({ block: b, term: t });
@@ -170,7 +174,7 @@ export function reconcileAbsenceClaim(absenceClaim, blocks, { unreadable = false
   if (termHits.length) {
     return {
       disposition: "ACCEPTED",
-      counterEvidence: termHits.map((h) => ({ evidenceId: h.block.evidenceId, locator: h.block.locator, quote: h.block.text, matchedTerm: h.term })),
+      counterEvidence: termHits.slice(0, MAX_COUNTERS).map((h) => ({ evidenceId: h.block.evidenceId, locator: h.block.locator, quote: h.block.text, matchedTerm: h.term })),
       reason: `지적이 스스로 제시한 대체 표현('${termHits[0].term}')이 본문에 있다. 같은 의미인지 심사자가 확인해야 한다(약점은 유지).`,
     };
   }

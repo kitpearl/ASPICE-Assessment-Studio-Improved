@@ -359,3 +359,13 @@ test("[synthetic] 문서에 BP 번호 참조가 없으면 BP 구성 불일치 �
   assert.match(c.detail, /BP 번호 참조가 없어/);
   assert.ok(!deriveSummary(a).openIssues.some((o) => o.ref === "DOC-BP-MAPPING"));
 });
+
+test("[synthetic] 반대 증거는 최대 6건이고, 빈 대체 표현은 모든 줄에 일치하지 않는다", () => {
+  const many = Array.from({ length: 50 }, (_, i) => ({ text: `확인 절차 ${i}`, locator: { paragraph: i + 1 }, evidenceId: `EV-${i}` }));
+  const rejected = reconcileAbsenceClaim({ conceptId: "verification", claim: "x" }, many);
+  assert.equal(rejected.disposition, "REJECTED");
+  assert.ok(rejected.counterEvidence.length <= 6, `반대 증거 ${rejected.counterEvidence.length}건`);
+  const blank = reconcileAbsenceClaim({ target: "대상", terms: ["", "  "], claim: "x" }, many);
+  assert.equal(blank.disposition, "ACCEPTED");
+  assert.equal(blank.counterEvidence.length, 0);
+});

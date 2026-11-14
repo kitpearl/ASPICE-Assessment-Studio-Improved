@@ -139,3 +139,12 @@ test("[synthetic] 실제 흐름 3: 같은 기대사항에 대한 강점·약점 
   assert.equal(b.findings.find((f) => f.findingId === "W1").disposition, "ACCEPTED");
   assert.deepEqual(validateAssessment(b).violations, []);
 });
+
+test("[synthetic] 평가에 쓰인 문서가 없고 읽지 못한 파일만 있어도 등급을 싣지 않는다(입력 없음)", () => {
+  const verdict = { processId: "SUP.9", bps: [{ id: "BP1", title: "t", rating: "N", scorePercent: 10, evidence: [], gaps: [], findings: [], appliedRules: [] }] };
+  const a = assessmentFromVerdict(verdict, { artifacts: [], skipped: [{ name: "broken.pdf", reason: "parse error" }], engines: ["rule"] });
+  assert.ok(a.bpResults.every((b) => b.rating.value === null && b.rating.status === "WITHHELD"));
+  assert.ok(a.consistencyChecks.some((c) => c.checkId === "INPUT-MISSING"));
+  assert.equal(a.inputManifest[0].extractionStatus, "FAILED");
+  assert.deepEqual(validateAssessment(a).violations, []);
+});
