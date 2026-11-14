@@ -14,3 +14,4 @@ export * from "./qualityMetrics.js";
 export * from "./prompt.js";
 export * from "./fromVerdict.js";
 export * from "./consensus.js";
+export * from "./independentReviewRunner.js";
