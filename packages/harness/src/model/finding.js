@@ -44,6 +44,10 @@
  * @property {Evidence[]} evidence          뒷받침 인용
  * @property {StandardReferences} standardReferences
  * @property {RatingImpact} ratingImpact
+ * @property {string[]} expectationIds  이 지적이 해당하는 기대사항 ID (프롬프트의 기대사항 목록에서 선택, 없으면 [])
+ * @property {?{target: string, alternativeTerms: string[]}} absenceClaim  "…이 없다/부족하다"는 부재 주장이면 대상과 문서가 같은 의미로 쓸 수 있는 대체 표현
+ * @property {boolean} expectationIdsDeclared  expectationIds 필드를 응답이 명시했는지(빈 배열 포함)
+ * @property {boolean} claimsExecution  계획이 아니라 실제로 구현·수행되고 있다고 단정하는 서술이면 true
  */
 
 /** @returns {StandardReferences} */
@@ -66,6 +70,14 @@ export function makeEmptyRatingImpact() {
  * @param {Partial<Finding>} partial
  * @returns {Finding}
  */
+function normalizeAbsenceClaim(raw) {
+  if (!raw || typeof raw !== "object") return null;
+  const target = typeof raw.target === "string" ? raw.target.trim() : "";
+  if (!target) return null;
+  const terms = Array.isArray(raw.alternativeTerms) ? raw.alternativeTerms.filter((t) => typeof t === "string" && t.trim().length >= 2).map((t) => t.trim()).slice(0, 8) : [];
+  return { target, alternativeTerms: terms };
+}
+
 export function makeFinding(partial = {}) {
   return {
     id: partial.id ?? "",
@@ -83,6 +95,11 @@ export function makeFinding(partial = {}) {
     ratingImpact: partial.ratingImpact
       ? { ...makeEmptyRatingImpact(), ...partial.ratingImpact }
       : makeEmptyRatingImpact(),
+    expectationIds: Array.isArray(partial.expectationIds) ? partial.expectationIds.filter((x) => typeof x === "string" && x.trim()).map((x) => x.trim()) : [],
+    absenceClaim: normalizeAbsenceClaim(partial.absenceClaim),
+    claimsExecution: partial.claimsExecution === true,
+    // LLM 이 expectationIds 필드를 명시했는지(빈 배열 포함). 명시했다면 변환기가 후보 매핑으로 덮어쓰지 않는다.
+    expectationIdsDeclared: Array.isArray(partial.expectationIds),
   };
 }
 

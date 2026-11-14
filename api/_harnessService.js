@@ -25,6 +25,7 @@ import {
 import { buildArtifacts } from "./_artifactBuilder.js";
 import { annotateEvidenceWithPages } from "./_evidencePages.js";
 import { toLegacyShape } from "./_legacyAdapter.js";
+import { assessmentFromVerdict, deriveSummary } from "aspice-harness/assessment";
 import { resolveLlmConfig, limitConcurrency } from "./_llmConfig.js";
 
 // Recognised scorer engines. Anything unknown normalises to "hybrid" so the
@@ -216,7 +217,7 @@ async function evaluateOneProcess(harness, processSpec, indexedArtifacts, extraB
   // document type is admissible evidence; only owner-based routing still applies.
   const docTypeScope = Number(harness?.targetLevel) === 1;
   const scoped = scopeArtifactsForProcess(processSpec, indexedArtifacts, { strict, docTypeScope });
-  return harness.evaluateProcess({
+  const verdict = await harness.evaluateProcess({
     processId: processSpec.id,
     artifacts: scoped,
     extraBPs,
@@ -225,6 +226,9 @@ async function evaluateOneProcess(harness, processSpec, indexedArtifacts, extraB
     // stability and possible future narrative-only use. See buildBpPrompt.
     mode,
   });
+  // 구조화 평가가 같은 범위의 문서를 입력 목록으로 기록할 수 있도록 실제 평가에 쓴 산출물 이름을 남긴다.
+  verdict.meta = { ...(verdict.meta || {}), scopedArtifactNames: scoped.map((a) => a.name) };
+  return verdict;
 }
 
 /**
@@ -269,6 +273,19 @@ function rejectIfNoArtifacts(arts, skipped) {
 }
 
 /**
+ * ProcessVerdict → 구조화 assessment + 요약. 어떤 오류도 호출자에게 던지지 않는다(기존 응답 보호).
+ */
+function buildStructuredAssessment(verdict, indexed, skipped, engines) {
+  try {
+    const assessment = assessmentFromVerdict(verdict, { artifacts: indexed, skipped, engines });
+    return { assessment, assessmentSummary: deriveSummary(assessment) };
+  } catch (err) {
+    console.warn(`[aspice/assessment] structured assessment skipped: ${err?.message ?? err}`);
+    return { assessment: null, assessmentSummary: null };
+  }
+}
+
+/**
  * Per-process evaluation. Request body:
  *   { processId, artifact: {name, text|base64, mimeType}, targetLevel, engine }
  *   OR legacy: { processId, artifacts: [...], targetLevel, engine }
@@ -299,7 +316,9 @@ export async function handleEvaluate({ processId, artifact, artifacts, targetLev
     engine: resolved[0],
   };
   annotateEvidenceWithPages(verdict, indexed);
-  return { legacy: toLegacyShape(verdict, skipped), verdict };
+  // 구조화 평가(assessment)는 기존 결과 옆에 추가로 만든다. 실패해도 기존 평가 응답을 막지 않는다.
+  const { assessment, assessmentSummary } = buildStructuredAssessment(verdict, indexed, skipped, resolved);
+  return { legacy: toLegacyShape(verdict, skipped), verdict, assessment, assessmentSummary };
 }
 
 /**
@@ -393,5 +412,15 @@ export async function handleProject({ processIds, artifacts, targetLevel = 1, en
     },
   };
   annotateEvidenceWithPages(verdict, indexed);
+  // 프로세스별 구조화 평가를 기존 응답 옆에 추가한다(기존 필드는 그대로). 프로세스 하나가 실패해도 나머지는 유지된다.
+  verdict.assessments = {};
+  verdict.assessmentSummaries = {};
+  for (const pv of processVerdicts) {
+    const names = new Set(pv.meta?.scopedArtifactNames ?? []);
+    const own = indexed.filter((a) => names.has(a.name));
+    const r = buildStructuredAssessment(pv, own, skipped, resolved);
+    verdict.assessments[pv.processId] = r.assessment;
+    verdict.assessmentSummaries[pv.processId] = r.assessmentSummary;
+  }
   return { verdict };
 }

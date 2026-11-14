@@ -1,15 +1,19 @@
 // 가이드라인 2026 등급 조건 규칙(condition.kind === "rating")의 결정론적 후처리 (순수 함수).
 // 출처 지표의 등급이 when(N/P)에 들면 대상 지표의 점수를 상한까지만 낮춘다. 올리지 않는다.
 // crossProcess 규칙과 이 프로세스 결과로 출처·대상을 찾을 수 없는 규칙은 건너뛴다.
-import { capForEffect, capLabel } from "./guidelineEffects.js";
+// 사유 한정 규칙은 사유를 검증할 수 없으므로 적용하지 않고 unverifiedReason 으로 돌려준다.
+import { capForEffect, capLabel, requiresReasonJudgment } from "./guidelineEffects.js";
 import { percentToRating, collapse } from "../model/rating.js";
 
 /**
  * @param {{processId: string, bps: any[], pas: any[], rules: any[]}} args
- * @returns {{bps: any[], pas: any[], applied: Array<{ruleId: string, target: string, sourceRating: string}>}}
+ * @returns {{bps: any[], pas: any[], applied: Array<{ruleId: string, target: string, sourceRating: string}>, unverifiedReason: Array<{ruleId: string, source: string, sourceRating: string}>}}
  */
 export function applyRatingConditionRules({ processId, bps = [], pas = [], rules = [] }) {
   const applied = [];
+  // 사유 한정 규칙("…때문에 P/N 이라면")은 출처 지표의 등급만으로 성립을 확인할 수 없다.
+  // 사유를 검증하지 않고 하향하면 오적용이므로 자동 적용하지 않고 검토 대기로 남긴다.
+  const unverifiedReason = [];
   for (const rule of rules ?? []) {
     const cond = rule?.condition;
     if (!cond || cond.kind !== "rating" || cond.crossProcess) continue;
@@ -18,6 +22,10 @@ export function applyRatingConditionRules({ processId, bps = [], pas = [], rules
     if (!source) continue;
     const sourceRating = safeCollapse(source.rating);
     if (!sourceRating || !when.includes(sourceRating)) continue;
+    if (requiresReasonJudgment(rule)) {
+      unverifiedReason.push({ ruleId: rule.id, source: source.id, sourceRating });
+      continue;
+    }
     const cap = capForEffect(rule.effect, source.percent);
     if (cap === null) continue;
     const targets = (rule.targets ?? []).map((t) => resolveTarget(t, processId, bps, pas));
@@ -37,7 +45,7 @@ export function applyRatingConditionRules({ processId, bps = [], pas = [], rules
       applied.push({ ruleId: rule.id, target: target.id, sourceRating });
     }
   }
-  return { bps, pas, applied };
+  return { bps, pas, applied, unverifiedReason };
 }
 
 function safeCollapse(rating) {

@@ -1,6 +1,10 @@
 import { ASSESSOR_PERSONA } from "./assessorPersona.js";
 import { buildIncoseGuidance } from "../../../spec/incose/index.js";
+import { normalizeExpectations } from "../../assessment/expectations.js";
 import { guidelineBlocks, exactCitationLine, guidelineCitationsLine, GUIDELINE_CITATIONS_SCHEMA_LINE, formatOutcomes, addNotesLines, titleWithEn } from "./common.js";
+
+/** BP 평가 프롬프트 버전. 구조화 평가(assessment)의 promptVersion 으로 기록된다. 2.0.0: 기대사항 ID·부재 주장·실행 단정 필드 추가. 2.1.0: 평가 범위(문서 적절성 대 수행) 명시. */
+export const BP_PROMPT_VERSION = "bp-prompt/2.1.0";
 
 /**
  * Build the assessor prompt for one Base Practice.
@@ -39,6 +43,8 @@ export function buildBpPrompt({
   projectFingerprint,
   // eslint-disable-next-line no-unused-vars -- accepted for call-site stability; scoring is mode-independent (see above)
   mode = "project",
+  // 평가 범위. 이 제품은 제출된 문서만 평가하므로 기본값은 문서 적절성 검토다.
+  assessmentScope = "DOCUMENT_ADEQUACY",
   knowledge = null,
 }) {
   const system = ASSESSOR_PERSONA;
@@ -66,12 +72,20 @@ export function buildBpPrompt({
   const incoseApplicable = Boolean(incoseGuidance);
   const citation = knowledge?.references?.pam?.citation;
 
+  // 이 BP 의 검증 가능한 기대사항 목록(공식 PAM 문장 단위). findings 가 어느 기대사항에 대한 것인지 구조화해 받기 위한 메뉴다.
+  const expectationMenu = normalizeExpectations({ ...process, basePractices: (process.basePractices ?? []).filter((b) => b.id === bp.id) })
+    .map((e) => `  - ${e.expectationId}: ${e.textKo}`);
+
   const task = [
     `# 평가 대상 Base Practice`,
     `  ${bpFullId}: ${bp.title}`,
     bp.description ? `  ${bp.description}` : "",
+    "",
+    `# 기대사항 목록 (findings 의 expectationIds 는 여기서만 고른다)`,
+    ...expectationMenu,
     ...(incoseApplicable ? ["", incoseGuidance] : []),
     "",
+    ...scopeLines(assessmentScope),
     `# 작업`,
     `- 0~100 점으로 충족도를 평가하라.`,
     citation
@@ -82,6 +96,11 @@ export function buildBpPrompt({
     `- findings 배열에 최소 1개의 Finding 을 작성하라 (가이드: 시스템 메시지 § Finding 작성 룰).`,
     `  - 각 Finding 의 bpId 는 "${bpFullId}" 로 고정하라.`,
     `  - id 는 "F-${bpFullId}-NN" 형식으로 부여하라 (NN 은 01 부터).`,
+    `  - expectationIds: 그 Finding 이 다루는 기대사항 ID 를 위 목록에서 고르라(없으면 []). 같은 기대사항에 강점과 부족을 동시에 쓰지 말고 근거로 하나로 정하라.`,
+    `  - absenceClaim: "…이 없다/부족하다/불명확하다"는 부재 주장이면 {"target": 없다고 주장하는 대상, "alternativeTerms": 문서가 같은 의미로 쓸 수 있는 다른 표현 목록}을 채우고, 아니면 null 로 두라.`,
+    `    부재를 주장하기 전에 문서 전체에서 반대 증거를 찾아라. 개시자≈제안자, 종료≈종결, 의사소통≈통보·알림처럼 표현이 달라도 같은 의미면 있는 것이다.`,
+    `    "간의", "의해", "용이하도록" 같은 기능어의 부재는 약점이 아니다.`,
+    `  - claimsExecution: 계획서의 선언을 "구현되어 있다/수행되고 있다"고 단정하는 서술이면 true. 계획·선언은 "…하도록 정의하고 있다"로 서술하라.`,
     ...(incoseApplicable
       ? [
           `- INCOSE GtWR V4 렌즈(위 "# INCOSE GtWR V4 ..." 절)로 요구사항 명세 품질과 검증가능성을 추가 평가하라.`,
@@ -114,6 +133,9 @@ export function buildBpPrompt({
     `      "gap": "<weakness 인 경우 무엇이 부족한지 구체적 진술>",`,
     `      "impact": "<weakness 인 경우 BP outcome / capability 에 미치는 영향>",`,
     `      "recommendation": "<weakness 인 경우 동사로 시작하는 권고>",`,
+    `      "expectationIds": ["${bpFullId}.E1"],`,
+    `      "absenceClaim": null,`,
+    `      "claimsExecution": false,`,
     `      "location": { "found": "<발견 위치 또는 null>", "recommended": "<부재 시 권고 위치 또는 null>" },`,
     `      "evidence": [{"artifactName": "...", "quote": "..."}],`,
     `      "standardReferences": {"pam": ["..."], "pamNote": [], "bgbRL": [], "iso": []${incoseApplicable ? ', "incose": ["INCOSE GtWR C7"]' : ""}},`,
@@ -124,6 +146,25 @@ export function buildBpPrompt({
   ].join("\n");
 
   return { system, context, task };
+}
+
+/** 평가 범위 안내. 문서가 요구를 충족하도록 "정의"했는지와 실제로 "수행"했는지를 구분하게 한다. */
+function scopeLines(scope) {
+  if (scope === "PROCESS_PERFORMANCE") {
+    return [
+      `# 평가 범위: 프로세스 수행 평가`,
+      `- 수행 기록·도구 설정·인터뷰 같은 수행 증거로 실제 수행을 평가한다. 계획서·템플릿·자기선언(예: "모두 충족")만으로는 수행을 인정하지 않는다.`,
+      "",
+    ];
+  }
+  return [
+    `# 평가 범위: 문서 적절성 검토`,
+    `- 제출된 문서가 이 BP 의 기대사항을 충족하도록 계획·정의했는지만 평가한다. 실제 프로세스 수행(Capability Level 달성)을 판정하지 않는다.`,
+    `- 실제 수행 기록(CR 건별 링크·회의록 실적·도구 설정 화면·KPI 실적·샘플 레코드)이 제출되지 않았다는 사실은 약점이 아니다. 그런 항목은 type "observation" 으로 "추가 확인 필요 증거"로만 기록하고 weakness 로 쓰지 말라.`,
+    `- weakness 는 문서 자체의 결함(기대사항에 해당하는 정의가 없거나 모호하거나 서로 모순됨)에 한정한다.`,
+    `- 계획·목표 수치·자동화 선언을 "이미 수행되고 있다"고 서술하지 말라. 목차·BP 매핑표·자기충족 선언은 본문 근거가 아니다.`,
+    "",
+  ];
 }
 
 function bpKnowledgeBlocks(k) {

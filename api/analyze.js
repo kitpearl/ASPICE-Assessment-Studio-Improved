@@ -31,8 +31,8 @@ export default async function handler(req, res) {
   if (!auth.ok) return res.status(401).json({ error: "Unauthorized. Sign in required." });
 
   try {
-    const { legacy, verdict } = await handleEvaluate(req.body || {}, process.env);
-    return res.status(200).json({ ...legacy, _verdict: verdict });
+    const { legacy, verdict, assessment, assessmentSummary } = await handleEvaluate(req.body || {}, process.env);
+    return res.status(200).json({ ...legacy, _verdict: verdict, _assessment: assessment, _assessmentSummary: assessmentSummary });
   } catch (e) {
     return res.status(502).json({ error: "Harness evaluation failed", detail: String(e?.message || e) });
   }

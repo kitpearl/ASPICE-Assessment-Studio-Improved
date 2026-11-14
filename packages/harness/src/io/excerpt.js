@@ -21,15 +21,23 @@ export function buildExcerpt({
   artifacts,
   keywords = [],
   maxChars = 18000,
-  perArtifactChars = 3600,
+  perArtifactChars,
   window = 600,
 }) {
   const kws = (keywords || []).filter(Boolean).map((k) => k.toLowerCase());
+  // 산출물 전체가 프롬프트 한도 안에 들어가면 자르지 않고 통째로 싣는다. 예전에는 산출물당 3,600자로 잘라
+  // 문서 뒷부분(예: 상태표)을 못 본 LLM 이 "문서에 없다"는 오지적을 냈다. 한도를 넘는 경우와 호출자가 한도를
+  // 명시한 경우(perArtifactChars)는 기존 동작(키워드 주변 발췌)을 유지한다.
+  const DEFAULT_PER_ARTIFACT = 3600;
+  const HEADER_ALLOWANCE = 200;
+  const total = artifacts.reduce((n, a) => n + (a.text ? a.text.length + HEADER_ALLOWANCE : 0), 0);
+  const fitsWhole = perArtifactChars === undefined && total <= maxChars;
+  const perArtifact = fitsWhole ? Infinity : (perArtifactChars ?? DEFAULT_PER_ARTIFACT);
   const chunks = [];
   for (const a of artifacts) {
     const text = a.text || "";
     if (!text) continue;
-    const body = kws.length ? keywordPassages(text, kws, window, perArtifactChars) : head(text, perArtifactChars);
+    const body = fitsWhole ? text : kws.length ? keywordPassages(text, kws, window, perArtifact) : head(text, perArtifact);
     const hdr = `--- ${a.name}${a.wpidCandidates?.length ? ` [WPs: ${a.wpidCandidates.join(", ")}]` : ""} ---`;
     chunks.push(`${hdr}\n${body.trim()}`);
   }

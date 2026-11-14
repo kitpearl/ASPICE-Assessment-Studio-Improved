@@ -18,7 +18,8 @@
     "./llm": "./src/llm/index.js",
     "./model": "./src/model/index.js",
     "./qa": "./src/qa/index.js",
-    "./knowledge": "./src/knowledge/index.js"
+    "./knowledge": "./src/knowledge/index.js",
+    "./assessment": "./src/assessment/index.js"
   },
   "scripts": {
     "start": "node src/cli.js",

@@ -81,3 +81,16 @@ test("buildExcerpt: per-artifact truncation caps total size", () => {
   const out = buildExcerpt({ artifacts, keywords: [], maxChars: 5000, perArtifactChars: 2000 });
   assert.ok(out.length <= 5200, `length was ${out.length}`);
 });
+
+test("buildExcerpt: 산출물 전체가 한도 안이면 자르지 않고 통째로 싣는다 (문서 뒷부분을 못 보는 오지적 방지)", () => {
+  const long = "앞부분 ".repeat(1500) + "7. Closed 상태표 끝부분";
+  const whole = buildExcerpt({ artifacts: [{ name: "plan.docx", text: long }], keywords: ["앞부분"] });
+  assert.ok(whole.includes("7. Closed 상태표 끝부분"));
+  // 한도를 넘으면 기존처럼 일부만
+  const big = "가나다 ".repeat(8000);
+  const cut = buildExcerpt({ artifacts: [{ name: "a", text: big }], keywords: ["가나다"] });
+  assert.ok(cut.length <= 18000 && cut.length < big.length);
+  // 호출자가 한도를 명시하면 그대로 따른다
+  const capped = buildExcerpt({ artifacts: [{ name: "plan.docx", text: long }], keywords: [], perArtifactChars: 100 });
+  assert.ok(!capped.includes("끝부분"));
+});
